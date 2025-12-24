@@ -16,7 +16,7 @@ export function WebGLHero() {
 
         // Scene setup
         const scene = new THREE.Scene();
-        scene.fog = new THREE.Fog(0x0f1729, 10, 50);
+        scene.fog = new THREE.Fog(0x0f1729, 20, 80); // Increased fog depth
         sceneRef.current = scene;
 
         // Camera setup
@@ -24,15 +24,16 @@ export function WebGLHero() {
             45,
             window.innerWidth / window.innerHeight,
             0.1,
-            100
+            120
         );
-        camera.position.z = 30;
+        camera.position.z = 40; // Moved camera back slightly
         cameraRef.current = camera;
 
         // Renderer setup
         const renderer = new THREE.WebGLRenderer({
             antialias: true,
             alpha: true,
+            powerPreference: "high-performance"
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -40,15 +41,20 @@ export function WebGLHero() {
         rendererRef.current = renderer;
 
         // Lighting
-        const ambientLight = new THREE.AmbientLight(0x4a9eff, 0.2);
+        const ambientLight = new THREE.AmbientLight(0x4a9eff, 0.4); // Brighter ambient
         scene.add(ambientLight);
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.3);
-        directionalLight.position.set(5, 5, 5);
-        scene.add(directionalLight);
+        const pointLight = new THREE.PointLight(0x60a5fa, 2, 50);
+        pointLight.position.set(10, 10, 10);
+        scene.add(pointLight);
+
+        const blueLight = new THREE.PointLight(0x4a9eff, 2, 40);
+        blueLight.position.set(-10, -5, 5);
+        scene.add(blueLight);
+
 
         // Background gradient
-        const gradientGeometry = new THREE.PlaneGeometry(100, 100);
+        const gradientGeometry = new THREE.PlaneGeometry(150, 150);
         const gradientMaterial = new THREE.ShaderMaterial({
             uniforms: {
                 color1: { value: new THREE.Color(0x1a1d2e) },
@@ -58,7 +64,7 @@ export function WebGLHero() {
                 varying vec2 vUv;
                 void main() {
                     vUv = uv;
- gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
                 }
             `,
             fragmentShader: `
@@ -72,72 +78,98 @@ export function WebGLHero() {
             side: THREE.DoubleSide,
         });
         const gradientPlane = new THREE.Mesh(gradientGeometry, gradientMaterial);
-        gradientPlane.position.z = -20;
+        gradientPlane.position.z = -30;
         scene.add(gradientPlane);
 
-        // Floating glass planes
+        // Abstract Global Sphere (Background)
+        const globeGeometry = new THREE.BufferGeometry();
+        const globePoints = 1500;
+        const globePositions = new Float32Array(globePoints * 3);
+        const globeSizes = new Float32Array(globePoints);
+
+        for (let i = 0; i < globePoints; i++) {
+            const phi = Math.acos(-1 + (2 * i) / globePoints);
+            const theta = Math.sqrt(globePoints * Math.PI) * phi;
+
+            const r = 25; // Radius
+            globePositions[i * 3] = r * Math.cos(theta) * Math.sin(phi);
+            globePositions[i * 3 + 1] = r * Math.sin(theta) * Math.sin(phi);
+            globePositions[i * 3 + 2] = r * Math.cos(phi);
+
+            globeSizes[i] = Math.random() * 0.15;
+        }
+
+        globeGeometry.setAttribute('position', new THREE.BufferAttribute(globePositions, 3));
+        globeGeometry.setAttribute('size', new THREE.BufferAttribute(globeSizes, 1));
+
+        const globeMaterial = new THREE.PointsMaterial({
+            color: 0x4a9eff,
+            size: 0.1,
+            transparent: true,
+            opacity: 0.15,
+            sizeAttenuation: true
+        });
+
+        const globe = new THREE.Points(globeGeometry, globeMaterial);
+        globe.position.z = -10;
+        scene.add(globe);
+
+
+        // Floating glass planes (Premium)
         const glassPlanes: THREE.Mesh[] = [];
         const glassGeometry = new THREE.PlaneGeometry(3, 3);
         const glassMaterial = new THREE.MeshPhysicalMaterial({
-            color: 0x4a9eff,
+            color: 0xffffff,
             metalness: 0.1,
-            roughness: 0.1,
+            roughness: 0.05,
             transparent: true,
-            opacity: 0.08,
-            transmission: 0.9,
-            thickness: 0.1,
+            opacity: 0.1,
+            transmission: 0.95,
+            thickness: 0.5,
+            clearcoat: 1.0,
+            clearcoatRoughness: 0.1,
+            ior: 1.5,
         });
 
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 8; i++) {
             const plane = new THREE.Mesh(glassGeometry, glassMaterial);
             plane.position.set(
-                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 25,
                 (Math.random() - 0.5) * 15,
-                (Math.random() - 0.5) * 15 - 5
+                (Math.random() - 0.5) * 10
             );
             plane.rotation.set(
                 Math.random() * Math.PI,
                 Math.random() * Math.PI,
                 Math.random() * Math.PI
             );
+            plane.scale.setScalar(0.8 + Math.random() * 0.5);
             scene.add(plane);
             glassPlanes.push(plane);
         }
 
-        // Particle system - flowing light streams
-        const particleCount = 800;
+        // Particle system - Data Streaks
+        const particleCount = 1000;
         const positions = new Float32Array(particleCount * 3);
         const colors = new Float32Array(particleCount * 3);
         const sizes = new Float32Array(particleCount);
-        const velocities: { progress: number; pathIndex: number; speed: number }[] = [];
+        const velocities: { progress: number; pathIndex: number; speed: number; offset: number }[] = [];
 
-        // Create spline paths for particles
+        // Create spline paths for particles (Wider layout)
         const paths: THREE.CatmullRomCurve3[] = [];
-        const pathCount = 5;
+        const pathCount = 6;
 
         for (let i = 0; i < pathCount; i++) {
             const points: THREE.Vector3[] = [];
-            const startX = (i - pathCount / 2) * 4;
-            const startY = (Math.random() - 0.5) * 8;
+            const startX = (i - pathCount / 2) * 5;
+            const startY = (Math.random() - 0.5) * 10;
 
-            // Entry pulse (enquiry)
-            points.push(new THREE.Vector3(startX - 15, startY, -5));
-
-            // Structured geometry (quotation)
-            points.push(new THREE.Vector3(startX - 8, startY + 2, 0));
-
-            // Branching (negotiation)
-            const branchY = startY + (Math.random() - 0.5) * 3;
-            points.push(new THREE.Vector3(startX - 3, branchY, 2));
-
-            // Convergence (acceptance)
-            points.push(new THREE.Vector3(startX + 3, 0, 3));
-
-            // Forward stream (workflow)
-            points.push(new THREE.Vector3(startX + 10, 0, 2));
-
-            // Exit
-            points.push(new THREE.Vector3(startX + 18, 0, 0));
+            // More complex "global" curves
+            points.push(new THREE.Vector3(startX - 20, startY - 5, -10)); // Far left
+            points.push(new THREE.Vector3(startX - 10, startY + 5, -5)); // Curve up
+            points.push(new THREE.Vector3(startX, startY, 0)); // Center
+            points.push(new THREE.Vector3(startX + 10, startY - 5, 5)); // Curve down
+            points.push(new THREE.Vector3(startX + 20, startY + 5, 0)); // Far right
 
             const path = new THREE.CatmullRomCurve3(points);
             paths.push(path);
@@ -149,7 +181,8 @@ export function WebGLHero() {
             velocities.push({
                 progress: Math.random(),
                 pathIndex,
-                speed: 0.0003 + Math.random() * 0.0005,
+                speed: 0.0005 + Math.random() * 0.001, // Faster data speed
+                offset: Math.random() * 0.5 // For sine wave motion
             });
 
             const point = paths[pathIndex].getPoint(velocities[i].progress);
@@ -157,21 +190,26 @@ export function WebGLHero() {
             positions[i * 3 + 1] = point.y;
             positions[i * 3 + 2] = point.z;
 
-            // Color (muted cyan/white)
+            // Refined Colors (Cyan, Blue, White, Subtle Amber)
             const colorChoice = Math.random();
-            if (colorChoice < 0.7) {
+            if (colorChoice < 0.6) {
                 // Muted cyan
                 colors[i * 3] = 0.29;
                 colors[i * 3 + 1] = 0.62;
-                colors[i * 3 + 2] = 1;
+                colors[i * 3 + 2] = 1.0;
+            } else if (colorChoice < 0.9) {
+                // Bright Blue
+                colors[i * 3] = 0.2;
+                colors[i * 3 + 1] = 0.4;
+                colors[i * 3 + 2] = 1.0;
             } else {
-                // Soft white
-                colors[i * 3] = 1;
-                colors[i * 3 + 1] = 1;
-                colors[i * 3 + 2] = 1;
+                // Data White
+                colors[i * 3] = 0.9;
+                colors[i * 3 + 1] = 0.95;
+                colors[i * 3 + 2] = 1.0;
             }
 
-            sizes[i] = 0.1 + Math.random() * 0.15;
+            sizes[i] = 0.1 + Math.random() * 0.3;
         }
 
         const particleGeometry = new THREE.BufferGeometry();
@@ -188,11 +226,18 @@ export function WebGLHero() {
                 attribute vec3 particleColor;
                 varying vec3 vColor;
                 varying float vOpacity;
+                uniform float time;
                 void main() {
                     vColor = particleColor;
-                    vOpacity = 0.5 + sin(position.x * 0.5) * 0.3;
+                    
+                    // Pulse effect along the path
+                    float pulse = sin(time * 2.0 + position.x * 0.2) * 0.5 + 0.5;
+                    vOpacity = 0.3 + pulse * 0.7; // Dynamic opacity
+                    
                     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                    gl_PointSize = size * (300.0 / -mvPosition.z);
+                    
+                    // Size attenuation + pulse
+                    gl_PointSize = size * (1.0 + pulse * 1.0) * (500.0 / -mvPosition.z);
                     gl_Position = projectionMatrix * mvPosition;
                 }
             `,
@@ -200,9 +245,16 @@ export function WebGLHero() {
                 varying vec3 vColor;
                 varying float vOpacity;
                 void main() {
-                    float dist = length(gl_PointCoord - vec2(0.5));
+                    // Soft glow particle
+                    vec2 coord = gl_PointCoord - vec2(0.5);
+                    float dist = length(coord);
+                    
                     if (dist > 0.5) discard;
-                    float alpha = (1.0 - dist * 2.0) * vOpacity;
+                    
+                    // Exponential falloff for "hot core" look
+                    float strength = exp(-dist * 8.0); 
+                    float alpha = strength * vOpacity;
+                    
                     gl_FragColor = vec4(vColor, alpha);
                 }
             `,
@@ -214,12 +266,11 @@ export function WebGLHero() {
         const particles = new THREE.Points(particleGeometry, particleMaterial);
         scene.add(particles);
 
-        // Background grid
-        const gridHelper = new THREE.GridHelper(60, 40, 0x4a9eff, 0x4a9eff);
-        gridHelper.material.opacity = 0.03;
+        // Dynamic Grid
+        const gridHelper = new THREE.GridHelper(80, 50, 0x1e293b, 0x1e293b); // Darker base
+        gridHelper.position.y = -10;
+        gridHelper.material.opacity = 0.05;
         gridHelper.material.transparent = true;
-        gridHelper.position.y = -8;
-        gridHelper.position.z = -10;
         scene.add(gridHelper);
 
         // Mouse move handler
@@ -246,20 +297,26 @@ export function WebGLHero() {
             animationId = requestAnimationFrame(animate);
             const elapsedTime = clock.getElapsedTime();
 
+            // Update uniforms
+            particleMaterial.uniforms.time.value = elapsedTime;
+
             // Smooth parallax
             mouseRef.current.x += (targetMouseRef.current.x - mouseRef.current.x) * 0.05;
             mouseRef.current.y += (targetMouseRef.current.y - mouseRef.current.y) * 0.05;
 
-            // Camera subtle drift + parallax
-            camera.position.x = Math.sin(elapsedTime * 0.1) * 0.5 + mouseRef.current.x * 2;
-            camera.position.y = Math.cos(elapsedTime * 0.15) * 0.3 + mouseRef.current.y * 1;
+            // Cinematic Camera Float
+            camera.position.x = Math.sin(elapsedTime * 0.05) * 1.5 + mouseRef.current.x * 3;
+            camera.position.y = Math.cos(elapsedTime * 0.08) * 1.0 + mouseRef.current.y * 2;
             camera.lookAt(0, 0, 0);
+
+            // Rotate Globe
+            globe.rotation.y = elapsedTime * 0.02;
 
             // Animate glass planes
             glassPlanes.forEach((plane, i) => {
-                plane.rotation.x += 0.0005 * (i % 2 === 0 ? 1 : -1);
-                plane.rotation.y += 0.0003 * (i % 2 === 0 ? -1 : 1);
-                plane.position.y += Math.sin(elapsedTime * 0.3 + i) * 0.002;
+                plane.rotation.x += 0.001 * (i % 2 === 0 ? 1 : -1);
+                plane.rotation.y += 0.001 * (i % 2 === 0 ? -1 : 1);
+                plane.position.y += Math.sin(elapsedTime * 0.5 + i) * 0.005;
             });
 
             // Update particles along paths
@@ -271,15 +328,18 @@ export function WebGLHero() {
                 // Loop particle
                 if (vel.progress > 1) {
                     vel.progress = 0;
-                    // Randomly switch paths for variation
-                    if (Math.random() < 0.1) {
+                    if (Math.random() < 0.2) {
                         vel.pathIndex = Math.floor(Math.random() * paths.length);
                     }
                 }
 
                 const point = paths[vel.pathIndex].getPoint(vel.progress);
+
+                // Add some "noise" or wave to the path
+                const noiseY = Math.sin(vel.progress * 10 + elapsedTime + vel.offset) * 0.5;
+
                 positionArray[i * 3] = point.x;
-                positionArray[i * 3 + 1] = point.y;
+                positionArray[i * 3 + 1] = point.y + noiseY;
                 positionArray[i * 3 + 2] = point.z;
             }
             particleGeometry.attributes.position.needsUpdate = true;
@@ -295,12 +355,15 @@ export function WebGLHero() {
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('resize', handleResize);
             renderer.dispose();
-            particleGeometry.dispose();
-            particleMaterial.dispose();
-            glassGeometry.dispose();
-            glassMaterial.dispose();
             gradientGeometry.dispose();
             gradientMaterial.dispose();
+            globeGeometry.dispose();
+            globeMaterial.dispose();
+            glassGeometry.dispose();
+            glassMaterial.dispose();
+            particleGeometry.dispose();
+            particleMaterial.dispose();
+
             if (containerRef.current && renderer.domElement) {
                 containerRef.current.removeChild(renderer.domElement);
             }
