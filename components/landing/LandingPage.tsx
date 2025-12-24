@@ -75,119 +75,119 @@ function Hero() {
             <WebGLHero />
 
             {/* Floating Trade Icons */}
-            <div className="absolute inset-0 z-[1] pointer-events-none">
-                {/* Ship with container - bottom left */}
+            <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden">
+                {/* Ship with containers - moving left to right */}
                 <motion.div
-                    className="absolute bottom-[15%] left-[8%] opacity-20"
+                    className="absolute top-[60%] opacity-50"
+                    initial={{ x: -200, y: 0 }}
                     animate={{
-                        y: [0, -30, 0],
-                        x: [0, 20, 0],
+                        x: ["0%", "100vw"],
                     }}
                     transition={{
-                        duration: 12,
+                        duration: 25,
                         repeat: Infinity,
-                        ease: "easeInOut",
+                        ease: "linear",
                     }}
                 >
-                    <svg width="120" height="80" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="20" y="35" width="80" height="30" fill="#4a9eff" opacity="0.3" rx="2" />
-                        <rect x="30" y="25" width="20" height="15" fill="#60a5fa" opacity="0.4" rx="1" />
-                        <rect x="55" y="25" width="20" height="15" fill="#60a5fa" opacity="0.4" rx="1" />
-                        <rect x="80" y="25" width="15" height="15" fill="#60a5fa" opacity="0.4" rx="1" />
-                        <path d="M15 65 L105 65 L100 55 L20 55 Z" fill="#4a9eff" opacity="0.3" />
+                    <svg width="180" height="120" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="20" y="35" width="80" height="30" fill="#4a9eff" opacity="0.6" rx="2" />
+                        <rect x="30" y="25" width="20" height="15" fill="#60a5fa" opacity="0.7" rx="1" />
+                        <rect x="55" y="25" width="20" height="15" fill="#60a5fa" opacity="0.7" rx="1" />
+                        <rect x="80" y="25" width="15" height="15" fill="#60a5fa" opacity="0.7" rx="1" />
+                        <path d="M15 65 L105 65 L100 55 L20 55 Z" fill="#4a9eff" opacity="0.6" />
                     </svg>
                 </motion.div>
 
-                {/* Airplane - top right */}
+                {/* Airplane - moving right to left */}
                 <motion.div
-                    className="absolute top-[20%] right-[12%] opacity-25"
+                    className="absolute top-[15%] opacity-55"
+                    initial={{ x: "100vw", y: 0 }}
                     animate={{
-                        x: [0, -40, 0],
-                        y: [0, 15, 0],
+                        x: ["100vw", "-200px"],
                     }}
                     transition={{
-                        duration: 15,
+                        duration: 20,
                         repeat: Infinity,
-                        ease: "easeInOut",
+                        ease: "linear",
                         delay: 2,
                     }}
                 >
-                    <svg width="100" height="60" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M50 20 L80 30 L50 25 L20 30 Z" fill="#60a5fa" opacity="0.4" />
-                        <rect x="45" y="22" width="10" height="20" fill="#4a9eff" opacity="0.3" rx="1" />
-                        <path d="M48 42 L52 42 L54 50 L46 50 Z" fill="#60a5fa" opacity="0.4" />
-                        <rect x="30" y="28" width="8" height="6" fill="#a5b4fc" opacity="0.3" rx="1" />
-                        <rect x="62" y="28" width="8" height="6" fill="#a5b4fc" opacity="0.3" rx="1" />
+                    <svg width="150" height="90" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 20 L80 30 L50 25 L20 30 Z" fill="#60a5fa" opacity="0.7" />
+                        <rect x="45" y="22" width="10" height="20" fill="#4a9eff" opacity="0.6" rx="1" />
+                        <path d="M48 42 L52 42 L54 50 L46 50 Z" fill="#60a5fa" opacity="0.7" />
+                        <rect x="30" y="28" width="8" height="6" fill="#a5b4fc" opacity="0.6" rx="1" />
+                        <rect x="62" y="28" width="8" height="6" fill="#a5b4fc" opacity="0.6" rx="1" />
                     </svg>
                 </motion.div>
 
-                {/* Truck with container - middle left */}
+                {/* Truck with container - moving left to right */}
                 <motion.div
-                    className="absolute top-[45%] left-[15%] opacity-20"
+                    className="absolute top-[70%] opacity-50"
+                    initial={{ x: -200, y: 0 }}
                     animate={{
-                        x: [0, 25, 0],
-                        y: [0, -20, 0],
+                        x: ["-200px", "100vw"],
                     }}
                     transition={{
-                        duration: 10,
+                        duration: 30,
                         repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: 4,
+                        ease: "linear",
+                        delay: 5,
                     }}
                 >
-                    <svg width="90" height="50" viewBox="0 0 90 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="10" y="15" width="50" height="25" fill="#60a5fa" opacity="0.4" rx="2" />
-                        <rect x="60" y="20" width="20" height="20" fill="#4a9eff" opacity="0.3" rx="1" />
-                        <circle cx="25" cy="42" r="5" fill="#94a3b8" opacity="0.3" />
-                        <circle cx="55" cy="42" r="5" fill="#94a3b8" opacity="0.3" />
-                        <circle cx="72" cy="42" r="5" fill="#94a3b8" opacity="0.3" />
-                        <rect x="15" y="18" width="12" height="10" fill="#a5b4fc" opacity="0.3" rx="1" />
-                        <rect x="32" y="18" width="12" height="10" fill="#a5b4fc" opacity="0.3" rx="1" />
+                    <svg width="135" height="75" viewBox="0 0 90 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="10" y="15" width="50" height="25" fill="#60a5fa" opacity="0.7" rx="2" />
+                        <rect x="60" y="20" width="20" height="20" fill="#4a9eff" opacity="0.6" rx="1" />
+                        <circle cx="25" cy="42" r="5" fill="#94a3b8" opacity="0.6" />
+                        <circle cx="55" cy="42" r="5" fill="#94a3b8" opacity="0.6" />
+                        <circle cx="72" cy="42" r="5" fill="#94a3b8" opacity="0.6" />
+                        <rect x="15" y="18" width="12" height="10" fill="#a5b4fc" opacity="0.6" rx="1" />
+                        <rect x="32" y="18" width="12" height="10" fill="#a5b4fc" opacity="0.6" rx="1" />
                     </svg>
                 </motion.div>
 
-                {/* Container - top left corner */}
+                {/* Container - moving right to left */}
                 <motion.div
-                    className="absolute top-[25%] left-[5%] opacity-15"
+                    className="absolute top-[40%] opacity-45"
+                    initial={{ x: "100vw", y: 0 }}
                     animate={{
-                        y: [0, -15, 0],
-                        rotate: [0, 5, 0],
+                        x: ["100vw", "-150px"],
                     }}
                     transition={{
-                        duration: 8,
+                        duration: 28,
                         repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: 1,
+                        ease: "linear",
+                        delay: 8,
                     }}
                 >
-                    <svg width="60" height="40" viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="5" y="10" width="50" height="25" fill="#4a9eff" opacity="0.4" rx="2" />
-                        <line x1="20" y1="10" x2="20" y2="35" stroke="#60a5fa" strokeWidth="1" opacity="0.3" />
-                        <line x1="40" y1="10" x2="40" y2="35" stroke="#60a5fa" strokeWidth="1" opacity="0.3" />
+                    <svg width="90" height="60" viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="5" y="10" width="50" height="25" fill="#4a9eff" opacity="0.7" rx="2" />
+                        <line x1="20" y1="10" x2="20" y2="35" stroke="#60a5fa" strokeWidth="1" opacity="0.6" />
+                        <line x1="40" y1="10" x2="40" y2="35" stroke="#60a5fa" strokeWidth="1" opacity="0.6" />
                     </svg>
                 </motion.div>
 
-                {/* Ship - bottom right */}
+                {/* Large Ship - moving left to right */}
                 <motion.div
-                    className="absolute bottom-[20%] right-[10%] opacity-18"
+                    className="absolute top-[80%] opacity-55"
+                    initial={{ x: -250, y: 0 }}
                     animate={{
-                        y: [0, -25, 0],
-                        x: [0, -15, 0],
+                        x: ["-250px", "100vw"],
                     }}
                     transition={{
-                        duration: 14,
+                        duration: 35,
                         repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: 3,
+                        ease: "linear",
+                        delay: 12,
                     }}
                 >
-                    <svg width="110" height="70" viewBox="0 0 110 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10 50 L100 50 L95 40 L15 40 Z" fill="#4a9eff" opacity="0.3" />
-                        <rect x="25" y="28" width="18" height="15" fill="#60a5fa" opacity="0.4" rx="1" />
-                        <rect x="48" y="28" width="18" height="15" fill="#60a5fa" opacity="0.4" rx="1" />
-                        <rect x="71" y="28" width="18" height="15" fill="#60a5fa" opacity="0.4" rx="1" />
-                        <rect x="36" y="18" width="15" height="12" fill="#a5b4fc" opacity="0.3" rx="1" />
-                        <rect x="59" y="18" width="15" height="12" fill="#a5b4fc" opacity="0.3" rx="1" />
+                    <svg width="165" height="105" viewBox="0 0 110 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 50 L100 50 L95 40 L15 40 Z" fill="#4a9eff" opacity="0.6" />
+                        <rect x="25" y="28" width="18" height="15" fill="#60a5fa" opacity="0.7" rx="1" />
+                        <rect x="48" y="28" width="18" height="15" fill="#60a5fa" opacity="0.7" rx="1" />
+                        <rect x="71" y="28" width="18" height="15" fill="#60a5fa" opacity="0.7" rx="1" />
+                        <rect x="36" y="18" width="15" height="12" fill="#a5b4fc" opacity="0.6" rx="1" />
+                        <rect x="59" y="18" width="15" height="12" fill="#a5b4fc" opacity="0.6" rx="1" />
                     </svg>
                 </motion.div>
             </div>
