@@ -59,7 +59,7 @@ function Navbar() {
 
                 <div className="flex items-center gap-4">
                     <Link href="/login" className="text-sm font-bold text-indigo-900 hover:text-blue-600 transition-colors">Sign In</Link>
-                    <Link href="/login" className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-6 py-2.5 rounded-full text-sm font-black hover:shadow-xl hover:shadow-indigo-500/30 transition-all active:scale-[0.98]">
+                    <Link href="/login" className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-5 py-2 rounded-lg text-sm font-bold hover:shadow-lg hover:shadow-indigo-500/20 transition-all active:scale-[0.98]">
                         Get Started
                     </Link>
                 </div>
@@ -95,13 +95,13 @@ function Hero() {
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <Link href="/login" className="group relative bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-600 text-white px-12 h-16 rounded-[1.25rem] flex items-center justify-center text-lg font-black hover:shadow-2xl hover:shadow-indigo-500/40 transition-all hover:scale-[1.02] active:scale-[0.98] overflow-hidden">
+                        <Link href="/login" className="group relative bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-600 text-white px-8 h-12 rounded-xl flex items-center justify-center text-base font-bold hover:shadow-lg hover:shadow-indigo-500/30 transition-all hover:scale-[1.02] active:scale-[0.98] overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                             <span className="relative z-10 flex items-center">
-                                Get Started Free <ArrowRight size={20} className="ml-3 group-hover:translate-x-1 transition-transform" />
+                                Get Started Free <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
                             </span>
                         </Link>
-                        <Link href="/login" className="px-10 h-16 rounded-[1.25rem] flex items-center justify-center text-lg font-black bg-white border-2 border-indigo-200 text-indigo-900 hover:bg-indigo-50 hover:border-indigo-300 transition-all active:scale-[0.98]">
+                        <Link href="/login" className="px-8 h-12 rounded-xl flex items-center justify-center text-base font-bold bg-white border border-indigo-200 text-indigo-900 hover:bg-indigo-50 hover:border-indigo-300 transition-all active:scale-[0.98]">
                             Contact Sales
                         </Link>
                     </div>
@@ -430,8 +430,8 @@ function PricingCard({ title, price, desc, features, popular }: any) {
             </div>
 
             <button className={cn(
-                "mt-auto h-16 rounded-2xl font-black text-lg transition-all active:scale-[0.98] shadow-lg",
-                popular ? "bg-white text-indigo-900 hover:bg-indigo-50" : "bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:shadow-xl hover:shadow-indigo-500/30"
+                "mt-auto h-12 rounded-xl font-bold text-base transition-all active:scale-[0.98] shadow-sm",
+                popular ? "bg-white text-indigo-900 hover:bg-indigo-50" : "bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:shadow-lg hover:shadow-indigo-500/20"
             )}>
                 Get Started
             </button>
@@ -500,10 +500,10 @@ function FinalCTA() {
             <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
                 <h2 className="text-5xl md:text-7xl font-black text-indigo-950 mb-12 tracking-tight">Run Global Trade Like a Modern Business.</h2>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <Link href="/login" className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-10 h-16 rounded-[1.25rem] flex items-center justify-center text-lg font-black hover:shadow-2xl hover:shadow-indigo-500/40 transition-all active:scale-[0.98]">
+                    <Link href="/login" className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-8 h-12 rounded-xl flex items-center justify-center text-base font-bold hover:shadow-xl hover:shadow-indigo-500/30 transition-all active:scale-[0.98]">
                         Get Started Free
                     </Link>
-                    <Link href="/login" className="px-10 h-16 rounded-[1.25rem] flex items-center justify-center text-lg font-black bg-white border-2 border-indigo-200 text-indigo-900 hover:bg-indigo-50 hover:border-indigo-300 transition-all active:scale-[0.98]">
+                    <Link href="/login" className="px-8 h-12 rounded-xl flex items-center justify-center text-base font-bold bg-white border border-indigo-200 text-indigo-900 hover:bg-indigo-50 hover:border-indigo-300 transition-all active:scale-[0.98]">
                         Sign In
                     </Link>
                 </div>
