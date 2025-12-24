@@ -1,0 +1,100 @@
+"use client";
+
+import React from 'react';
+import { Shipment } from '@/lib/workflow';
+import { useWorkflow } from '@/context/WorkflowContext';
+import { Button } from '@/components/ui/button';
+import { BadgeCheck, DollarSign, Download, Lock, Sparkles, FileText, CheckCircle } from 'lucide-react';
+
+export function FinanceView({ shipment }: { shipment: Shipment }) {
+    const isClosed = shipment.status === 'CLOSED';
+
+    return (
+        <div className="h-full flex flex-col items-center justify-start p-8 animate-in fade-in duration-700">
+            <div className={`h-24 w-24 rounded-full flex items-center justify-center mb-6 transition-all duration-1000 ${isClosed ? 'bg-emerald-100 text-emerald-600 scale-100 shadow-lg shadow-emerald-100' : 'bg-slate-100 text-slate-300'
+                }`}>
+                <BadgeCheck size={48} className={isClosed ? "animate-in zoom-in-50 duration-500" : ""} />
+            </div>
+
+            <h2 className="text-2xl font-bold text-slate-900 mb-2 tracking-tight">
+                {isClosed ? 'Shipment Successfully Closed' : 'Final Finance Closure'}
+            </h2>
+
+            <p className="text-slate-500 max-w-sm mb-10 text-sm">
+                {isClosed
+                    ? "Cycle complete. All documents filed, payments realized, and eBRC generated."
+                    : "Awaiting final eBRC confirmation and cargo delivery realization."}
+            </p>
+
+            {isClosed ? (
+                <div className="w-full space-y-6 animate-in slide-in-from-bottom-4 duration-700">
+                    {/* AI Engine Summary */}
+                    <div className="bg-slate-900 rounded-2xl p-6 text-white text-left relative overflow-hidden shadow-xl border border-slate-800">
+                        <div className="absolute top-0 right-0 p-4 opacity-10">
+                            <Sparkles size={60} className="text-blue-400" />
+                        </div>
+                        <h4 className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <Sparkles size={12} />
+                            AI Post-Shipment Audit
+                        </h4>
+                        <div className="space-y-3">
+                            <div className="flex items-start gap-3">
+                                <CheckCircle size={14} className="text-emerald-400 mt-0.5" />
+                                <p className="text-xs text-slate-300 leading-relaxed">
+                                    Final document set (CI, PL, SB, BL) matched with **100% data integrity**.
+                                </p>
+                            </div>
+                            <div className="flex items-start gap-3">
+                                <CheckCircle size={14} className="text-emerald-400 mt-0.5" />
+                                <p className="text-xs text-slate-300 leading-relaxed">
+                                    Forex realization within expected 30-day window.
+                                </p>
+                            </div>
+                            <div className="pt-2 border-t border-slate-800 mt-4">
+                                <p className="text-[10px] text-slate-500 font-medium italic">
+                                    "This shipment is fully compliant and closed at a gross margin of 18.2%."
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Official Docket */}
+                    <div className="bg-slate-50 rounded-2xl border border-slate-200 p-6 shadow-sm divide-y divide-slate-100">
+                        <div className="flex items-center justify-between pb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-400">
+                                    <FileText size={20} />
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">eBRC Reference</p>
+                                    <p className="font-bold text-slate-900 text-sm">HDFC_BRC_0099821</p>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Date</p>
+                                <p className="font-bold text-slate-900 text-sm">24 Dec 2025</p>
+                            </div>
+                        </div>
+                        <div className="pt-4 flex items-center justify-between">
+                            <span className="text-xs font-medium text-slate-500 leading-relaxed">Generated by Eximley AI Compliance Engine</span>
+                            <Button size="sm" variant="ghost" className="text-blue-600 font-bold hover:bg-blue-50 h-8">
+                                <Download size={14} className="mr-2" />
+                                Download Full Docket
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <div className="w-full flex flex-col items-center gap-4">
+                    <div className="h-40 w-full bg-slate-50 rounded-2xl border border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400">
+                        <Lock size={32} className="mb-2 opacity-20" />
+                        <p className="text-xs font-medium uppercase tracking-widest">Verification Pending</p>
+                    </div>
+                    <Button disabled className="w-full bg-slate-100 text-slate-400 cursor-not-allowed h-14 rounded-2xl border border-slate-200">
+                        Awaiting Bank Realization
+                    </Button>
+                </div>
+            )}
+        </div>
+    );
+}
