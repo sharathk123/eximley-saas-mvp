@@ -84,8 +84,8 @@ export function AdminDashboard() {
                 {/* Header */}
                 <div className="mb-10">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="h-12 w-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-slate-900/10">
-                            <Shield size={24} />
+                        <div className="icon-box-sleek bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-xl shadow-indigo-500/20">
+                            <Shield size={20} />
                         </div>
                         <div>
                             <h1 className="text-4xl font-black tracking-tight text-slate-900">Eximley Admin</h1>
@@ -98,25 +98,25 @@ export function AdminDashboard() {
                         <button
                             onClick={() => setActiveTab('users')}
                             className={cn(
-                                "h-14 px-8 rounded-2xl font-black text-sm transition-all flex items-center gap-2",
+                                "btn-sleek-secondary",
                                 activeTab === 'users'
-                                    ? "bg-slate-900 text-white shadow-xl shadow-slate-900/20"
-                                    : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
+                                    ? "bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-500/20 border-transparent hover:bg-indigo-600"
+                                    : ""
                             )}
                         >
-                            <Users size={18} />
+                            <Users size={16} />
                             User Approvals
                         </button>
                         <button
                             onClick={() => setActiveTab('products')}
                             className={cn(
-                                "h-14 px-8 rounded-2xl font-black text-sm transition-all flex items-center gap-2",
+                                "btn-sleek-secondary",
                                 activeTab === 'products'
-                                    ? "bg-slate-900 text-white shadow-xl shadow-slate-900/20"
-                                    : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
+                                    ? "bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-500/20 border-transparent hover:bg-indigo-600"
+                                    : ""
                             )}
                         >
-                            <Package size={18} />
+                            <Package size={16} />
                             Product Catalog
                         </button>
                     </div>
@@ -133,11 +133,11 @@ export function AdminDashboard() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: idx * 0.1 }}
-                                    className="glass-panel p-6 rounded-[2rem] shadow-xl"
+                                    className="card-sleek"
                                 >
                                     <div className="flex items-center justify-between mb-4">
                                         <div className={cn(
-                                            "h-12 w-12 rounded-2xl flex items-center justify-center shadow-inner",
+                                            "icon-box-sleek shadow-inner",
                                             stat.color === 'blue' && "bg-blue-50 text-blue-600 border border-blue-100",
                                             stat.color === 'amber' && "bg-amber-50 text-amber-600 border border-amber-100",
                                             stat.color === 'emerald' && "bg-emerald-50 text-emerald-600 border border-emerald-100"
@@ -152,19 +152,19 @@ export function AdminDashboard() {
                         </div>
 
                         {/* Pending Users Table */}
-                        <div className="glass-panel p-8 rounded-[2rem] shadow-2xl">
+                        <div className="card-sleek">
                             <div className="flex items-center justify-between mb-8">
                                 <div>
                                     <h2 className="text-2xl font-black text-slate-900 mb-1">Pending Approvals</h2>
                                     <p className="text-sm text-slate-500 font-medium">Review and approve new user applications</p>
                                 </div>
-                                <div className="flex gap-3">
-                                    <button className="h-12 px-6 bg-white border border-slate-200 rounded-2xl flex items-center gap-2 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all">
-                                        <Search size={16} />
+                                <div className="flex gap-2">
+                                    <button className="btn-sleek-secondary h-10 px-4">
+                                        <Search size={14} />
                                         Search
                                     </button>
-                                    <button className="h-12 px-6 bg-white border border-slate-200 rounded-2xl flex items-center gap-2 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all">
-                                        <Filter size={16} />
+                                    <button className="btn-sleek-secondary h-10 px-4">
+                                        <Filter size={14} />
                                         Filter
                                     </button>
                                 </div>
@@ -178,7 +178,7 @@ export function AdminDashboard() {
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: idx * 0.1 }}
                                         className={cn(
-                                            "bg-white border rounded-2xl p-6 transition-all",
+                                            "bg-white border rounded-xl p-5 transition-all",
                                             user.status === 'PENDING' && "border-slate-200",
                                             user.status === 'APPROVED' && "border-emerald-200 bg-emerald-50/50",
                                             user.status === 'DECLINED' && "border-red-200 bg-red-50/50 opacity-50"
@@ -186,8 +186,8 @@ export function AdminDashboard() {
                                     >
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-6 flex-1">
-                                                <div className="h-14 w-14 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400">
-                                                    <Users size={24} />
+                                                <div className="icon-box-sleek h-12 w-12 bg-slate-100 text-slate-400">
+                                                    <Users size={20} />
                                                 </div>
                                                 <div className="flex-1 grid grid-cols-3 gap-6">
                                                     <div>
@@ -222,7 +222,7 @@ export function AdminDashboard() {
                                                     <>
                                                         <Button
                                                             onClick={() => handleApprove(user.id)}
-                                                            className="h-12 px-6 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black text-sm shadow-xl shadow-emerald-500/20"
+                                                            className="btn-sleek-primary h-10 px-5 bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20"
                                                         >
                                                             <CheckCircle2 size={16} className="mr-2" />
                                                             Approve
@@ -230,7 +230,7 @@ export function AdminDashboard() {
                                                         <Button
                                                             onClick={() => handleDecline(user.id)}
                                                             variant="outline"
-                                                            className="h-12 px-6 border-2 border-slate-200 rounded-2xl font-black text-sm hover:bg-red-50 hover:border-red-200 hover:text-red-700"
+                                                            className="btn-sleek-secondary h-10 px-5 border hover:bg-red-50 hover:border-red-200 hover:text-red-700"
                                                         >
                                                             <XCircle size={16} className="mr-2" />
                                                             Decline
@@ -238,15 +238,15 @@ export function AdminDashboard() {
                                                     </>
                                                 )}
                                                 {user.status === 'APPROVED' && (
-                                                    <div className="flex items-center gap-2 px-4 py-2 bg-emerald-100 border border-emerald-200 rounded-xl">
-                                                        <CheckCircle2 size={16} className="text-emerald-600" />
-                                                        <span className="text-xs font-black uppercase text-emerald-700">Approved</span>
+                                                    <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-100 border border-emerald-200 rounded-lg">
+                                                        <CheckCircle2 size={14} className="text-emerald-600" />
+                                                        <span className="text-[10px] font-black uppercase text-emerald-700">Approved</span>
                                                     </div>
                                                 )}
                                                 {user.status === 'DECLINED' && (
-                                                    <div className="flex items-center gap-2 px-4 py-2 bg-red-100 border border-red-200 rounded-xl">
-                                                        <XCircle size={16} className="text-red-600" />
-                                                        <span className="text-xs font-black uppercase text-red-700">Declined</span>
+                                                    <div className="flex items-center gap-2 px-3 py-1.5 bg-red-100 border border-red-200 rounded-lg">
+                                                        <XCircle size={14} className="text-red-600" />
+                                                        <span className="text-[10px] font-black uppercase text-red-700">Declined</span>
                                                     </div>
                                                 )}
                                             </div>

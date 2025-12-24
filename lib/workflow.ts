@@ -1,4 +1,4 @@
-export type Role = 'COMPANY_ADMIN' | 'COMPANY_EXPORT_ANALYST';
+export type Role = 'COMPANY_ADMIN' | 'COMPANY_EXPORT_ANALYST' | 'EXPORTER_ADMIN' | 'EXPORT_MANAGER' | 'CHA' | 'FINANCE';
 
 export type ShipmentState =
     | 'ENQUIRY_RECEIVED'

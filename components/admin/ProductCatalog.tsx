@@ -102,9 +102,9 @@ export function ProductCatalog() {
                         setEditingProduct(null);
                         setShowProductForm(true);
                     }}
-                    className="h-14 px-8 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-500/20"
+                    className="btn-sleek-primary h-10 px-5 shadow-blue-500/20"
                 >
-                    <Plus size={20} className="mr-2" />
+                    <Plus size={18} className="mr-2" />
                     Add Product
                 </Button>
             </div>
@@ -112,31 +112,31 @@ export function ProductCatalog() {
             {/* Search and Actions Bar */}
             <div className="flex items-center gap-4">
                 <div className="flex-1 relative">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                     <input
                         type="text"
                         placeholder="Search by product name, HS code, or category..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full h-14 pl-12 pr-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
+                        className="input-sleek w-full pl-10"
                     />
                 </div>
-                <button className="h-14 px-6 bg-white border border-slate-200 rounded-2xl flex items-center gap-2 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all">
-                    <Filter size={18} />
+                <button className="btn-sleek-secondary h-10 px-4">
+                    <Filter size={16} />
                     Filter
                 </button>
-                <button className="h-14 px-6 bg-white border border-slate-200 rounded-2xl flex items-center gap-2 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all">
-                    <Upload size={18} />
+                <button className="btn-sleek-secondary h-10 px-4">
+                    <Upload size={16} />
                     Import CSV
                 </button>
-                <button className="h-14 px-6 bg-white border border-slate-200 rounded-2xl flex items-center gap-2 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all">
-                    <Download size={18} />
+                <button className="btn-sleek-secondary h-10 px-4">
+                    <Download size={16} />
                     Export
                 </button>
             </div>
 
             {/* Products Table */}
-            <div className="glass-panel rounded-[2rem] shadow-xl overflow-hidden">
+            <div className="card-sleek p-0 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full">
                         <thead>
@@ -161,7 +161,7 @@ export function ProductCatalog() {
                                 >
                                     <td className="p-6">
                                         <div className="flex items-center gap-4">
-                                            <div className="h-12 w-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 border border-blue-100">
+                                            <div className="icon-box-sleek h-12 w-12 bg-blue-50 text-blue-600 border border-blue-100">
                                                 <Package size={20} />
                                             </div>
                                             <div>
@@ -209,13 +209,13 @@ export function ProductCatalog() {
                                                     setEditingProduct(product);
                                                     setShowProductForm(true);
                                                 }}
-                                                className="h-10 w-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-600 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 transition-all"
+                                                className="btn-sleek-secondary h-10 w-10 px-0 border hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600"
                                             >
                                                 <Edit size={16} />
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteProduct(product.id)}
-                                                className="h-10 w-10 bg-white border border-slate-200 rounded-xl flex items-center justify-center text-slate-600 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all"
+                                                className="btn-sleek-secondary h-10 w-10 px-0 border hover:bg-red-50 hover:border-red-200 hover:text-red-600"
                                             >
                                                 <Trash2 size={16} />
                                             </button>

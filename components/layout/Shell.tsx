@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useWorkflow } from '@/context/WorkflowContext';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,20 @@ import { usePathname } from 'next/navigation';
 export function Shell({ children }: { children: React.ReactNode }) {
     const { currentRole, setRole } = useWorkflow();
     const pathname = usePathname();
+    const [userInitials, setUserInitials] = useState('JD');
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('currentUser');
+        if (storedUser) {
+            try {
+                const user = JSON.parse(storedUser);
+                const initials = user.name.split(' ').map((n: string) => n[0]).join('');
+                setUserInitials(initials);
+            } catch (e) {
+                console.error("Failed to parse user from local storage", e);
+            }
+        }
+    }, []);
 
     // Hide shell on login, landing, and admin pages
     if (pathname === '/login' || pathname === '/landing' || pathname === '/admin') return <>{children}</>;
@@ -31,6 +45,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
         'EXPORT_MANAGER': 'bg-purple-100 text-purple-800 border-purple-200',
         'CHA': 'bg-amber-100 text-amber-800 border-amber-200',
         'FINANCE': 'bg-emerald-100 text-emerald-800 border-emerald-200',
+        'COMPANY_ADMIN': 'bg-indigo-100 text-indigo-800 border-indigo-200',
+        'COMPANY_EXPORT_ANALYST': 'bg-cyan-100 text-cyan-800 border-cyan-200',
     };
 
     return (
@@ -82,9 +98,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                         </Button>
 
                         <div className="h-9 w-9 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 border-2 border-white shadow-sm flex items-center justify-center text-sm font-bold text-white">
-                            {typeof window !== 'undefined' && localStorage.getItem('currentUser')
-                                ? JSON.parse(localStorage.getItem('currentUser')!).name.split(' ').map((n: string) => n[0]).join('')
-                                : 'JD'}
+                            {userInitials}
                         </div>
                     </div>
                 </header>

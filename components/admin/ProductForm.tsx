@@ -67,7 +67,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 20 }}
                 onClick={(e) => e.stopPropagation()}
-                className="glass-panel w-full max-w-3xl rounded-[3rem] shadow-2xl overflow-hidden"
+                className="card-sleek w-full max-w-3xl overflow-hidden p-0"
             >
                 {/* Header */}
                 <div className="p-8 border-b border-slate-100 flex items-center justify-between">
@@ -81,7 +81,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                     </div>
                     <button
                         onClick={onCancel}
-                        className="h-12 w-12 bg-slate-100 hover:bg-slate-200 rounded-2xl flex items-center justify-center text-slate-600 transition-all"
+                        className="icon-box-sleek bg-slate-100 hover:bg-slate-200 text-slate-600 shadow-none border-transparent"
                     >
                         <X size={20} />
                     </button>
@@ -99,7 +99,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                             required
                             value={formData.name}
                             onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                            className="w-full h-14 px-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
+                            className="input-sleek w-full"
                             placeholder="e.g., Cotton T-Shirts, Basmati Rice, Laptop"
                         />
                     </div>
@@ -113,7 +113,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                             value={formData.description}
                             onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                             rows={3}
-                            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm resize-none"
+                            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm resize-none"
                             placeholder="Detailed product description..."
                         />
                     </div>
@@ -129,16 +129,16 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                                 required
                                 value={formData.hsCode}
                                 onChange={(e) => setFormData(prev => ({ ...prev, hsCode: e.target.value }))}
-                                className="flex-1 h-14 px-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
+                                className="input-sleek flex-1"
                                 placeholder="XXXX.XX.XX"
                             />
                             <Button
                                 type="button"
                                 onClick={() => setShowHSCodeLookup(true)}
                                 disabled={!formData.name}
-                                className="h-14 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-500/20"
+                                className="btn-sleek-primary shadow-blue-500/20"
                             >
-                                <Sparkles size={18} className="mr-2" />
+                                <Sparkles size={16} className="mr-2" />
                                 AI Lookup
                             </Button>
                         </div>
@@ -159,7 +159,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                                 required
                                 value={formData.category}
                                 onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value as ProductCategory }))}
-                                className="w-full h-14 px-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
+                                className="input-sleek w-full"
                             >
                                 <option value="Electronics">Electronics</option>
                                 <option value="Textiles">Textiles</option>
@@ -180,7 +180,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                                 required
                                 value={formData.unitOfMeasure}
                                 onChange={(e) => setFormData(prev => ({ ...prev, unitOfMeasure: e.target.value as UnitOfMeasure }))}
-                                className="w-full h-14 px-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
+                                className="input-sleek w-full"
                             >
                                 <option value="KGS">Kilograms (KGS)</option>
                                 <option value="LTR">Liters (LTR)</option>
@@ -205,7 +205,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                                 required
                                 value={formData.originCountry}
                                 onChange={(e) => setFormData(prev => ({ ...prev, originCountry: e.target.value }))}
-                                className="w-full h-14 px-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
+                                className="input-sleek w-full"
                                 placeholder="India"
                             />
                         </div>
@@ -219,7 +219,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                                 step="0.01"
                                 value={formData.weight}
                                 onChange={(e) => setFormData(prev => ({ ...prev, weight: e.target.value }))}
-                                className="w-full h-14 px-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
+                                className="input-sleek w-full"
                                 placeholder="Optional"
                             />
                         </div>
@@ -229,7 +229,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                     <div className="flex items-center gap-4 pt-4">
                         <Button
                             type="submit"
-                            className="flex-1 h-16 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-lg shadow-2xl shadow-slate-900/20"
+                            className="btn-sleek-primary flex-1 h-12 text-base shadow-indigo-500/20"
                         >
                             {product ? 'Update Product' : 'Add Product'}
                         </Button>
@@ -237,7 +237,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                             type="button"
                             variant="outline"
                             onClick={onCancel}
-                            className="h-16 px-8 border-2 border-slate-200 rounded-2xl font-black text-lg hover:bg-slate-50"
+                            className="btn-sleek-secondary h-12 px-8 text-base"
                         >
                             Cancel
                         </Button>

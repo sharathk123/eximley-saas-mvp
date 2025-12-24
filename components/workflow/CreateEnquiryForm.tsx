@@ -73,7 +73,7 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="bg-white/90 backdrop-blur-xl w-full max-w-xl rounded-3xl shadow-2xl border border-white/60 overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="bg-white/90 backdrop-blur-xl w-full max-w-xl rounded-2xl shadow-2xl border border-white/60 overflow-hidden animate-in zoom-in-95 duration-300">
                 {/* Header */}
                 <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                     <div>
@@ -102,7 +102,7 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
                                 value={formData.buyer}
                                 onChange={handleChange}
                                 required
-                                className="h-12 rounded-xl bg-white border-slate-200 shadow-sm focus:border-blue-500 transition-all font-medium"
+                                className="input-sleek"
                             />
                         </div>
                         <div className="space-y-2">
@@ -116,7 +116,7 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
                                 value={formData.destination}
                                 onChange={handleChange}
                                 required
-                                className="h-12 rounded-xl bg-white border-slate-200 shadow-sm focus:border-blue-500 transition-all font-medium"
+                                className="input-sleek"
                             />
                         </div>
                     </div>
@@ -133,7 +133,7 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
                                 value={formData.goods}
                                 onChange={handleChange}
                                 required
-                                className="h-12 rounded-xl bg-white border-slate-200 shadow-sm focus:border-blue-500 transition-all font-medium"
+                                className="input-sleek"
                             />
                         </div>
                         <div className="space-y-2">
@@ -147,7 +147,7 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
                                 value={formData.quantity}
                                 onChange={handleChange}
                                 required
-                                className="h-12 rounded-xl bg-white border-slate-200 shadow-sm focus:border-blue-500 transition-all font-medium"
+                                className="input-sleek"
                             />
                         </div>
                     </div>
@@ -170,14 +170,14 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
                         <Button
                             type="button"
                             variant="ghost"
-                            className="flex-1 h-12 rounded-xl font-bold text-slate-500"
+                            className="flex-1 h-11 rounded-xl font-bold text-slate-500 hover:bg-slate-100"
                             onClick={onClose}
                         >
                             Cancel
                         </Button>
                         <Button
                             type="submit"
-                            className="flex-1 bg-blue-600 hover:bg-blue-700 h-12 rounded-xl font-bold shadow-lg shadow-blue-200 transition-all active:scale-[0.98]"
+                            className="btn-sleek-primary flex-1 shadow-blue-200"
                         >
                             Create Enquiry
                         </Button>

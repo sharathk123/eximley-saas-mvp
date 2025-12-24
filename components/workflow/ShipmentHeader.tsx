@@ -4,6 +4,8 @@ import React from 'react';
 import { Shipment } from '@/lib/workflow';
 import { Box, MapPin, DollarSign, Briefcase } from 'lucide-react';
 
+import { AIStatusPill } from './AIStatusPill';
+
 export function ShipmentHeader({ shipment }: { shipment: Shipment }) {
     return (
         <div className="md:col-span-12 float-panel rounded-2xl p-6 mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -17,6 +19,7 @@ export function ShipmentHeader({ shipment }: { shipment: Shipment }) {
                         <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-xs font-semibold border border-slate-200">
                             Export
                         </span>
+                        <AIStatusPill shipment={shipment} />
                     </div>
                     <div className="flex items-center gap-4 text-sm text-slate-500">
                         <span className="flex items-center gap-1">

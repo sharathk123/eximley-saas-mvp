@@ -14,7 +14,12 @@ import {
     Truck,
     Lock,
     MessageSquare,
-    DollarSign
+    DollarSign,
+    FileText,
+    LayoutDashboard,
+    Box,
+    Settings,
+    Search
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -55,6 +60,7 @@ function Navbar() {
                     <a href="#features" className="hover:text-indigo-600 transition-colors">Features</a>
                     <a href="#flow" className="hover:text-indigo-600 transition-colors">Workflow</a>
                     <a href="#pricing" className="hover:text-indigo-600 transition-colors">Pricing</a>
+                    <a href="mailto:sales@eximley.com" className="hover:text-indigo-600 transition-colors font-black">Contact Sales</a>
                 </div>
 
                 <div className="flex items-center gap-4">
@@ -121,10 +127,10 @@ function Hero() {
                                 {/* Sidebar */}
                                 <div className="w-20 border-r border-indigo-50 flex flex-col items-center py-8 gap-6 bg-white/50">
                                     <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 shadow-lg shadow-indigo-500/20" />
-                                    <div className="w-full flex flex-col items-center gap-4 mt-4">
-                                        {[1, 2, 3, 4].map(i => (
-                                            <div key={i} className={`h-10 w-10 rounded-xl flex items-center justify-center ${i === 1 ? 'bg-indigo-50 text-indigo-600' : 'text-slate-300'}`}>
-                                                <div className="h-5 w-5 bg-current rounded-md opacity-40" />
+                                    <div className="w-full flex flex-col items-center gap-6 mt-4">
+                                        {[LayoutDashboard, Box, FileText, Settings].map((Icon, i) => (
+                                            <div key={i} className={`h-10 w-10 rounded-xl flex items-center justify-center transition-colors ${i === 1 ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>
+                                                <Icon size={20} />
                                             </div>
                                         ))}
                                     </div>
@@ -135,8 +141,8 @@ function Hero() {
                                     {/* Header */}
                                     <div className="flex items-center justify-between mb-8">
                                         <div className="space-y-1">
-                                            <div className="h-4 w-32 bg-slate-200/80 rounded-full" />
-                                            <div className="h-8 w-64 bg-slate-900/10 rounded-lg" />
+                                            <h3 className="text-xl font-black text-slate-900 tracking-tight">Live Operations</h3>
+                                            <p className="text-sm font-medium text-slate-500">Global Command Center</p>
                                         </div>
                                         <div className="flex gap-3">
                                             <div className="h-10 w-10 rounded-full bg-white border border-slate-100 shadow-sm" />
@@ -146,12 +152,19 @@ function Hero() {
 
                                     {/* Metrics Row */}
                                     <div className="grid grid-cols-3 gap-4 mb-8">
-                                        {[1, 2, 3].map(i => (
-                                            <div key={i} className="p-4 rounded-2xl bg-white border border-indigo-50 shadow-sm flex flex-col gap-3">
-                                                <div className="h-8 w-8 rounded-lg bg-indigo-50" />
-                                                <div className="space-y-2">
-                                                    <div className="h-4 w-12 bg-slate-100 rounded-full" />
-                                                    <div className="h-6 w-24 bg-slate-200 rounded-md" />
+                                        {[
+                                            { label: "Active Shipments", value: "124", color: "text-blue-600", trend: "+12%" },
+                                            { label: "Pending Actions", value: "3", color: "text-amber-500", trend: "-2" },
+                                            { label: "Total Value", value: "$4.2M", color: "text-emerald-600", trend: "+8%" }
+                                        ].map((m, i) => (
+                                            <div key={i} className="p-5 rounded-2xl bg-white border border-indigo-50 shadow-sm flex flex-col justify-between">
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <div className={`p-2 rounded-lg bg-slate-50 ${m.color}`}><BarChart3 size={18} /></div>
+                                                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">{m.trend}</span>
+                                                </div>
+                                                <div>
+                                                    <p className="text-slate-500 text-xs font-bold uppercase tracking-wide mb-1 opacity-70">{m.label}</p>
+                                                    <p className="text-2xl font-black text-slate-900 tracking-tight">{m.value}</p>
                                                 </div>
                                             </div>
                                         ))}
@@ -164,15 +177,34 @@ function Hero() {
                                             <div className="h-8 w-24 bg-indigo-50 rounded-lg" />
                                         </div>
 
-                                        <div className="space-y-4">
-                                            {[1, 2, 3].map(i => (
-                                                <div key={i} className="flex items-center gap-4 p-3 rounded-xl border border-slate-50 hover:bg-slate-50 transition-colors">
-                                                    <div className="h-10 w-10 rounded-lg bg-slate-100" />
-                                                    <div className="space-y-1 flex-1">
-                                                        <div className="h-3 w-48 bg-slate-200 rounded-full" />
-                                                        <div className="h-2 w-32 bg-slate-100 rounded-full" />
+                                        <div className="space-y-3">
+                                            {[
+                                                { id: "SHP-2025-001", dest: "New York, USA", status: "In Transit", icon: "🇺🇸", state: "default" },
+                                                { id: "SHP-2025-002", dest: "Dubai, UAE", status: "AI Drafting...", icon: "🇦🇪", state: "active" },
+                                                { id: "SHP-2025-003", dest: "Berlin, GER", status: "Customs", icon: "🇩🇪", state: "default" }
+                                            ].map((item, i) => (
+                                                <div key={i} className={cn(
+                                                    "flex items-center gap-4 p-3 rounded-xl border transition-all",
+                                                    item.state === 'active'
+                                                        ? "bg-indigo-50/50 border-indigo-200 shadow-sm"
+                                                        : "bg-white border-slate-50 hover:bg-slate-50"
+                                                )}>
+                                                    <div className="h-10 w-10 rounded-lg bg-slate-100 flex items-center justify-center text-lg shadow-inner">{item.icon}</div>
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <p className="text-sm font-bold text-slate-900">{item.id}</p>
+                                                            {item.state === 'active' && <Sparkles size={12} className="text-indigo-600 animate-pulse" />}
+                                                        </div>
+                                                        <p className="text-xs font-medium text-slate-500">{item.dest}</p>
                                                     </div>
-                                                    <div className="h-8 w-20 bg-emerald-50 rounded-lg" />
+                                                    <div className={cn(
+                                                        "px-3 py-1.5 rounded-lg text-xs font-bold",
+                                                        item.state === 'active'
+                                                            ? "bg-indigo-100 text-indigo-700 animate-pulse"
+                                                            : "bg-slate-100 text-slate-600"
+                                                    )}>
+                                                        {item.status}
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
@@ -206,7 +238,7 @@ function Hero() {
                         </div>
                         <div className="space-y-1">
                             <p className="text-[12px] font-black text-slate-900 uppercase tracking-tight">AI Auto-Drafting</p>
-                            <p className="text-[10px] font-bold text-slate-400">v4.0 Autonomous</p>
+                            <p className="text-[10px] font-bold text-slate-400">Processing Shipment #002...</p>
                         </div>
                     </motion.div>
 
@@ -244,24 +276,20 @@ function Hero() {
 
 function TrustSection() {
     return (
-        <section className="py-24 bg-white border-y border-slate-100">
-            <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-12 text-center md:text-left">
-                <div>
-                    <p className="text-3xl font-black text-slate-900 mb-1 tracking-tight">Global</p>
-                    <p className="text-slate-500 text-sm font-medium">Built for international standards</p>
-                </div>
-                <div>
-                    <p className="text-3xl font-black text-slate-900 mb-1 tracking-tight">Compliance</p>
-                    <p className="text-slate-500 text-sm font-medium">Audit-ready documentation</p>
-                </div>
-                <div>
-                    <p className="text-3xl font-black text-slate-900 mb-1 tracking-tight">Secure</p>
-                    <p className="text-slate-500 text-sm font-medium">Enterprise-grade protection</p>
-                </div>
-                <div>
-                    <p className="text-3xl font-black text-slate-900 mb-1 tracking-tight">Intelligent</p>
-                    <p className="text-slate-500 text-sm font-medium">AI-powered EXIM workflows</p>
-                </div>
+        <section className="py-24 bg-white border-y border-slate-50">
+            <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6">
+                {[
+                    { label: "Global", sub: "International Standards", icon: <Globe size={24} className="text-blue-600" /> },
+                    { label: "Compliance", sub: "Audit-ready Docs", icon: <FileCheck size={24} className="text-indigo-600" /> },
+                    { label: "Secure", sub: "Enterprise Protection", icon: <Shield size={24} className="text-emerald-600" /> },
+                    { label: "Intelligent", sub: "AI-Powered Workflows", icon: <Zap size={24} className="text-amber-500" /> }
+                ].map((item, i) => (
+                    <div key={i} className="sleek-card p-6 flex flex-col items-center text-center justify-center min-h-[160px] group hover:bg-slate-50/50 transition-colors">
+                        <div className="h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500 shadow-sm group-hover:shadow-md group-hover:bg-white">{item.icon}</div>
+                        <p className="text-xl font-black text-slate-900 mb-1 tracking-tight">{item.label}</p>
+                        <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wide opacity-70">{item.sub}</p>
+                    </div>
+                ))}
             </div>
         </section>
     );
@@ -290,9 +318,9 @@ function FeatureShowcase() {
     ];
 
     return (
-        <section id="features" className="py-32 bg-slate-50">
+        <section id="features" className="py-32 bg-slate-50/50">
             <div className="max-w-6xl mx-auto px-6">
-                <div className="text-center mb-24">
+                <div className="text-center mb-20">
                     <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Core Infrastructure</h2>
                     <p className="text-xl text-slate-500 max-w-2xl mx-auto font-medium">Everything you need to run a world-class export organization on one platform.</p>
                 </div>
@@ -301,13 +329,13 @@ function FeatureShowcase() {
                     {features.map((f, i) => (
                         <motion.div
                             key={i}
-                            className="weightless-card p-10 flex flex-col min-h-[500px]"
-                            whileHover={{ y: -10 }}
+                            className="weightless-card p-8 flex flex-col min-h-[480px]"
+                            whileHover={{ y: -5 }}
                         >
-                            <div className="mb-8">{f.icon}</div>
-                            <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">{f.title}</h3>
-                            <p className="text-slate-500 font-medium mb-12">{f.desc}</p>
-                            <div className="mt-auto">{f.visual}</div>
+                            <div className="mb-6 bg-slate-50 w-16 h-16 rounded-2xl flex items-center justify-center shadow-inner">{f.icon}</div>
+                            <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight leading-tight">{f.title}</h3>
+                            <p className="text-slate-500 font-medium mb-10 leading-relaxed">{f.desc}</p>
+                            <div className="mt-auto rounded-3xl overflow-hidden shadow-sm">{f.visual}</div>
                         </motion.div>
                     ))}
                 </div>
@@ -365,42 +393,78 @@ function FeatureVisual3() {
 
 function LivingFlow() {
     const steps = [
-        "Enquiry", "Quotation", "Negotiation", "Acceptance",
-        "Proforma", "Payment", "CI / PL", "Customs", "Closure"
+        { label: "Enquiry", color: "bg-blue-600", text: "text-blue-600", border: "border-blue-200", icon: <MessageSquare size={16} /> },
+        { label: "Quotation", color: "bg-indigo-600", text: "text-indigo-600", border: "border-indigo-200", icon: <FileText size={16} /> },
+        { label: "Negotiation", color: "bg-violet-600", text: "text-violet-600", border: "border-violet-200", icon: <MessageSquare size={16} /> },
+        { label: "Acceptance", color: "bg-purple-600", text: "text-purple-600", border: "border-purple-200", icon: <CheckCircle2 size={16} /> },
+        { label: "Proforma", color: "bg-fuchsia-600", text: "text-fuchsia-600", border: "border-fuchsia-200", icon: <FileText size={16} /> },
+        { label: "Payment", color: "bg-pink-600", text: "text-pink-600", border: "border-pink-200", icon: <DollarSign size={16} /> },
+        { label: "CI / PL", color: "bg-rose-600", text: "text-rose-600", border: "border-rose-200", icon: <FileText size={16} /> },
+        { label: "Customs", color: "bg-orange-600", text: "text-orange-600", border: "border-orange-200", icon: <Shield size={16} /> }
     ];
 
     return (
-        <section id="flow" className="py-32 bg-white overflow-hidden relative">
-            <div className="max-w-6xl mx-auto px-6 relative z-10">
+        <section id="flow" className="py-32 bg-white overflow-hidden relative border-t border-slate-50">
+            <div className="max-w-[1400px] mx-auto px-6 relative z-10">
                 <div className="text-center mb-24">
                     <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">The Living Flow</h2>
                     <p className="text-xl text-slate-500 font-medium">A guided, intelligent stream for every shipment.</p>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8">
-                    {steps.map((step, i) => (
-                        <React.Fragment key={i}>
-                            <motion.div
-                                className="px-6 py-3 glass-panel rounded-full text-sm font-black text-slate-900 whitespace-nowrap shadow-xl"
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                            >
-                                {step}
-                            </motion.div>
-                            {i < steps.length - 1 && (
-                                <ArrowRight size={16} className="text-slate-300 hidden md:block" />
-                            )}
-                        </React.Fragment>
-                    ))}
-                </div>
+                <div className="relative overflow-x-auto pb-12 scrollbar-hide -mx-6 px-6">
+                    <div className="flex items-center min-w-max mx-auto justify-center space-x-4">
+                        {steps.map((step, i) => (
+                            <React.Fragment key={i}>
+                                <motion.div
+                                    className="relative group"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: i * 0.1 }}
+                                >
+                                    <div className="flex flex-col items-center gap-4">
+                                        <div className={cn(
+                                            "h-16 w-16 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl border-2 z-10 relative bg-white",
+                                            step.border,
+                                            step.text
+                                        )}>
+                                            {step.icon}
+                                            <div className={cn(
+                                                "absolute inset-0 opacity-10 rounded-xl transition-opacity group-hover:opacity-20",
+                                                step.color.replace('text', 'bg')
+                                            )} />
+                                        </div>
+                                        <span className="text-sm font-bold text-slate-600">{step.label}</span>
+                                    </div>
+                                </motion.div>
 
-                <div className="mt-24 flex justify-center">
-                    <div className="h-[2px] w-full max-w-4xl bg-slate-100 relative overflow-hidden rounded-full">
-                        <div className="absolute inset-0 bg-blue-500 animate-signal" style={{ animationDuration: '6s' }} />
+                                {i < steps.length - 1 && (
+                                    <div className="w-16 h-[2px] bg-slate-100 relative mt-[-28px]">
+                                        <motion.div
+                                            className={cn("absolute inset-0 origin-left", step.color)}
+                                            initial={{ scaleX: 0 }}
+                                            whileInView={{ scaleX: 1 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: i * 0.1 + 0.5, duration: 0.5 }}
+                                        />
+                                    </div>
+                                )}
+                            </React.Fragment>
+                        ))}
                     </div>
                 </div>
+
+                {/* Simulated Floating Cursor/Status */}
+                <motion.div
+                    className="absolute top-[55%] left-[20%] z-20 pointer-events-none hidden md:block"
+                    animate={{ x: [0, 600], opacity: [0, 1, 1, 0] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                >
+                    <div className="bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-xl flex items-center gap-2">
+                        <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                        Processing...
+                    </div>
+                </motion.div>
             </div>
         </section>
     );
@@ -416,6 +480,7 @@ function PricingSection() {
                         price="₹0"
                         desc="For small Indian exporters starting their global journey."
                         features={["10 Enquiries/mo", "Basic AI Drafting", "Email Support"]}
+                        href="/login"
                     />
                     <PricingCard
                         title="Growth"
@@ -423,12 +488,15 @@ function PricingSection() {
                         desc="Scaling exporters needing full workflow automation."
                         features={["Unlimited Enquiries", "Full AI Suite", "CHA Collaboration", "Priority Support"]}
                         popular
+                        href="/login"
                     />
                     <PricingCard
                         title="Enterprise"
                         price="Custom"
                         desc="Multi-entity controls for Indian trade giants."
                         features={["SLA Guarantees", "Custom Compliance Rules", "Dedicated Onboarding", "API Access"]}
+                        ctaLabel="Contact Sales"
+                        href="mailto:sales@eximley.com"
                     />
                 </div>
             </div>
@@ -436,7 +504,7 @@ function PricingSection() {
     );
 }
 
-function PricingCard({ title, price, desc, features, popular }: any) {
+function PricingCard({ title, price, desc, features, popular, ctaLabel = "Get Started", href = "/login" }: any) {
     return (
         <div className={cn(
             "p-10 rounded-[2.5rem] flex flex-col min-h-[600px] transition-all duration-500",
@@ -463,12 +531,21 @@ function PricingCard({ title, price, desc, features, popular }: any) {
                 ))}
             </div>
 
-            <button className={cn(
-                "mt-auto h-12 rounded-xl font-bold text-base transition-all active:scale-[0.98] shadow-sm",
-                popular ? "bg-white text-indigo-900 hover:bg-indigo-50" : "bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:shadow-lg hover:shadow-indigo-500/20"
-            )}>
-                Get Started
-            </button>
+            {href.startsWith('mailto:') ? (
+                <a href={href} className={cn(
+                    "mt-auto h-12 rounded-xl font-bold text-base transition-all active:scale-[0.98] shadow-sm flex items-center justify-center",
+                    popular ? "bg-white text-indigo-900 hover:bg-indigo-50" : "bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:shadow-lg hover:shadow-indigo-500/20"
+                )}>
+                    {ctaLabel}
+                </a>
+            ) : (
+                <Link href={href} className={cn(
+                    "mt-auto h-12 rounded-xl font-bold text-base transition-all active:scale-[0.98] shadow-sm flex items-center justify-center",
+                    popular ? "bg-white text-indigo-900 hover:bg-indigo-50" : "bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:shadow-lg hover:shadow-indigo-500/20"
+                )}>
+                    {ctaLabel}
+                </Link>
+            )}
         </div>
     );
 }

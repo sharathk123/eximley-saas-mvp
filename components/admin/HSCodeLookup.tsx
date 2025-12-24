@@ -47,13 +47,13 @@ export function HSCodeLookup({ productName, description, onSelect, onClose }: HS
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 20 }}
                 onClick={(e) => e.stopPropagation()}
-                className="glass-panel w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden"
+                className="card-sleek w-full max-w-2xl overflow-hidden p-0"
             >
                 {/* Header */}
                 <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50">
                     <div className="flex items-center gap-4">
-                        <div className="h-14 w-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20">
-                            <Sparkles size={24} />
+                        <div className="icon-box-sleek bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/20">
+                            <Sparkles size={18} />
                         </div>
                         <div>
                             <h3 className="text-2xl font-black text-slate-900">AI HS Code Suggestions</h3>
@@ -64,9 +64,9 @@ export function HSCodeLookup({ productName, description, onSelect, onClose }: HS
                     </div>
                     <button
                         onClick={onClose}
-                        className="h-12 w-12 bg-white hover:bg-slate-100 rounded-2xl flex items-center justify-center text-slate-600 transition-all shadow-sm"
+                        className="icon-box-sleek bg-white hover:bg-slate-100 text-slate-600 shadow-sm"
                     >
-                        <X size={20} />
+                        <X size={18} />
                     </button>
                 </div>
 
@@ -145,7 +145,7 @@ export function HSCodeLookup({ productName, description, onSelect, onClose }: HS
                                         <Button
                                             type="button"
                                             size="sm"
-                                            className="h-10 px-6 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black text-xs shadow-lg shadow-blue-500/20"
+                                            className="btn-sleek-primary h-10 px-6 text-xs shadow-blue-500/20"
                                         >
                                             Use This Code
                                         </Button>

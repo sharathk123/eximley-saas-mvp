@@ -54,7 +54,7 @@ export function QuoteApprovalView({ shipment }: { shipment: Shipment }) {
                 <Button variant="outline">Edit Quote</Button>
                 <Button
                     disabled={!isAllowed}
-                    onClick={() => updateShipmentStatus(shipment.id, 'QUOTE_APPROVED', 'Approved Quote')}
+                    onClick={() => updateShipmentStatus(shipment.id, 'QUOTE_ACCEPTED', 'Approved Quote')}
                     className="bg-blue-600 hover:bg-blue-700"
                 >
                     {isAllowed ? "Approve Quote" : "Waiting for Export Manager"}

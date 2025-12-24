@@ -80,8 +80,8 @@ export function CompanyDashboard() {
                 <div className="mb-10">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-4">
-                            <div className="h-16 w-16 bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-500/30">
-                                <Building2 size={32} />
+                            <div className="icon-box-sleek h-12 w-12 bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-xl shadow-indigo-500/30">
+                                <Building2 size={24} />
                             </div>
                             <div>
                                 <h1 className="text-4xl font-black tracking-tight text-indigo-900">{company.name}</h1>
@@ -105,11 +105,11 @@ export function CompanyDashboard() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.1 }}
-                            className="glass-panel p-6 rounded-[2rem] shadow-xl"
+                            className="card-sleek"
                         >
                             <div className="flex items-center justify-between mb-4">
                                 <div className={cn(
-                                    "h-12 w-12 rounded-2xl flex items-center justify-center shadow-inner",
+                                    "icon-box-sleek shadow-inner",
                                     stat.color === 'blue' && "bg-blue-50 text-blue-600 border border-blue-100",
                                     stat.color === 'emerald' && "bg-emerald-50 text-emerald-600 border border-emerald-100",
                                     stat.color === 'purple' && "bg-purple-50 text-purple-600 border border-purple-100",
@@ -125,7 +125,7 @@ export function CompanyDashboard() {
                 </div>
 
                 {/* Quick Actions */}
-                <div className="glass-panel p-8 rounded-[2rem] shadow-2xl mb-10">
+                <div className="card-sleek shadow-2xl mb-10">
                     <h2 className="text-2xl font-black text-slate-900 mb-6">Quick Actions</h2>
                     <div className="grid grid-cols-4 gap-4">
                         {quickActions.map((action, idx) => (
@@ -136,7 +136,7 @@ export function CompanyDashboard() {
                                 transition={{ delay: idx * 0.05 }}
                                 onClick={action.action}
                                 className={cn(
-                                    "flex flex-col items-center gap-3 p-6 rounded-2xl border-2 transition-all hover:scale-105",
+                                    "flex flex-col items-center gap-3 p-5 rounded-xl border transition-all hover:scale-105",
                                     action.color === 'blue' && "bg-blue-50 border-blue-200 hover:bg-blue-100",
                                     action.color === 'emerald' && "bg-emerald-50 border-emerald-200 hover:bg-emerald-100",
                                     action.color === 'purple' && "bg-purple-50 border-purple-200 hover:bg-purple-100",
@@ -144,13 +144,13 @@ export function CompanyDashboard() {
                                 )}
                             >
                                 <div className={cn(
-                                    "h-12 w-12 rounded-xl flex items-center justify-center",
+                                    "icon-box-sleek",
                                     action.color === 'blue' && "bg-blue-600 text-white",
                                     action.color === 'emerald' && "bg-emerald-600 text-white",
                                     action.color === 'purple' && "bg-purple-600 text-white",
                                     action.color === 'slate' && "bg-slate-600 text-white"
                                 )}>
-                                    <action.icon size={24} />
+                                    <action.icon size={20} />
                                 </div>
                                 <p className="text-sm font-black text-slate-900">{action.label}</p>
                             </motion.button>
@@ -159,7 +159,7 @@ export function CompanyDashboard() {
                 </div>
 
                 {/* Recent Shipments */}
-                <div className="glass-panel p-8 rounded-[2rem] shadow-2xl">
+                <div className="card-sleek shadow-2xl">
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-2xl font-black text-slate-900">Recent Shipments</h2>
                         <Link href="/shipments" className="text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors">
@@ -175,8 +175,8 @@ export function CompanyDashboard() {
                                     transition={{ delay: idx * 0.05 }}
                                     className="group flex items-center gap-4 p-4 bg-white rounded-xl border border-slate-100 hover:border-blue-200 hover:shadow-lg transition-all cursor-pointer"
                                 >
-                                    <div className="h-12 w-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-500 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
-                                        <Box size={20} />
+                                    <div className="icon-box-sleek bg-slate-100 text-slate-500 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+                                        <Box size={18} />
                                     </div>
                                     <div className="flex-1">
                                         <p className="text-sm font-black text-slate-900">{shipment.id}</p>
@@ -200,9 +200,9 @@ export function CompanyDashboard() {
                                 <p className="text-sm text-slate-500 font-medium mb-6">Create your first enquiry to get started</p>
                                 <Button
                                     onClick={() => setShowCreateForm(true)}
-                                    className="h-12 px-6 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black shadow-xl shadow-blue-500/20"
+                                    className="btn-sleek-primary shadow-blue-500/20"
                                 >
-                                    <Plus size={18} className="mr-2" />
+                                    <Plus size={16} className="mr-2" />
                                     Create Enquiry
                                 </Button>
                             </div>

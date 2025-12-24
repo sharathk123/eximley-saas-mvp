@@ -182,15 +182,15 @@ export default function LoginPage() {
                                         <div className="space-y-2">
                                             <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Company Name</label>
                                             <div className="relative group">
-                                                <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={18} />
-                                                <input className="w-full h-14 pl-12 pr-4 bg-white border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm" placeholder="Global Trade Inc." />
+                                                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={16} />
+                                                <input className="w-full h-11 pl-10 pr-4 bg-white border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm" placeholder="Global Trade Inc." />
                                             </div>
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Country</label>
                                             <div className="relative group">
-                                                <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={18} />
-                                                <input className="w-full h-14 pl-12 pr-4 bg-white border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm" placeholder="India" />
+                                                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={16} />
+                                                <input className="w-full h-11 pl-10 pr-4 bg-white border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm" placeholder="India" />
                                             </div>
                                         </div>
                                     </div>
@@ -199,12 +199,12 @@ export default function LoginPage() {
                                 <div className="space-y-2">
                                     <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Work Email</label>
                                     <div className="relative group">
-                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={18} />
+                                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={16} />
                                         <input
                                             type="email"
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
-                                            className="w-full h-14 pl-12 pr-4 bg-white border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
+                                            className="w-full h-11 pl-10 pr-4 bg-white border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
                                             placeholder="name@company.com"
                                         />
                                     </div>
@@ -213,12 +213,12 @@ export default function LoginPage() {
                                 <div className="space-y-2">
                                     <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Password</label>
                                     <div className="relative group">
-                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={18} />
+                                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={16} />
                                         <input
                                             type="password"
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
-                                            className="w-full h-14 pl-12 pr-4 bg-white border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
+                                            className="w-full h-11 pl-10 pr-4 bg-white border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm"
                                             placeholder="••••••••"
                                         />
                                     </div>
@@ -290,7 +290,7 @@ export default function LoginPage() {
                                         onClick={handleAction}
                                         disabled={isLoading || !email || !password}
                                         className={cn(
-                                            "w-full h-16 rounded-2xl text-lg font-black shadow-2xl transition-all active:scale-[0.98]",
+                                            "w-full h-12 rounded-xl text-base font-black shadow-xl transition-all active:scale-[0.98]",
                                             isLoading ? "bg-slate-100 text-transparent" : "bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white shadow-indigo-500/30"
                                         )}
                                     >
