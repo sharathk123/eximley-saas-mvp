@@ -14,7 +14,6 @@ import {
     Search,
     ChevronDown
 } from 'lucide-react';
-import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { Role } from '@/lib/workflow';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
@@ -54,37 +53,12 @@ export function Shell({ children }: { children: React.ReactNode }) {
                     <NavItem href="/settings" icon={<Settings size={18} />} label="Settings" active={pathname === '/settings'} />
                 </nav>
 
-                <SignedIn>
-                    <div className="p-4 border-t border-slate-100/50">
-                        <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-indigo-50/50">
-                            <UserButton
-                                appearance={{
-                                    elements: {
-                                        avatarBox: "h-9 w-9"
-                                    }
-                                }}
-                            />
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-slate-900 truncate">User Account</p>
-                                <p className="text-xs text-slate-500">Manage profile</p>
-                            </div>
-                        </div>
-                    </div>
-                </SignedIn>
-                <SignedOut>
-                    <div className="p-4 border-t border-slate-100/50 space-y-2">
-                        <SignInButton mode="modal">
-                            <Button variant="outline" className="w-full">
-                                Sign In
-                            </Button>
-                        </SignInButton>
-                        <SignUpButton mode="modal">
-                            <Button className="w-full bg-gradient-to-r from-indigo-600 to-blue-600">
-                                Sign Up
-                            </Button>
-                        </SignUpButton>
-                    </div>
-                </SignedOut>
+                <div className="p-4 border-t border-slate-100/50">
+                    <Button variant="ghost" className="w-full justify-start text-slate-500 hover:text-red-600 hover:bg-red-50">
+                        <LogOut size={18} className="mr-2" />
+                        Sign Out
+                    </Button>
+                </div>
             </aside>
 
             {/* Main Content */}
@@ -102,34 +76,16 @@ export function Shell({ children }: { children: React.ReactNode }) {
                     </div>
 
                     <div className="flex items-center gap-4 ml-auto">
-                        <SignedIn>
-                            <Button variant="ghost" size="icon" className="relative text-slate-500">
-                                <Bell size={18} />
-                                <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 border-2 border-white"></span>
-                            </Button>
+                        <Button variant="ghost" size="icon" className="relative text-slate-500">
+                            <Bell size={18} />
+                            <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 border-2 border-white"></span>
+                        </Button>
 
-                            <UserButton
-                                appearance={{
-                                    elements: {
-                                        avatarBox: "h-9 w-9 rounded-full border-2 border-white shadow-sm"
-                                    }
-                                }}
-                            />
-                        </SignedIn>
-                        <SignedOut>
-                            <div className="flex items-center gap-2">
-                                <SignInButton mode="modal">
-                                    <Button variant="ghost" size="sm">
-                                        Sign In
-                                    </Button>
-                                </SignInButton>
-                                <SignUpButton mode="modal">
-                                    <Button size="sm" className="bg-gradient-to-r from-indigo-600 to-blue-600">
-                                        Sign Up
-                                    </Button>
-                                </SignUpButton>
-                            </div>
-                        </SignedOut>
+                        <div className="h-9 w-9 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 border-2 border-white shadow-sm flex items-center justify-center text-sm font-bold text-white">
+                            {typeof window !== 'undefined' && localStorage.getItem('currentUser')
+                                ? JSON.parse(localStorage.getItem('currentUser')!).name.split(' ').map((n: string) => n[0]).join('')
+                                : 'JD'}
+                        </div>
                     </div>
                 </header>
 
