@@ -176,7 +176,7 @@ export function WebGLHero() {
 
         const particleGeometry = new THREE.BufferGeometry();
         particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        particleGeometry.setAttribute('particleColor', new THREE.BufferAttribute(colors, 3));
         particleGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
 
         const particleMaterial = new THREE.ShaderMaterial({
@@ -185,11 +185,11 @@ export function WebGLHero() {
             },
             vertexShader: `
                 attribute float size;
-                attribute vec3 color;
+                attribute vec3 particleColor;
                 varying vec3 vColor;
                 varying float vOpacity;
                 void main() {
-                    vColor = color;
+                    vColor = particleColor;
                     vOpacity = 0.5 + sin(position.x * 0.5) * 0.3;
                     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
                     gl_PointSize = size * (300.0 / -mvPosition.z);
@@ -209,7 +209,6 @@ export function WebGLHero() {
             transparent: true,
             blending: THREE.AdditiveBlending,
             depthWrite: false,
-            vertexColors: true,
         });
 
         const particles = new THREE.Points(particleGeometry, particleMaterial);
