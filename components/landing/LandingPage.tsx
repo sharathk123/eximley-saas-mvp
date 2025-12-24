@@ -115,45 +115,79 @@ function Hero() {
                         animate={{ opacity: 1, y: 0, rotateX: 0 }}
                         transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     >
-                        <div className="glass-panel w-full aspect-[16/10] rounded-[2.5rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.1)] overflow-hidden relative">
-                            <div className="absolute inset-0 bg-gradient-to-br from-white/80 to-slate-50/50" />
-
-                            {/* Mock Dashboard UI */}
-                            <div className="relative p-10 h-full flex flex-col">
-                                <div className="flex items-center justify-between mb-16">
-                                    <div className="flex gap-4">
-                                        <div className="h-5 w-5 rounded-full bg-slate-200" />
-                                        <div className="h-5 w-32 rounded-full bg-slate-200" />
-                                    </div>
-                                    <div className="h-12 w-12 rounded-full bg-blue-600/10 flex items-center justify-center text-blue-600 border border-blue-600/20">
-                                        <Globe size={24} />
+                        <div className="glass-panel w-full aspect-[16/10] rounded-[2.5rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.1)] overflow-hidden relative border border-white/40 bg-white/80 backdrop-blur-xl">
+                            {/* Dashboard Layout */}
+                            <div className="flex h-full">
+                                {/* Sidebar */}
+                                <div className="w-20 border-r border-indigo-50 flex flex-col items-center py-8 gap-6 bg-white/50">
+                                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 shadow-lg shadow-indigo-500/20" />
+                                    <div className="w-full flex flex-col items-center gap-4 mt-4">
+                                        {[1, 2, 3, 4].map(i => (
+                                            <div key={i} className={`h-10 w-10 rounded-xl flex items-center justify-center ${i === 1 ? 'bg-indigo-50 text-indigo-600' : 'text-slate-300'}`}>
+                                                <div className="h-5 w-5 bg-current rounded-md opacity-40" />
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-3 gap-10">
-                                    <div className="col-span-2 space-y-8">
-                                        <div className="h-10 w-64 rounded-xl bg-indigo-100/50 animate-pulse" />
-                                        <div className="h-40 w-full rounded-2xl bg-white border border-indigo-100 shadow-sm p-6 relative overflow-hidden group">
-                                            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-blue-500/5 animate-signal" />
-                                            <div className="h-5 w-2/3 rounded-full bg-indigo-50 mb-6" />
-                                            <div className="h-5 w-1/2 rounded-full bg-indigo-50" />
-
-                                            <div className="absolute top-6 left-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <div className="bg-white/90 backdrop-blur px-3 py-1.5 rounded-lg border border-indigo-200 shadow-lg text-[10px] font-black text-indigo-600">
-                                                    AI ANALYZING DATA...
-                                                </div>
-                                            </div>
+                                {/* Main Content */}
+                                <div className="flex-1 flex flex-col p-8 relative overflow-hidden">
+                                    {/* Header */}
+                                    <div className="flex items-center justify-between mb-8">
+                                        <div className="space-y-1">
+                                            <div className="h-4 w-32 bg-slate-200/80 rounded-full" />
+                                            <div className="h-8 w-64 bg-slate-900/10 rounded-lg" />
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <div className="h-10 w-10 rounded-full bg-white border border-slate-100 shadow-sm" />
+                                            <div className="h-10 w-10 rounded-full bg-indigo-600 shadow-lg shadow-indigo-500/20" />
                                         </div>
                                     </div>
-                                    <div className="space-y-8">
-                                        <div className="h-full w-full rounded-[2.5rem] bg-gradient-to-br from-indigo-600 via-indigo-700 to-blue-700 text-white p-10 relative overflow-hidden shadow-2xl shadow-indigo-500/30 flex flex-col justify-end">
-                                            <Shield size={120} className="opacity-10 absolute -top-8 -right-8 rotate-12" />
-                                            <div className="h-14 w-14 bg-emerald-400 rounded-2xl mb-6 flex items-center justify-center shadow-xl shadow-emerald-500/40">
-                                                <CheckCircle2 size={32} className="text-white" />
+
+                                    {/* Metrics Row */}
+                                    <div className="grid grid-cols-3 gap-4 mb-8">
+                                        {[1, 2, 3].map(i => (
+                                            <div key={i} className="p-4 rounded-2xl bg-white border border-indigo-50 shadow-sm flex flex-col gap-3">
+                                                <div className="h-8 w-8 rounded-lg bg-indigo-50" />
+                                                <div className="space-y-2">
+                                                    <div className="h-4 w-12 bg-slate-100 rounded-full" />
+                                                    <div className="h-6 w-24 bg-slate-200 rounded-md" />
+                                                </div>
                                             </div>
-                                            <div>
-                                                <p className="text-[12px] font-black tracking-[0.2em] uppercase mb-3 opacity-60">Status</p>
-                                                <p className="text-2xl font-bold leading-tight">Compliance<br />Verified</p>
+                                        ))}
+                                    </div>
+
+                                    {/* Active Shipment List */}
+                                    <div className="flex-1 bg-white rounded-3xl border border-indigo-50 shadow-sm p-6 overflow-hidden relative">
+                                        <div className="flex items-center justify-between mb-6">
+                                            <div className="h-5 w-32 bg-slate-100 rounded-full" />
+                                            <div className="h-8 w-24 bg-indigo-50 rounded-lg" />
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            {[1, 2, 3].map(i => (
+                                                <div key={i} className="flex items-center gap-4 p-3 rounded-xl border border-slate-50 hover:bg-slate-50 transition-colors">
+                                                    <div className="h-10 w-10 rounded-lg bg-slate-100" />
+                                                    <div className="space-y-1 flex-1">
+                                                        <div className="h-3 w-48 bg-slate-200 rounded-full" />
+                                                        <div className="h-2 w-32 bg-slate-100 rounded-full" />
+                                                    </div>
+                                                    <div className="h-8 w-20 bg-emerald-50 rounded-lg" />
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {/* Floating Status Card Overlay */}
+                                        <div className="absolute top-6 right-6 z-10">
+                                            <div className="h-[180px] w-[160px] rounded-[2rem] bg-gradient-to-br from-indigo-600 to-blue-600 text-white p-6 relative overflow-hidden shadow-2xl shadow-indigo-500/30 flex flex-col justify-end">
+                                                <div className="absolute top-0 right-0 p-6 opacity-20">
+                                                    <Globe size={48} />
+                                                </div>
+                                                <div className="h-10 w-10 bg-white/20 backdrop-blur-md rounded-xl mb-4 flex items-center justify-center border border-white/30">
+                                                    <CheckCircle2 size={20} className="text-white" />
+                                                </div>
+                                                <p className="text-[10px] font-bold opacity-60 uppercase tracking-widest mb-1">Status</p>
+                                                <p className="text-lg font-bold leading-tight">All Systems<br />Green</p>
                                             </div>
                                         </div>
                                     </div>
