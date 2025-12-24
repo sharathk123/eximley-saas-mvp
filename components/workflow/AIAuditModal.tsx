@@ -115,8 +115,8 @@ export function AIAuditModal({ shipment, onClose }: AIAuditModalProps) {
                     {step !== 'complete' ? (
                         <div className="py-12 flex flex-col items-center justify-center text-center">
                             <div className="relative mb-8">
-                                <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl animate-pulse" />
-                                <div className="h-24 w-24 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center relative z-10 shadow-xl shadow-blue-500/30">
+                                <div className="absolute inset-0 bg-indigo-500/20 rounded-full blur-xl animate-pulse" />
+                                <div className="h-24 w-24 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-full flex items-center justify-center relative z-10 shadow-xl shadow-indigo-500/30">
                                     {step === 'scanning' ? (
                                         <ScanLine size={40} className="text-white animate-pulse" />
                                     ) : (

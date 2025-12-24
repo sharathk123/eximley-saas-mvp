@@ -6,6 +6,7 @@ import { useWorkflow } from '@/context/WorkflowContext';
 import { Timeline } from '@/components/workflow/Timeline';
 import { ShipmentHeader } from '@/components/workflow/ShipmentHeader';
 import { ActionPanel } from '@/components/workflow/ActionPanel';
+import { WorkflowSidebar } from '@/components/workflow/WorkflowSidebar';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -26,9 +27,9 @@ export default function ShipmentPage() {
     }
 
     return (
-        <div className="max-w-7xl mx-auto animate-in fade-in duration-500">
+        <div className="max-w-[1600px] mx-auto animate-in fade-in duration-500">
             {/* Back Button */}
-            <Link href="/dashboard" className="inline-flex items-center text-sm text-slate-400 hover:text-slate-800 transition-colors mb-6 group">
+            <Link href="/dashboard" className="inline-flex items-center text-sm text-slate-400 hover:text-slate-800 transition-colors mb-8 group">
                 <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
                 Back to Dashboard
             </Link>
@@ -38,18 +39,18 @@ export default function ShipmentPage() {
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 relative items-start">
 
                 {/* Left: Timeline - Sticky */}
-                <div className="md:col-span-4 lg:col-span-3 sticky top-24">
+                <div className="md:col-span-3 lg:col-span-2 sticky top-24">
                     <div className="bg-slate-50/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-100">
                         <Timeline currentStatus={shipment.status} />
                     </div>
                 </div>
 
-                {/* Right: Action Panel */}
-                <div className="md:col-span-8 lg:col-span-9">
+                {/* Center: Action Panel */}
+                <div className="md:col-span-6 lg:col-span-7">
                     <ActionPanel shipment={shipment} />
 
                     {/* Audit Log / History Preview */}
-                    <div className="mt-8 px-4">
+                    <div className="mt-8 px-4 pb-12">
                         <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Activity Log</h4>
                         <div className="space-y-4 border-l-2 border-slate-100 pl-4">
                             {shipment.history.length === 0 ? (
@@ -66,6 +67,11 @@ export default function ShipmentPage() {
                             )}
                         </div>
                     </div>
+                </div>
+
+                {/* Right: AI Sidebar */}
+                <div className="md:col-span-3 lg:col-span-3 sticky top-24">
+                    <WorkflowSidebar shipment={shipment} />
                 </div>
             </div>
         </div>

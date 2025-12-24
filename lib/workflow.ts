@@ -10,6 +10,9 @@ export type ShipmentState =
     | 'QUOTE_DRAFT'
     | 'PI_APPROVED'
     | 'PAYMENT_CONFIRMED'
+    // Risk Mitigation
+    | 'INSURANCE_FILED'
+    | 'ECGC_COVER_OBTAINED'
     // Procurement stages (optional - for trading companies)
     | 'PROCUREMENT_INITIATED'
     | 'SUPPLIER_SELECTED'
@@ -24,6 +27,8 @@ export type ShipmentState =
     | 'CUSTOMS_QUERY'
     | 'LEO_GRANTED'
     | 'BL_APPROVED'
+    | 'FINANCIAL_RECONCILIATION'
+    | 'ESCALATED'
     | 'CLOSED';
 
 export interface WorkflowStep {
@@ -64,6 +69,8 @@ export interface Shipment {
     messages: Message[];
     validUntil?: string;
     chaMode?: 'EMBEDDED' | 'MANUAL';
+    selectedChaId?: string;
+    selectedChaName?: string;
     procurementRequired?: boolean; // true for trading companies, false for manufacturers with inventory
     history: {
         state: ShipmentState;
@@ -83,6 +90,8 @@ export const WORKFLOW_STEPS: WorkflowStep[] = [
     { id: 'REJECTED', label: 'Rejected', description: 'Enquiry or Quotation rejected', allowedRoles: ['COMPANY_ADMIN', 'COMPANY_EXPORT_ANALYST'] },
     { id: 'PI_APPROVED', label: 'PI Approved', description: 'Proforma Invoice confirmed', allowedRoles: ['COMPANY_ADMIN', 'COMPANY_EXPORT_ANALYST'] },
     { id: 'PAYMENT_CONFIRMED', label: 'Payment Confirmed', description: 'Advance payment received', allowedRoles: ['COMPANY_ADMIN'] },
+    { id: 'INSURANCE_FILED', label: 'Marine Insurance', description: 'Transit insurance cover obtained', allowedRoles: ['COMPANY_EXPORT_ANALYST', 'COMPANY_ADMIN'] },
+    { id: 'ECGC_COVER_OBTAINED', label: 'ECGC Cover', description: 'Export Credit Guarantee secured', allowedRoles: ['COMPANY_EXPORT_ANALYST', 'COMPANY_ADMIN'] },
 
     // Procurement stages (optional - skip if you have inventory)
     { id: 'PROCUREMENT_INITIATED', label: 'Procurement Initiated', description: 'Started sourcing from supplier', allowedRoles: ['COMPANY_ADMIN', 'COMPANY_EXPORT_ANALYST'] },
@@ -99,7 +108,9 @@ export const WORKFLOW_STEPS: WorkflowStep[] = [
     { id: 'CUSTOMS_QUERY', label: 'Customs Query', description: 'Query raised by customs', allowedRoles: ['COMPANY_ADMIN', 'COMPANY_EXPORT_ANALYST'] },
     { id: 'LEO_GRANTED', label: 'LEO Granted', description: 'Let Export Order granted', allowedRoles: ['COMPANY_EXPORT_ANALYST'] },
     { id: 'BL_APPROVED', label: 'BL Approved', description: 'Bill of Lading confirmed', allowedRoles: ['COMPANY_EXPORT_ANALYST'] },
-    { id: 'CLOSED', label: 'Shipment Closed', description: 'E-BRC received and closed', allowedRoles: ['COMPANY_ADMIN'] },
+    { id: 'FINANCIAL_RECONCILIATION', label: 'Reconciliation', description: 'Ledger matching & final audit', allowedRoles: ['FINANCE', 'COMPANY_ADMIN'] },
+    { id: 'ESCALATED', label: 'Escalated', description: 'High-priority intervention required', allowedRoles: ['COMPANY_ADMIN', 'EXPORTER_ADMIN'] },
+    { id: 'CLOSED', label: 'Shipment Closed', description: 'E-BRC & reconciliation verified', allowedRoles: ['COMPANY_ADMIN'] },
 ];
 
 export const MOCK_SHIPMENTS: Shipment[] = [
@@ -146,6 +157,38 @@ export const MOCK_SHIPMENTS: Shipment[] = [
         goods: 'Basmati Rice (Premium)',
         value: '$12,500',
         buyer: 'Al Maya Group',
+        messages: [],
+        history: []
+    },
+    {
+        id: 'EXP-003',
+        destination: 'Tokyo, Japan',
+        status: 'CUSTOMS_QUERY',
+        goods: 'Handcrafted Silk Scarves',
+        value: '¥850,000',
+        buyer: 'Mitsukoshi Ltd.',
+        messages: [
+            { id: 'm-cq-1', sender: 'EXPORTER', content: 'Customs queried the HSN code. Please provide technical specs.', timestamp: new Date().toISOString() }
+        ],
+        history: []
+    },
+    {
+        id: 'EXP-004',
+        destination: 'New York, USA',
+        status: 'SB_FILED',
+        goods: 'Leather Handbags',
+        value: '$28,000',
+        buyer: 'Macy\'s Inc.',
+        messages: [],
+        history: []
+    },
+    {
+        id: 'EXP-005',
+        destination: 'London, UK',
+        status: 'LEO_GRANTED',
+        goods: 'Assam Tea Blends',
+        value: '£12,000',
+        buyer: 'Fortnum & Mason',
         messages: [],
         history: []
     }

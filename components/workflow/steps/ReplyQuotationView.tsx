@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { MessageSquare, Send, Save, ArrowLeft, DollarSign, Package, Truck, Sparkles, FileText, CheckCircle, ShieldCheck, Lock } from 'lucide-react';
 import { AIGenerationHUD } from '../AIGenerationHUD';
 import { cn } from '@/lib/utils';
+import { INCOTERMS, PAYMENT_TERMS, CURRENCIES, UNIT_OF_MEASURE } from '@/lib/constants/masterData';
 
 interface ReplyQuotationViewProps {
     shipment: Shipment;
@@ -34,9 +35,11 @@ Please find the detailed quotation attached. We look forward to your positive re
 Best Regards,
 Exports Team`,
         price: '12.00',
-        unit: 'Piece',
+        currency: 'USD',
+        unit: 'PCS',
         validity: '15 Days',
-        terms: 'FOB India',
+        terms: 'FOB',
+        paymentTerms: 'ADVANCE_30_70',
         notes: ''
     });
 
@@ -170,10 +173,18 @@ Exports Team`,
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Unit Price</label>
-                        <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                        <div className="flex gap-2">
+                            <select
+                                className="w-20 h-12 rounded-xl border border-slate-200 bg-white px-2 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500"
+                                value={formData.currency}
+                                onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                            >
+                                {CURRENCIES.map(c => (
+                                    <option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>
+                                ))}
+                            </select>
                             <Input
-                                className="pl-7 h-12 rounded-xl border-slate-200"
+                                className="flex-1 h-12 rounded-xl border-slate-200"
                                 value={formData.price}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, price: e.target.value })}
                             />
@@ -181,34 +192,53 @@ Exports Team`,
                     </div>
                     <div className="space-y-2">
                         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Per Unit</label>
-                        <Input
-                            className="h-12 rounded-xl border-slate-200"
+                        <select
+                            className="w-full h-12 rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500"
                             value={formData.unit}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, unit: e.target.value })}
-                        />
+                            onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                        >
+                            {UNIT_OF_MEASURE.map(u => (
+                                <option key={u.code} value={u.code}>{u.name} ({u.code})</option>
+                            ))}
+                        </select>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Price Terms</label>
-                        <div className="relative">
-                            <Truck size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                            <Input
-                                className="pl-9 h-12 rounded-xl border-slate-200"
-                                value={formData.terms}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, terms: e.target.value })}
-                            />
-                        </div>
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Incoterms</label>
+                        <select
+                            className="w-full h-12 rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500"
+                            value={formData.terms}
+                            onChange={(e) => setFormData({ ...formData, terms: e.target.value })}
+                        >
+                            {INCOTERMS.map(i => (
+                                <option key={i.code} value={i.code}>{i.code} - {i.name}</option>
+                            ))}
+                        </select>
                     </div>
                     <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Validity</label>
-                        <Input
-                            className="h-12 rounded-xl border-slate-200"
-                            value={formData.validity}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, validity: e.target.value })}
-                        />
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Payment Terms</label>
+                        <select
+                            className="w-full h-12 rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500"
+                            value={formData.paymentTerms}
+                            onChange={(e) => setFormData({ ...formData, paymentTerms: e.target.value })}
+                        >
+                            {PAYMENT_TERMS.map(p => (
+                                <option key={p.code} value={p.code}>{p.label}</option>
+                            ))}
+                        </select>
                     </div>
+                </div>
+
+                <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Validity</label>
+                    <Input
+                        className="h-12 rounded-xl border-slate-200"
+                        value={formData.validity}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, validity: e.target.value })}
+                        placeholder="e.g. 15 Days"
+                    />
                 </div>
             </div>
 

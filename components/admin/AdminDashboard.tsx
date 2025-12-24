@@ -79,74 +79,110 @@ export function AdminDashboard() {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 p-8">
+        <div className="min-h-screen bg-transparent">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
-                <div className="mb-10">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="icon-box-sleek bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-xl shadow-indigo-500/20">
-                            <Shield size={20} />
-                        </div>
-                        <div>
-                            <h1 className="text-4xl font-black tracking-tight text-slate-900">Eximley Admin</h1>
-                            <p className="text-slate-500 font-medium">Enterprise Management Dashboard</p>
-                        </div>
+                <div className="flex items-center gap-5 mb-10">
+                    <div className="h-14 w-14 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-[1.5rem] flex items-center justify-center text-white shadow-2xl shadow-indigo-500/30">
+                        <Shield size={24} />
                     </div>
+                    <div>
+                        <h1 className="text-3xl font-black tracking-tight text-slate-800 uppercase">Eximley Admin</h1>
+                        <p className="text-slate-500 font-bold mt-1 flex items-center gap-2 uppercase text-[10px] tracking-widest">
+                            <span className="h-2 w-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(79,70,229,0.5)]" />
+                            Enterprise Management Cluster
+                        </p>
+                    </div>
+                </div>
 
-                    {/* Tab Navigation */}
-                    <div className="flex gap-3">
-                        <button
-                            onClick={() => setActiveTab('users')}
-                            className={cn(
-                                "btn-sleek-secondary",
-                                activeTab === 'users'
-                                    ? "bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-500/20 border-transparent hover:bg-indigo-600"
-                                    : ""
-                            )}
-                        >
-                            <Users size={16} />
-                            User Approvals
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('products')}
-                            className={cn(
-                                "btn-sleek-secondary",
-                                activeTab === 'products'
-                                    ? "bg-gradient-to-r from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-500/20 border-transparent hover:bg-indigo-600"
-                                    : ""
-                            )}
-                        >
-                            <Package size={16} />
-                            Product Catalog
-                        </button>
-                    </div>
+                {/* Tab Navigation */}
+                <div className="flex items-center gap-2 bg-white/50 p-1.5 rounded-[2rem] border border-slate-100 w-fit backdrop-blur-sm">
+                    <button
+                        onClick={() => setActiveTab('users')}
+                        className={cn(
+                            "h-12 px-6 rounded-[1.5rem] flex items-center gap-3 transition-all duration-300 group whitespace-nowrap relative",
+                            activeTab !== 'users' && "text-slate-400 hover:text-slate-600 hover:bg-slate-100/30"
+                        )}
+                    >
+                        {activeTab === 'users' && (
+                            <motion.div
+                                layoutId="active-pill-admin"
+                                className="absolute inset-0 bg-white rounded-[1.5rem] shadow-lg shadow-slate-200/50 border border-slate-100"
+                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                            />
+                        )}
+                        <div className="relative z-10 flex items-center gap-3">
+                            <div className={cn(
+                                "h-7 w-7 rounded-lg flex items-center justify-center transition-all duration-300",
+                                activeTab === 'users' ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" : "bg-slate-100 text-slate-400 group-hover:bg-slate-200"
+                            )}>
+                                <Users size={14} />
+                            </div>
+                            <span className={cn(
+                                "font-black text-[10px] uppercase tracking-widest transition-colors",
+                                activeTab === 'users' ? "text-indigo-900" : "text-slate-400 group-hover:text-slate-600"
+                            )}>User Approvals</span>
+                        </div>
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('products')}
+                        className={cn(
+                            "h-12 px-6 rounded-[1.5rem] flex items-center gap-3 transition-all duration-300 group whitespace-nowrap relative",
+                            activeTab !== 'products' && "text-slate-400 hover:text-slate-600 hover:bg-slate-100/30"
+                        )}
+                    >
+                        {activeTab === 'products' && (
+                            <motion.div
+                                layoutId="active-pill-admin"
+                                className="absolute inset-0 bg-white rounded-[1.5rem] shadow-lg shadow-slate-200/50 border border-slate-100"
+                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                            />
+                        )}
+                        <div className="relative z-10 flex items-center gap-3">
+                            <div className={cn(
+                                "h-7 w-7 rounded-lg flex items-center justify-center transition-all duration-300",
+                                activeTab === 'products' ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20" : "bg-slate-100 text-slate-400 group-hover:bg-slate-200"
+                            )}>
+                                <Package size={14} />
+                            </div>
+                            <span className={cn(
+                                "font-black text-[10px] uppercase tracking-widest transition-colors",
+                                activeTab === 'products' ? "text-indigo-900" : "text-slate-400 group-hover:text-slate-600"
+                            )}>Product Catalog</span>
+                        </div>
+                    </button>
                 </div>
 
                 {/* Tab Content */}
                 {activeTab === 'users' && (
                     <>
                         {/* Stats Grid */}
-                        <div className="grid grid-cols-3 gap-6 mb-10">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
                             {stats.map((stat, idx) => (
                                 <motion.div
                                     key={stat.label}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: idx * 0.1 }}
-                                    className="card-sleek"
+                                    className="card-sleek border-slate-100 hover:border-indigo-200 transition-all group relative overflow-hidden"
                                 >
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className={cn(
-                                            "icon-box-sleek shadow-inner",
-                                            stat.color === 'blue' && "bg-blue-50 text-blue-600 border border-blue-100",
-                                            stat.color === 'amber' && "bg-amber-50 text-amber-600 border border-amber-100",
-                                            stat.color === 'emerald' && "bg-emerald-50 text-emerald-600 border border-emerald-100"
-                                        )}>
-                                            <stat.icon size={24} />
+                                    {/* Inner Bloom Effect */}
+                                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-indigo-500/5 rounded-full blur-3xl group-hover:bg-indigo-500/10 transition-colors" />
+
+                                    <div className="relative z-10">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className={cn(
+                                                "h-12 w-12 rounded-2xl flex items-center justify-center transition-all shadow-sm",
+                                                stat.color === 'blue' && "bg-indigo-50 text-indigo-600 border border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-indigo-500/30",
+                                                stat.color === 'amber' && "bg-amber-50 text-amber-600 border border-amber-100 group-hover:bg-amber-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-amber-500/30",
+                                                stat.color === 'emerald' && "bg-emerald-50 text-emerald-600 border border-emerald-100 group-hover:bg-emerald-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-emerald-500/30"
+                                            )}>
+                                                <stat.icon size={20} />
+                                            </div>
                                         </div>
+                                        <p className="text-3xl font-black text-slate-800 mb-1">{stat.value}</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{stat.label}</p>
                                     </div>
-                                    <p className="text-3xl font-black text-slate-900 mb-1">{stat.value}</p>
-                                    <p className="text-xs font-black uppercase tracking-widest text-slate-400">{stat.label}</p>
                                 </motion.div>
                             ))}
                         </div>
@@ -155,8 +191,8 @@ export function AdminDashboard() {
                         <div className="card-sleek">
                             <div className="flex items-center justify-between mb-8">
                                 <div>
-                                    <h2 className="text-2xl font-black text-slate-900 mb-1">Pending Approvals</h2>
-                                    <p className="text-sm text-slate-500 font-medium">Review and approve new user applications</p>
+                                    <h2 className="text-2xl font-black text-slate-800 mb-1">Pending Approvals</h2>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Review and verify new node requests</p>
                                 </div>
                                 <div className="flex gap-2">
                                     <button className="btn-sleek-secondary h-10 px-4">
@@ -178,10 +214,10 @@ export function AdminDashboard() {
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: idx * 0.1 }}
                                         className={cn(
-                                            "bg-white border rounded-xl p-5 transition-all",
-                                            user.status === 'PENDING' && "border-slate-200",
-                                            user.status === 'APPROVED' && "border-emerald-200 bg-emerald-50/50",
-                                            user.status === 'DECLINED' && "border-red-200 bg-red-50/50 opacity-50"
+                                            "bg-white border rounded-xl p-5 transition-all hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-500/5",
+                                            user.status === 'PENDING' && "border-slate-100",
+                                            user.status === 'APPROVED' && "border-emerald-100 bg-emerald-50/10",
+                                            user.status === 'DECLINED' && "border-red-100 bg-red-50/10 opacity-60"
                                         )}
                                     >
                                         <div className="flex items-center justify-between">

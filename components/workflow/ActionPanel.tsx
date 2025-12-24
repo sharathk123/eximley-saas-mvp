@@ -15,7 +15,8 @@ import { FinanceView } from './steps/FinanceView';
 import { EnquiryDetailView } from './steps/EnquiryDetailView';
 import { ReplyQuotationView } from './steps/ReplyQuotationView';
 import { ConversationThread } from './ConversationThread';
-import { Sparkles, MessageCircle, FileCheck, Clock, AlertTriangle } from 'lucide-react';
+import { Sparkles, MessageCircle, FileCheck, Clock, AlertTriangle, Loader2, Zap } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ActionPanelProps {
     shipment: Shipment;
@@ -24,6 +25,53 @@ interface ActionPanelProps {
 export function ActionPanel({ shipment }: ActionPanelProps) {
     const { currentRole, updateShipmentStatus, setShipments } = useWorkflow();
     const [showReplyForm, setShowReplyForm] = useState(false);
+    const [isThinking, setIsThinking] = useState(false);
+    const [thinkingMessage, setThinkingMessage] = useState('');
+
+    const getProgressPercentage = (status: string) => {
+        const stages: Record<string, number> = {
+            'ENQUIRY_RECEIVED': 5,
+            'QUOTE_SENT': 10,
+            'NEGOTIATION': 15,
+            'QUOTE_ACCEPTED': 20,
+            'PI_APPROVED': 25,
+            'INSURANCE_FILED': 30,
+            'ECGC_COVER_OBTAINED': 35,
+            'PAYMENT_CONFIRMED': 40,
+            'PROCUREMENT_INITIATED': 50,
+            'GOODS_RECEIVED': 60,
+            'CI_PL_APPROVED': 70,
+            'SB_FILED': 80,
+            'LEO_GRANTED': 90,
+            'BL_APPROVED': 95,
+            'FINANCIAL_RECONCILIATION': 98,
+            'CLOSED': 100,
+            'REJECTED': 0,
+            'ESCALATED': 100 // Visual flag
+        };
+        return stages[status] || 5;
+    };
+
+    const progress = getProgressPercentage(shipment.status);
+
+    const handleUpdateStatus = async (shipmentId: string, newState: any, action: string) => {
+        setIsThinking(true);
+        setThinkingMessage(`AI is validating ${newState.replace('_', ' ')} logic...`);
+
+        // Dynamic thinking messages based on state
+        const messages: Record<string, string> = {
+            'PI_APPROVED': 'Cross-referencing commercial terms with product catalog...',
+            'PAYMENT_CONFIRMED': 'Verifying SWIFT/Bank remittance with ledger patterns...',
+            'SB_FILED': 'Analyzing HSN compatibility for ICEGATE submission...',
+            'BL_APPROVED': 'Checking Bill of Lading parity with Packing List...',
+        };
+
+        if (messages[newState]) setThinkingMessage(messages[newState]);
+
+        await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate thinking
+        updateShipmentStatus(shipmentId, newState, action);
+        setIsThinking(false);
+    };
 
     // Helper to check if current role can act
     // For prototype, we map the current state to the allowed roles defined in WORKFLOW_STEPS
@@ -233,26 +281,26 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-blue-600 rounded-2xl p-4 text-white shadow-lg relative overflow-hidden group">
+                            <div className="bg-indigo-600 rounded-2xl p-4 text-white shadow-lg shadow-indigo-500/20 relative overflow-hidden group">
                                 <div className="relative z-10">
-                                    <h3 className="text-xs font-bold uppercase tracking-wider mb-2">Acceptance</h3>
-                                    <p className="text-[10px] text-blue-50 leading-tight mb-4">Confirm deal terms.</p>
+                                    <h3 className="text-xs font-black uppercase tracking-wider mb-2">Acceptance</h3>
+                                    <p className="text-[10px] text-indigo-50 leading-tight mb-4 font-bold">Confirm deal terms and proceed.</p>
                                     <Button
                                         size="sm"
-                                        className="w-full bg-white text-blue-600 hover:bg-blue-50 font-bold text-[10px]"
+                                        className="w-full bg-white text-indigo-600 hover:bg-indigo-50 font-black text-[10px] rounded-xl"
                                         onClick={simulateBuyerAcceptance}
                                     >
                                         Accept Deal
                                     </Button>
                                 </div>
                             </div>
-                            <div className="bg-slate-900 rounded-2xl p-4 text-white shadow-lg relative overflow-hidden group">
+                            <div className="bg-slate-900 rounded-2xl p-4 text-white shadow-lg relative overflow-hidden group border border-white/5">
                                 <div className="relative z-10">
-                                    <h3 className="text-xs font-bold uppercase tracking-wider mb-2">Negotiation</h3>
-                                    <p className="text-[10px] text-slate-400 leading-tight mb-4">Request revisions.</p>
+                                    <h3 className="text-xs font-black uppercase tracking-wider mb-2">Negotiation</h3>
+                                    <p className="text-[10px] text-slate-400 leading-tight mb-4 font-bold">Request revisions or counter.</p>
                                     <Button
                                         size="sm"
-                                        className="w-full bg-slate-800 text-white hover:bg-slate-700 font-bold text-[10px]"
+                                        className="w-full bg-slate-800 text-white hover:bg-slate-700 font-black text-[10px] rounded-xl"
                                         onClick={simulateCounterOffer}
                                     >
                                         Counter-Offer
@@ -306,24 +354,24 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
             case 'QUOTE_ACCEPTED':
                 return (
                     <div className="flex flex-col h-full space-y-6 animate-in fade-in duration-500">
-                        <div className="bg-slate-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 p-4 opacity-10">
-                                <FileCheck size={100} />
+                        <div className="bg-slate-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden group border border-white/5">
+                            <div className="absolute top-0 right-0 p-4 opacity-[0.03]">
+                                <FileCheck size={120} />
                             </div>
                             <div className="relative z-10 space-y-6">
                                 <div>
-                                    <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-[10px] font-bold uppercase tracking-widest border border-green-500/30">
+                                    <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-500/30">
                                         Action Required
                                     </span>
-                                    <h3 className="text-2xl font-bold mt-4 tracking-tight">Generate Proforma Invoice</h3>
-                                    <p className="text-slate-400 text-sm mt-2 leading-relaxed">
+                                    <h3 className="text-2xl font-black mt-4 tracking-tight uppercase">Generate Proforma Invoice</h3>
+                                    <p className="text-slate-400 text-sm mt-2 leading-relaxed font-medium">
                                         The buyer has formally accepted the quotation. You are now authorized to generate the Proforma Invoice (PI).
                                     </p>
                                 </div>
                                 <Button
                                     size="lg"
-                                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold h-14 rounded-xl shadow-lg shadow-blue-900/40 transition-all active:scale-[0.98]"
-                                    onClick={() => updateShipmentStatus(shipment.id, 'PI_APPROVED', 'Generated Proforma Invoice')}
+                                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black h-14 rounded-2xl shadow-xl shadow-indigo-900/40 transition-all active:scale-[0.98] uppercase tracking-widest text-xs"
+                                    onClick={() => handleUpdateStatus(shipment.id, 'PI_APPROVED', 'Generated Proforma Invoice')}
                                 >
                                     Create Proforma Invoice
                                 </Button>
@@ -340,9 +388,10 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                     <div className="space-y-6">
                         <StandardActionView
                             shipment={shipment}
-                            nextState="PAYMENT_CONFIRMED"
-                            actionLabel="Confirm Advance Payment"
-                            role="FINANCE"
+                            nextState="INSURANCE_FILED"
+                            actionLabel="Obtain Marine Insurance"
+                            role={['COMPANY_EXPORT_ANALYST', 'COMPANY_ADMIN']}
+                            onAction={handleUpdateStatus}
                         />
                         <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 animate-in fade-in slide-in-from-top-2 duration-700 delay-300">
                             <h5 className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-3 flex items-center gap-2">
@@ -381,9 +430,30 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                     </div>
                 );
 
+            case 'INSURANCE_FILED':
+                return (
+                    <StandardActionView
+                        shipment={shipment}
+                        nextState="ECGC_COVER_OBTAINED"
+                        actionLabel="Secure ECGC Cover"
+                        role={['COMPANY_EXPORT_ANALYST', 'COMPANY_ADMIN']}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'ECGC_COVER_OBTAINED':
+                return (
+                    <StandardActionView
+                        shipment={shipment}
+                        nextState="PAYMENT_CONFIRMED"
+                        actionLabel="Confirm Advance Payment"
+                        role="FINANCE"
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
             case 'PAYMENT_CONFIRMED':
             case 'CI_PL_APPROVED':
-                // Document Viewer handles both AI generation and Approval states
                 return <DocumentView shipment={shipment} />;
 
             case 'SB_PENDING_CHA':
@@ -394,14 +464,58 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
             case 'BL_APPROVED':
                 return <BillOfLadingView shipment={shipment} />;
 
+            case 'FINANCIAL_RECONCILIATION':
+                return (
+                    <StandardActionView
+                        shipment={shipment}
+                        nextState="CLOSED"
+                        actionLabel="Complete Final Reconciliation"
+                        role="FINANCE"
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'ESCALATED':
+                return (
+                    <div className="p-8 text-center space-y-6 bg-amber-50 rounded-3xl border border-amber-100 animate-in zoom-in-95 duration-500">
+                        <div className="h-20 w-20 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-200">
+                            <AlertTriangle size={40} />
+                        </div>
+                        <div>
+                            <h3 className="text-2xl font-black text-amber-900 uppercase tracking-tight">Escalation Managed</h3>
+                            <p className="text-sm text-amber-700 max-w-xs mx-auto mt-2 font-medium">
+                                High-priority intervention is active. Administrators are resolving the identified bottleneck.
+                            </p>
+                        </div>
+                        <Button
+                            size="lg"
+                            className="w-full bg-amber-600 hover:bg-amber-700 text-white font-black h-14 rounded-2xl shadow-xl shadow-amber-900/10 uppercase tracking-widest text-xs"
+                            onClick={() => handleUpdateStatus(shipment.id, 'CLOSED', 'Resolved Escalation & Closed')}
+                        >
+                            Mark Escalation Resolved
+                        </Button>
+                    </div>
+                );
+
             case 'CLOSED':
                 return <FinanceView shipment={shipment} />;
 
             case 'CUSTOMS_QUERY':
-                return <CustomsQueryView shipment={shipment} />;
+                return (
+                    <div className="space-y-6">
+                        <CustomsQueryView shipment={shipment} />
+                        <Button
+                            variant="ghost"
+                            className="w-full text-amber-600 hover:text-amber-700 hover:bg-amber-50 text-[10px] font-black uppercase tracking-widest gap-2"
+                            onClick={() => handleUpdateStatus(shipment.id, 'ESCALATED', 'Escalated due to Customs Query delay')}
+                        >
+                            <AlertTriangle size={12} />
+                            Escalate this Query
+                        </Button>
+                    </div>
+                );
 
             default:
-                // Fallback for steps like PAYMENT_CONFIRMED if not explicitly handled
                 return (
                     <div className="flex flex-col items-center justify-center h-64 text-slate-400">
                         <p>Workflow step specific UI not implemented for {shipment.status} yet.</p>
@@ -412,8 +526,81 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
 
     return (
         <div className="float-panel rounded-2xl min-h-[600px] flex flex-col relative overflow-hidden">
-            {/* Header Strip */}
-            <div className="h-1.5 w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+            {/* Header Strip & Progress */}
+            <div className="relative group/progress">
+                <div className="h-1.5 w-full bg-slate-100 relative overflow-hidden">
+                    <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${progress}%` }}
+                        transition={{ duration: 1, ease: "easeOut" }}
+                        className={cn(
+                            "h-full transition-colors duration-500",
+                            shipment.status === 'REJECTED' ? "bg-red-500" :
+                                shipment.status === 'ESCALATED' ? "bg-amber-500" :
+                                    "bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-500"
+                        )}
+                    />
+                </div>
+
+                {/* Progress Hub */}
+                <div className="px-6 py-3 border-b border-slate-100 flex items-center justify-between bg-white/50 backdrop-blur-sm">
+                    <div className="flex items-center gap-3">
+                        <div className={cn(
+                            "h-2 w-2 rounded-full animate-pulse shadow-[0_0_8px]",
+                            shipment.status === 'REJECTED' ? "bg-red-500 shadow-red-500/50" :
+                                shipment.status === 'ESCALATED' ? "bg-amber-500 shadow-amber-500/50" :
+                                    "bg-indigo-500 shadow-indigo-500/50"
+                        )} />
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Shipment Maturity</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm font-black text-slate-800 tracking-tight">{progress}%</span>
+                        <div className="h-4 w-px bg-slate-200" />
+                        <span className={cn(
+                            "text-[10px] font-black uppercase tracking-widest",
+                            shipment.status === 'REJECTED' ? "text-red-600" :
+                                shipment.status === 'ESCALATED' ? "text-amber-600" :
+                                    "text-indigo-600"
+                        )}>
+                            {shipment.status === 'CLOSED' ? 'Completed' :
+                                shipment.status === 'ESCALATED' ? 'Attention' :
+                                    shipment.status === 'REJECTED' ? 'Terminated' : 'Operational'}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Thinking Overlay */}
+            <AnimatePresence>
+                {isThinking && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 z-50 bg-white/60 backdrop-blur-md flex flex-col items-center justify-center p-8 text-center"
+                    >
+                        <div className="relative">
+                            <div className="h-20 w-20 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin" />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <Zap size={24} className="text-indigo-600 animate-pulse" />
+                            </div>
+                        </div>
+                        <h3 className="mt-8 text-lg font-black text-slate-900 tracking-tight">AI Agent Working</h3>
+                        <p className="mt-2 text-sm text-slate-500 font-medium max-w-xs">{thinkingMessage}</p>
+
+                        <div className="mt-12 flex gap-1">
+                            {[1, 2, 3].map(i => (
+                                <motion.div
+                                    key={i}
+                                    animate={{ opacity: [0.3, 1, 0.3] }}
+                                    transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+                                    className="h-1 shadow-indigo-600 rounded-full"
+                                />
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <div className="flex-1 p-6">
                 {renderContent()}
@@ -423,9 +610,11 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
 }
 
 // Simple fallback view for steps that are just a button press in this prototype
-function StandardActionView({ shipment, nextState, actionLabel, role }: any) {
+function StandardActionView({ shipment, nextState, actionLabel, role, onAction }: any) {
     const { updateShipmentStatus, currentRole } = useWorkflow();
-    const isAllowed = currentRole === role || currentRole === 'EXPORTER_ADMIN';
+    const isAllowed = Array.isArray(role)
+        ? role.includes(currentRole) || currentRole === 'EXPORTER_ADMIN'
+        : currentRole === role || currentRole === 'EXPORTER_ADMIN';
 
     return (
         <div className="flex flex-col items-center justify-center h-full space-y-6 text-center">
@@ -441,7 +630,7 @@ function StandardActionView({ shipment, nextState, actionLabel, role }: any) {
                 <Button
                     size="lg"
                     className="w-full max-w-sm"
-                    onClick={() => updateShipmentStatus(shipment.id, nextState, actionLabel)}
+                    onClick={() => onAction ? onAction(shipment.id, nextState, actionLabel) : updateShipmentStatus(shipment.id, nextState, actionLabel)}
                 >
                     {actionLabel}
                 </Button>

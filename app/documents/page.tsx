@@ -15,7 +15,7 @@ export default function DocumentsPage() {
 
     const getDocTypeColor = (type: string) => {
         switch (type) {
-            case 'Invoice': return 'blue';
+            case 'Invoice': return 'indigo';
             case 'Packing List': return 'emerald';
             case 'Shipping Bill': return 'purple';
             case 'BL': return 'amber';
@@ -24,77 +24,91 @@ export default function DocumentsPage() {
     };
 
     return (
-        <div className="space-y-8">
-            {/* Header */}
-            <div>
-                <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Documents</h1>
-                <p className="text-slate-500 mt-2">All your export documentation in one place</p>
-            </div>
-
-            {/* Documents Grid */}
-            <div className="glass-panel p-8 rounded-[2rem] shadow-2xl">
-                <div className="space-y-3">
-                    {documents.map((doc, idx) => {
-                        const color = getDocTypeColor(doc.type);
-                        return (
-                            <motion.div
-                                key={doc.id}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: idx * 0.05 }}
-                                className="group flex items-center gap-4 p-4 bg-white rounded-xl border border-slate-100 hover:border-blue-200 hover:shadow-lg transition-all"
-                            >
-                                <div className={cn(
-                                    "h-12 w-12 rounded-xl flex items-center justify-center flex-shrink-0",
-                                    color === 'blue' && "bg-blue-50 text-blue-600",
-                                    color === 'emerald' && "bg-emerald-50 text-emerald-600",
-                                    color === 'purple' && "bg-purple-50 text-purple-600",
-                                    color === 'amber' && "bg-amber-50 text-amber-600",
-                                    color === 'slate' && "bg-slate-100 text-slate-600"
-                                )}>
-                                    <FileText size={20} />
-                                </div>
-                                <div className="flex-1">
-                                    <p className="text-sm font-black text-slate-900">{doc.name}</p>
-                                    <div className="flex items-center gap-3 mt-1">
-                                        <span className={cn(
-                                            "text-xs font-bold px-2 py-0.5 rounded-md",
-                                            color === 'blue' && "bg-blue-50 text-blue-700",
-                                            color === 'emerald' && "bg-emerald-50 text-emerald-700",
-                                            color === 'purple' && "bg-purple-50 text-purple-700",
-                                            color === 'amber' && "bg-amber-50 text-amber-700"
-                                        )}>
-                                            {doc.type}
-                                        </span>
-                                        <span className="text-xs text-slate-500 font-medium flex items-center gap-1">
-                                            <Calendar size={12} />
-                                            {doc.date}
-                                        </span>
-                                        <span className="text-xs text-slate-400 font-medium">{doc.size}</span>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <button className="h-9 w-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
-                                        <Eye size={16} />
-                                    </button>
-                                    <button className="h-9 w-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
-                                        <Download size={16} />
-                                    </button>
-                                </div>
-                            </motion.div>
-                        );
-                    })}
+        <div className="min-h-screen bg-transparent">
+            <div className="max-w-7xl mx-auto">
+                {/* Header */}
+                <div className="mb-10">
+                    <div className="flex items-center gap-5">
+                        <div className="h-14 w-14 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-[1.5rem] flex items-center justify-center text-white shadow-2xl shadow-indigo-500/30">
+                            <FileText size={24} />
+                        </div>
+                        <div>
+                            <h1 className="text-3xl font-black tracking-tight text-slate-800 uppercase">Documents</h1>
+                            <p className="text-slate-500 font-bold mt-1 flex items-center gap-2 uppercase text-[10px] tracking-widest">
+                                <span className="h-2 w-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(79,70,229,0.5)]" />
+                                Universal Digital Archive
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
-                {documents.length === 0 && (
-                    <div className="text-center py-12">
-                        <div className="h-20 w-20 bg-slate-100 rounded-3xl flex items-center justify-center text-slate-400 mx-auto mb-4">
-                            <FileText size={32} />
-                        </div>
-                        <p className="text-lg font-black text-slate-900 mb-2">No documents yet</p>
-                        <p className="text-sm text-slate-500 font-medium">Documents will appear here as you process shipments</p>
+                {/* Documents Grid */}
+                <div className="card-sleek shadow-2xl border-slate-100">
+                    <div className="space-y-3">
+                        {documents.map((doc, idx) => {
+                            const color = getDocTypeColor(doc.type);
+                            return (
+                                <motion.div
+                                    key={doc.id}
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: idx * 0.05 }}
+                                    className="group flex items-center gap-4 p-4 bg-white rounded-xl border border-slate-100 hover:border-indigo-200 hover:shadow-lg transition-all"
+                                >
+                                    <div className={cn(
+                                        "h-12 w-12 rounded-xl flex items-center justify-center flex-shrink-0",
+                                        color === 'indigo' && "bg-indigo-50 text-indigo-600",
+                                        color === 'emerald' && "bg-emerald-50 text-emerald-600",
+                                        color === 'purple' && "bg-purple-50 text-purple-600",
+                                        color === 'amber' && "bg-amber-50 text-amber-600",
+                                        color === 'slate' && "bg-slate-100 text-slate-600"
+                                    )}>
+                                        <FileText size={20} />
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-sm font-black text-slate-800 uppercase tracking-tight group-hover:text-indigo-600 transition-colors">{doc.name}</p>
+                                        <div className="flex items-center gap-4 mt-2">
+                                            <span className={cn(
+                                                "text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border",
+                                                color === 'indigo' && "bg-indigo-50 text-indigo-700 border-indigo-100",
+                                                color === 'emerald' && "bg-emerald-50 text-emerald-700 border-emerald-100",
+                                                color === 'purple' && "bg-purple-50 text-purple-700 border-purple-100",
+                                                color === 'amber' && "bg-amber-50 text-amber-700 border-amber-100"
+                                            )}>
+                                                {doc.type}
+                                            </span>
+                                            <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                                <span className="flex items-center gap-1.5">
+                                                    <Calendar size={12} />
+                                                    {doc.date}
+                                                </span>
+                                                <span>{doc.size}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button className="h-10 w-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
+                                            <Eye size={18} />
+                                        </button>
+                                        <button className="h-10 w-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-emerald-600 hover:text-white transition-all shadow-sm">
+                                            <Download size={18} />
+                                        </button>
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
                     </div>
-                )}
+
+                    {documents.length === 0 && (
+                        <div className="text-center py-12">
+                            <div className="h-20 w-20 bg-slate-100 rounded-3xl flex items-center justify-center text-slate-400 mx-auto mb-4">
+                                <FileText size={32} />
+                            </div>
+                            <p className="text-lg font-black text-slate-900 mb-2">No documents yet</p>
+                            <p className="text-sm text-slate-500 font-medium">Documents will appear here as you process shipments</p>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

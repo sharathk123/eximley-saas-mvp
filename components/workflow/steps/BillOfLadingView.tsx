@@ -13,7 +13,7 @@ export function BillOfLadingView({ shipment }: { shipment: Shipment }) {
     const { updateShipmentStatus, currentRole } = useWorkflow();
     const isAllowed = currentRole === 'EXPORT_MANAGER' || currentRole === 'EXPORTER_ADMIN';
     const [genState, setGenState] = useState<'IDLE' | 'GENERATING' | 'REVIEW'>(
-        shipment.status === 'BL_APPROVED' || shipment.status === 'CLOSED' ? 'REVIEW' : 'IDLE'
+        shipment.status === 'BL_APPROVED' || shipment.status !== 'ENQUIRY_RECEIVED' ? 'REVIEW' : 'IDLE'
     );
     const [isApproved, setIsApproved] = useState(false);
 
@@ -22,7 +22,7 @@ export function BillOfLadingView({ shipment }: { shipment: Shipment }) {
     };
 
     const handleAction = () => {
-        updateShipmentStatus(shipment.id, 'CLOSED', 'Approved BL & Closed Shipment');
+        updateShipmentStatus(shipment.id, 'FINANCIAL_RECONCILIATION', 'Approved BL & Sent for Reconciliation');
         setGenState('REVIEW');
     };
 
@@ -162,7 +162,7 @@ export function BillOfLadingView({ shipment }: { shipment: Shipment }) {
                         disabled={!isApproved && shipment.status !== 'CLOSED'}
                     >
                         {isApproved || shipment.status === 'CLOSED' ? <ExternalLink size={18} className="mr-2" /> : <Lock size={16} className="mr-2" />}
-                        {shipment.status === 'CLOSED' ? "Shipment Successfully Closed" : "Approve BL & Close Shipment"}
+                        {shipment.status === 'CLOSED' ? "Shipment Successfully Closed" : "Approve BL & Proceed to Reconciliation"}
                     </Button>
                 )}
             </div>

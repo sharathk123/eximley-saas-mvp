@@ -21,6 +21,8 @@ const getStepColor = (status: ShipmentState) => {
         case 'NEGOTIATION':
         case 'QUOTE_ACCEPTED':
         case 'PI_APPROVED':
+        case 'INSURANCE_FILED':
+        case 'ECGC_COVER_OBTAINED':
             return 'blue';
         case 'PAYMENT_CONFIRMED':
         case 'CI_PL_APPROVED':
@@ -31,8 +33,11 @@ const getStepColor = (status: ShipmentState) => {
         case 'LEO_GRANTED':
             return 'amber';
         case 'BL_APPROVED':
+        case 'FINANCIAL_RECONCILIATION':
         case 'CLOSED':
             return 'emerald';
+        case 'ESCALATED':
+            return 'slate';
         default:
             return 'blue';
     }
@@ -43,11 +48,11 @@ export function Timeline({ currentStatus, className }: TimelineProps) {
     const currentColor = getStepColor(currentStatus);
 
     const colorClasses: Record<string, { bg: string, border: string, text: string, ring: string, glow: string }> = {
-        blue: { bg: 'bg-blue-600', border: 'border-blue-600', text: 'text-blue-600', ring: 'ring-blue-500/20', glow: 'shadow-[0_0_15px_rgba(37,99,235,0.4)]' },
-        purple: { bg: 'bg-purple-600', border: 'border-purple-600', text: 'text-purple-600', ring: 'ring-purple-500/20', glow: 'shadow-[0_0_15px_rgba(147,51,234,0.4)]' },
-        amber: { bg: 'bg-amber-500', border: 'border-amber-500', text: 'text-amber-500', ring: 'ring-amber-500/20', glow: 'shadow-[0_0_15px_rgba(245,158,11,0.4)]' },
-        emerald: { bg: 'bg-emerald-600', border: 'border-emerald-600', text: 'text-emerald-600', ring: 'ring-emerald-500/20', glow: 'shadow-[0_0_15px_rgba(5,150,105,0.4)]' },
-        slate: { bg: 'bg-slate-600', border: 'border-slate-600', text: 'text-slate-600', ring: 'ring-slate-500/20', glow: 'shadow-[0_0_15px_rgba(71,85,105,0.4)]' }
+        blue: { bg: 'bg-indigo-600', border: 'border-indigo-600', text: 'text-indigo-600', ring: 'ring-indigo-500/20', glow: 'shadow-[0_0_20px_rgba(79,70,229,0.3)]' },
+        purple: { bg: 'bg-violet-600', border: 'border-violet-600', text: 'text-violet-600', ring: 'ring-violet-500/20', glow: 'shadow-[0_0_20px_rgba(139,92,246,0.3)]' },
+        amber: { bg: 'bg-amber-500', border: 'border-amber-500', text: 'text-amber-500', ring: 'ring-amber-500/20', glow: 'shadow-[0_0_20px_rgba(245,158,11,0.3)]' },
+        emerald: { bg: 'bg-emerald-600', border: 'border-emerald-600', text: 'text-emerald-600', ring: 'ring-emerald-500/20', glow: 'shadow-[0_0_20px_rgba(16,185,129,0.3)]' },
+        slate: { bg: 'bg-slate-600', border: 'border-slate-600', text: 'text-slate-600', ring: 'ring-slate-500/20', glow: 'shadow-[0_0_20px_rgba(71,85,105,0.3)]' }
     };
 
     const currentColors = colorClasses[currentColor];
@@ -104,7 +109,7 @@ export function Timeline({ currentStatus, className }: TimelineProps) {
                                     <div className="mt-2 flex flex-wrap gap-1">
                                         {step.allowedRoles.map(role => (
                                             <span key={role} className={cn("text-[9px] uppercase font-black px-1.5 py-0.5 rounded border transition-colors",
-                                                stepColor === 'blue' ? "bg-blue-50 text-blue-600 border-blue-100" :
+                                                stepColor === 'blue' ? "bg-indigo-50 text-indigo-600 border-indigo-100" :
                                                     stepColor === 'purple' ? "bg-purple-50 text-purple-600 border-purple-100" :
                                                         stepColor === 'amber' ? "bg-amber-50 text-amber-600 border-amber-100" :
                                                             "bg-emerald-50 text-emerald-600 border-emerald-100"

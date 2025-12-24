@@ -52,7 +52,7 @@ function Navbar() {
         <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center p-6 pointer-events-none">
             <div className="bg-white/70 backdrop-blur-xl border border-white/50 flex items-center justify-between px-8 py-3 w-full max-w-6xl rounded-full pointer-events-auto shadow-[0_8px_32px_-4px_rgba(0,0,0,0.05)]">
                 <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 bg-gradient-to-br from-indigo-600 to-blue-600 text-white rounded-lg flex items-center justify-center font-bold shadow-lg shadow-indigo-500/30">E</div>
+                    <div className="h-8 w-8 bg-gradient-to-br from-indigo-600 to-violet-600 text-white rounded-lg flex items-center justify-center font-bold shadow-lg shadow-indigo-500/30">E</div>
                     <span className="text-xl font-black tracking-tighter text-indigo-900">Eximley</span>
                 </div>
 
@@ -64,8 +64,8 @@ function Navbar() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <Link href="/login" className="text-sm font-bold text-indigo-900 hover:text-blue-600 transition-colors">Sign In</Link>
-                    <Link href="/login" className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-5 py-2 rounded-lg text-sm font-bold hover:shadow-lg hover:shadow-indigo-500/20 transition-all active:scale-[0.98]">
+                    <Link href="/login" className="text-sm font-bold text-indigo-900 hover:text-violet-600 transition-colors">Sign In</Link>
+                    <Link href="/login" className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-5 py-2 rounded-lg text-sm font-bold hover:shadow-lg hover:shadow-indigo-500/20 transition-all active:scale-[0.98]">
                         Get Started
                     </Link>
                 </div>
@@ -87,13 +87,13 @@ function Hero() {
                     transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 >
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/20 backdrop-blur-sm rounded-full border border-indigo-400/30 shadow-sm mb-8">
-                        <Sparkles size={16} className="text-cyan-400" />
-                        <span className="text-xs font-black uppercase tracking-widest text-cyan-300">India's First Autonomous Export System</span>
+                        <Sparkles size={16} className="text-indigo-400" />
+                        <span className="text-xs font-black uppercase tracking-widest text-indigo-300">India's First Autonomous Export System</span>
                     </div>
 
                     <h1 className="text-6xl md:text-8xl font-black tracking-tight text-white mb-8 leading-[1.05] drop-shadow-2xl">
                         From Enquiry<br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 animate-gradient">to Export.</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 animate-gradient">to Export.</span>
                     </h1>
 
                     <p className="text-xl md:text-2xl text-slate-300 max-w-2xl mx-auto mb-12 font-medium leading-relaxed drop-shadow-lg">
@@ -101,8 +101,8 @@ function Hero() {
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <Link href="/login" className="group relative bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-600 text-white px-8 h-12 rounded-xl flex items-center justify-center text-base font-bold hover:shadow-lg hover:shadow-indigo-500/30 transition-all hover:scale-[1.02] active:scale-[0.98] overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <Link href="/login" className="group relative bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 text-white px-8 h-12 rounded-xl flex items-center justify-center text-base font-bold hover:shadow-lg hover:shadow-indigo-500/30 transition-all hover:scale-[1.02] active:scale-[0.98] overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-violet-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                             <span className="relative z-10 flex items-center">
                                 Get Started Free <ArrowRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
                             </span>
@@ -126,7 +126,7 @@ function Hero() {
                             <div className="flex h-full">
                                 {/* Sidebar */}
                                 <div className="w-20 border-r border-indigo-50 flex flex-col items-center py-8 gap-6 bg-white/50">
-                                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 shadow-lg shadow-indigo-500/20" />
+                                    <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 shadow-lg shadow-indigo-500/20" />
                                     <div className="w-full flex flex-col items-center gap-6 mt-4">
                                         {[LayoutDashboard, Box, FileText, Settings].map((Icon, i) => (
                                             <div key={i} className={`h-10 w-10 rounded-xl flex items-center justify-center transition-colors ${i === 1 ? 'bg-indigo-50 text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}>
@@ -138,6 +138,8 @@ function Hero() {
 
                                 {/* Main Content */}
                                 <div className="flex-1 flex flex-col p-8 relative overflow-hidden">
+                                    {/* Inner Bloom Effect */}
+                                    <div className="absolute -right-20 -top-20 w-64 h-64 bg-indigo-500/5 rounded-full blur-[100px]" />
                                     {/* Header */}
                                     <div className="flex items-center justify-between mb-8">
                                         <div className="space-y-1">
@@ -153,12 +155,13 @@ function Hero() {
                                     {/* Metrics Row */}
                                     <div className="grid grid-cols-3 gap-4 mb-8">
                                         {[
-                                            { label: "Active Shipments", value: "124", color: "text-blue-600", trend: "+12%" },
+                                            { label: "Active Shipments", value: "124", color: "text-indigo-600", trend: "+12%" },
                                             { label: "Pending Actions", value: "3", color: "text-amber-500", trend: "-2" },
                                             { label: "Total Value", value: "$4.2M", color: "text-emerald-600", trend: "+8%" }
                                         ].map((m, i) => (
-                                            <div key={i} className="p-5 rounded-2xl bg-white border border-indigo-50 shadow-sm flex flex-col justify-between">
-                                                <div className="flex items-center justify-between mb-4">
+                                            <div key={i} className="p-5 rounded-2xl bg-white border border-indigo-50 shadow-sm flex flex-col justify-between group/metric relative overflow-hidden">
+                                                <div className="absolute -right-4 -top-4 w-12 h-12 bg-indigo-500/5 rounded-full blur-xl group-hover/metric:bg-indigo-500/10 transition-colors" />
+                                                <div className="flex items-center justify-between mb-4 relative z-10">
                                                     <div className={`p-2 rounded-lg bg-slate-50 ${m.color}`}><BarChart3 size={18} /></div>
                                                     <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">{m.trend}</span>
                                                 </div>
@@ -211,7 +214,7 @@ function Hero() {
 
                                         {/* Floating Status Card Overlay */}
                                         <div className="absolute top-6 right-6 z-10">
-                                            <div className="h-[180px] w-[160px] rounded-[2rem] bg-gradient-to-br from-indigo-600 to-blue-600 text-white p-6 relative overflow-hidden shadow-2xl shadow-indigo-500/30 flex flex-col justify-end">
+                                            <div className="h-[180px] w-[160px] rounded-[2rem] bg-gradient-to-br from-indigo-600 to-violet-600 text-white p-6 relative overflow-hidden shadow-2xl shadow-indigo-500/30 flex flex-col justify-end">
                                                 <div className="absolute top-0 right-0 p-6 opacity-20">
                                                     <Globe size={48} />
                                                 </div>
@@ -279,7 +282,7 @@ function TrustSection() {
         <section className="py-24 bg-white border-y border-slate-50">
             <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-6">
                 {[
-                    { label: "Global", sub: "International Standards", icon: <Globe size={24} className="text-blue-600" /> },
+                    { label: "Global", sub: "International Standards", icon: <Globe size={24} className="text-indigo-600" /> },
                     { label: "Compliance", sub: "Audit-ready Docs", icon: <FileCheck size={24} className="text-indigo-600" /> },
                     { label: "Secure", sub: "Enterprise Protection", icon: <Shield size={24} className="text-emerald-600" /> },
                     { label: "Intelligent", sub: "AI-Powered Workflows", icon: <Zap size={24} className="text-amber-500" /> }
@@ -300,13 +303,13 @@ function FeatureShowcase() {
         {
             title: "Enquiry-to-Export Workflows",
             desc: "One structured road for every shipment. From initial query to final closure.",
-            icon: <Globe className="text-blue-600" size={32} />,
+            icon: <Globe className="text-indigo-600" size={32} />,
             visual: <FeatureVisual1 />
         },
         {
             title: "AI-Assisted Documentation",
             desc: "Auto-draft CI, PL, and Shipping Bills with 99.9% accuracy matching ICEGATE standards.",
-            icon: <Sparkles className="text-indigo-600" size={32} />,
+            icon: <Sparkles className="text-violet-600" size={32} />,
             visual: <FeatureVisual2 />
         },
         {
@@ -346,7 +349,7 @@ function FeatureShowcase() {
 
 function FeatureVisual1() {
     return (
-        <div className="h-32 w-full relative overflow-hidden bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl p-4 flex items-center justify-center shadow-xl shadow-indigo-500/20">
+        <div className="h-32 w-full relative overflow-hidden bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl p-4 flex items-center justify-center shadow-xl shadow-indigo-500/20">
             <div className="absolute top-0 left-0 w-full h-full opacity-10 compliance-grid" />
             <div className="flex items-center gap-4 relative z-10 w-full overflow-hidden">
                 <div className="p-2 bg-white/20 backdrop-blur text-white rounded-lg"><MessageSquare size={16} /></div>
@@ -393,14 +396,14 @@ function FeatureVisual3() {
 
 function LivingFlow() {
     const steps = [
-        { label: "Enquiry", color: "bg-blue-600", text: "text-blue-600", border: "border-blue-200", icon: <MessageSquare size={16} /> },
-        { label: "Quotation", color: "bg-indigo-600", text: "text-indigo-600", border: "border-indigo-200", icon: <FileText size={16} /> },
+        { label: "Enquiry", color: "bg-indigo-600", text: "text-indigo-600", border: "border-indigo-200", icon: <MessageSquare size={16} /> },
+        { label: "Quotation", color: "bg-indigo-700", text: "text-indigo-700", border: "border-indigo-200", icon: <FileText size={16} /> },
         { label: "Negotiation", color: "bg-violet-600", text: "text-violet-600", border: "border-violet-200", icon: <MessageSquare size={16} /> },
-        { label: "Acceptance", color: "bg-purple-600", text: "text-purple-600", border: "border-purple-200", icon: <CheckCircle2 size={16} /> },
-        { label: "Proforma", color: "bg-fuchsia-600", text: "text-fuchsia-600", border: "border-fuchsia-200", icon: <FileText size={16} /> },
-        { label: "Payment", color: "bg-pink-600", text: "text-pink-600", border: "border-pink-200", icon: <DollarSign size={16} /> },
-        { label: "CI / PL", color: "bg-rose-600", text: "text-rose-600", border: "border-rose-200", icon: <FileText size={16} /> },
-        { label: "Customs", color: "bg-orange-600", text: "text-orange-600", border: "border-orange-200", icon: <Shield size={16} /> }
+        { label: "Acceptance", color: "bg-violet-700", text: "text-violet-700", border: "border-violet-200", icon: <CheckCircle2 size={16} /> },
+        { label: "Proforma", color: "bg-purple-600", text: "text-purple-600", border: "border-purple-200", icon: <FileText size={16} /> },
+        { label: "Payment", color: "bg-purple-700", text: "text-purple-700", border: "border-purple-200", icon: <DollarSign size={16} /> },
+        { label: "CI / PL", color: "bg-indigo-600", text: "text-indigo-600", border: "border-indigo-200", icon: <FileText size={16} /> },
+        { label: "Customs", color: "bg-emerald-600", text: "text-emerald-600", border: "border-emerald-200", icon: <Shield size={16} /> }
     ];
 
     return (
@@ -508,7 +511,7 @@ function PricingCard({ title, price, desc, features, popular, ctaLabel = "Get St
     return (
         <div className={cn(
             "p-10 rounded-[2.5rem] flex flex-col min-h-[600px] transition-all duration-500",
-            popular ? "bg-gradient-to-br from-indigo-600 via-indigo-700 to-blue-700 text-white scale-105 shadow-[0_40px_80px_-15px_rgba(79,70,229,0.3)]" : "bg-white border border-slate-100 text-slate-900"
+            popular ? "bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-700 text-white scale-105 shadow-[0_40px_80px_-15px_rgba(79,70,229,0.3)]" : "bg-white border border-slate-100 text-slate-900"
         )}>
             {popular && (
                 <span className="bg-white/20 backdrop-blur text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full w-fit mb-8 shadow-lg">
@@ -534,14 +537,14 @@ function PricingCard({ title, price, desc, features, popular, ctaLabel = "Get St
             {href.startsWith('mailto:') ? (
                 <a href={href} className={cn(
                     "mt-auto h-12 rounded-xl font-bold text-base transition-all active:scale-[0.98] shadow-sm flex items-center justify-center",
-                    popular ? "bg-white text-indigo-900 hover:bg-indigo-50" : "bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:shadow-lg hover:shadow-indigo-500/20"
+                    popular ? "bg-white text-indigo-900 hover:bg-indigo-50" : "bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:shadow-lg hover:shadow-indigo-500/20"
                 )}>
                     {ctaLabel}
                 </a>
             ) : (
                 <Link href={href} className={cn(
                     "mt-auto h-12 rounded-xl font-bold text-base transition-all active:scale-[0.98] shadow-sm flex items-center justify-center",
-                    popular ? "bg-white text-indigo-900 hover:bg-indigo-50" : "bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:shadow-lg hover:shadow-indigo-500/20"
+                    popular ? "bg-white text-indigo-900 hover:bg-indigo-50" : "bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:shadow-lg hover:shadow-indigo-500/20"
                 )}>
                     {ctaLabel}
                 </Link>
@@ -553,11 +556,11 @@ function PricingCard({ title, price, desc, features, popular, ctaLabel = "Get St
 function SecuritySection() {
     return (
         <section className="py-32 bg-white relative overflow-hidden">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-50 rounded-full blur-[100px] opacity-20 pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-50 rounded-full blur-[100px] opacity-20 pointer-events-none" />
 
             <div className="max-w-6xl mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center gap-16">
                 <div className="flex-1">
-                    <div className="h-16 w-16 bg-blue-600 text-white rounded-3xl flex items-center justify-center mb-8 shadow-xl shadow-blue-500/20">
+                    <div className="h-16 w-16 bg-indigo-600 text-white rounded-3xl flex items-center justify-center mb-8 shadow-xl shadow-indigo-500/20">
                         <Lock size={32} />
                     </div>
                     <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-8 tracking-tight">Enterprise-Grade Security</h2>
@@ -578,7 +581,7 @@ function SecuritySection() {
                     <div className="absolute inset-0 compliance-grid opacity-10" />
                     <div className="relative z-10 text-center flex flex-col items-center">
                         <div className="h-32 w-32 border-4 border-slate-900/5 rounded-full flex items-center justify-center mb-6">
-                            <div className="h-24 w-24 border-4 border-blue-600 rounded-full flex items-center justify-center animate-pulse">
+                            <div className="h-24 w-24 border-4 border-indigo-600 rounded-full flex items-center justify-center animate-pulse">
                                 <Lock size={40} className="text-slate-900" />
                             </div>
                         </div>
@@ -593,7 +596,7 @@ function SecuritySection() {
 function SecurityItem({ icon, title, desc }: any) {
     return (
         <div className="flex gap-4">
-            <div className="mt-1 text-blue-600">{icon}</div>
+            <div className="mt-1 text-indigo-600">{icon}</div>
             <div>
                 <h4 className="font-black text-slate-900 mb-1">{title}</h4>
                 <p className="text-slate-500 text-sm font-medium leading-relaxed">{desc}</p>
@@ -604,14 +607,14 @@ function SecurityItem({ icon, title, desc }: any) {
 
 function FinalCTA() {
     return (
-        <section className="py-40 bg-gradient-to-b from-slate-50 via-blue-50/30 to-slate-50 relative overflow-hidden">
+        <section className="py-40 bg-gradient-to-b from-slate-50 via-indigo-50/30 to-slate-50 relative overflow-hidden">
             <div className="absolute inset-0 z-0 pointer-events-none">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-400/20 blur-[120px] rounded-full" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-400/20 blur-[120px] rounded-full" />
             </div>
             <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
                 <h2 className="text-5xl md:text-7xl font-black text-indigo-950 mb-12 tracking-tight">Run Global Trade Like a Modern Business.</h2>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <Link href="/login" className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-8 h-12 rounded-xl flex items-center justify-center text-base font-bold hover:shadow-xl hover:shadow-indigo-500/30 transition-all active:scale-[0.98]">
+                    <Link href="/login" className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-8 h-12 rounded-xl flex items-center justify-center text-base font-bold hover:shadow-xl hover:shadow-indigo-500/30 transition-all active:scale-[0.98]">
                         Get Started Free
                     </Link>
                     <Link href="/login" className="px-8 h-12 rounded-xl flex items-center justify-center text-base font-bold bg-white border border-indigo-200 text-indigo-900 hover:bg-indigo-50 hover:border-indigo-300 transition-all active:scale-[0.98]">
@@ -628,7 +631,7 @@ function Footer() {
         <footer className="py-24 bg-white border-t border-slate-100">
             <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-12">
                 <div className="flex items-center gap-2">
-                    <div className="h-6 w-6 bg-gradient-to-br from-indigo-600 to-blue-600 text-white rounded flex items-center justify-center font-bold text-xs shadow-md">E</div>
+                    <div className="h-6 w-6 bg-gradient-to-br from-indigo-600 to-violet-600 text-white rounded flex items-center justify-center font-bold text-xs shadow-md">E</div>
                     <span className="text-lg font-black tracking-tighter text-indigo-900">Eximley</span>
                 </div>
 

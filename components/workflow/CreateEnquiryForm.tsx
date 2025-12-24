@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { X, Send, User, Globe, Package, ShoppingBag } from 'lucide-react';
 import { Shipment, Message } from '@/lib/workflow';
+import { COUNTRIES, PORTS, SHIPPING_MODES } from '@/lib/constants/masterData';
 
 interface CreateEnquiryFormProps {
     onClose: () => void;
@@ -16,7 +17,9 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
     const { addShipment } = useWorkflow();
     const [formData, setFormData] = useState({
         buyer: '',
-        destination: '',
+        destinationCountry: 'DE',
+        destinationPort: 'DEHAM',
+        shippingMode: 'SEA',
         goods: '',
         quantity: '',
         message: ''
@@ -33,17 +36,21 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
         const newId = `ENQ-${Math.floor(100 + Math.random() * 900)}`;
         const timestamp = new Date().toISOString();
 
+        const country = COUNTRIES.find(c => c.code === formData.destinationCountry)?.name || formData.destinationCountry;
+        const port = [...PORTS.SEA, ...PORTS.AIR].find(p => p.code === formData.destinationPort)?.name || formData.destinationPort;
+        const destination = `${port}, ${country}`;
+
         const initialMessage: Message = {
             id: `msg-${Date.now()}`,
             sender: 'BUYER',
-            content: formData.message || `Dear Team,\n\nWe are looking for **${formData.quantity}** of **${formData.goods}** to be delivered to **${formData.destination}**.\n\nPlease provide your best FOB quotation.\n\nRegards,\n${formData.buyer}`,
+            content: formData.message || `Dear Team,\n\nWe are looking for **${formData.quantity}** of **${formData.goods}** to be delivered to **${destination}** via **${formData.shippingMode}**.\n\nPlease provide your best FOB quotation.\n\nRegards,\n${formData.buyer}`,
             timestamp
         };
 
         const newShipment: Shipment = {
             id: newId,
             buyer: formData.buyer,
-            destination: formData.destination,
+            destination: destination,
             goods: formData.goods,
             status: 'ENQUIRY_RECEIVED',
             value: 'Pending',
@@ -108,16 +115,58 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
                         <div className="space-y-2">
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 px-1">
                                 <Globe size={12} className="text-blue-500" />
-                                Destination
+                                Destination Country
                             </label>
-                            <Input
-                                name="destination"
-                                placeholder="e.g. London, UK"
-                                value={formData.destination}
-                                onChange={handleChange}
+                            <select
+                                name="destinationCountry"
+                                value={formData.destinationCountry}
+                                onChange={(e) => setFormData(prev => ({ ...prev, destinationCountry: e.target.value }))}
                                 required
-                                className="input-sleek"
-                            />
+                                className="input-sleek w-full"
+                            >
+                                {COUNTRIES.map(c => (
+                                    <option key={c.code} value={c.code}>{c.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">
+                                Shipping Mode
+                            </label>
+                            <select
+                                name="shippingMode"
+                                value={formData.shippingMode}
+                                onChange={(e) => setFormData(prev => ({ ...prev, shippingMode: e.target.value }))}
+                                required
+                                className="input-sleek w-full"
+                            >
+                                {SHIPPING_MODES.map(m => (
+                                    <option key={m.code} value={m.code}>{m.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">
+                                Target Port
+                            </label>
+                            <select
+                                name="destinationPort"
+                                value={formData.destinationPort}
+                                onChange={(e) => setFormData(prev => ({ ...prev, destinationPort: e.target.value }))}
+                                required
+                                className="input-sleek w-full"
+                            >
+                                {(formData.shippingMode === 'SEA' ? PORTS.SEA : PORTS.AIR)
+                                    .filter(p => p.country === COUNTRIES.find(c => c.code === formData.destinationCountry)?.name)
+                                    .map(p => (
+                                        <option key={p.code} value={p.code}>{p.name} ({p.code})</option>
+                                    ))
+                                }
+                                <option value="OTHER">Other / Port not listed</option>
+                            </select>
                         </div>
                     </div>
 

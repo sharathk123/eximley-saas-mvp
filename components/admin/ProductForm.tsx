@@ -6,6 +6,7 @@ import { X, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Product, ProductCategory, UnitOfMeasure } from '@/lib/types/product';
 import { HSCodeLookup } from './HSCodeLookup';
+import { PRODUCT_CATEGORIES, UNIT_OF_MEASURE, COUNTRIES } from '@/lib/constants/masterData';
 
 interface ProductFormProps {
     product?: Product | null;
@@ -59,7 +60,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-6"
+            className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-6"
             onClick={onCancel}
         >
             <motion.div
@@ -70,9 +71,9 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                 className="card-sleek w-full max-w-3xl overflow-hidden p-0"
             >
                 {/* Header */}
-                <div className="p-8 border-b border-slate-100 flex items-center justify-between">
+                <div className="p-8 border-b border-indigo-50 flex items-center justify-between bg-indigo-50/20">
                     <div>
-                        <h3 className="text-2xl font-black text-slate-900">
+                        <h3 className="text-2xl font-black text-slate-800 tracking-tight">
                             {product ? 'Edit Product' : 'Add New Product'}
                         </h3>
                         <p className="text-sm text-slate-500 font-medium mt-1">
@@ -81,7 +82,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                     </div>
                     <button
                         onClick={onCancel}
-                        className="icon-box-sleek bg-slate-100 hover:bg-slate-200 text-slate-600 shadow-none border-transparent"
+                        className="h-10 w-10 rounded-full hover:bg-white hover:shadow-lg transition-all flex items-center justify-center text-slate-400 hover:text-indigo-600"
                     >
                         <X size={20} />
                     </button>
@@ -129,16 +130,16 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                                 required
                                 value={formData.hsCode}
                                 onChange={(e) => setFormData(prev => ({ ...prev, hsCode: e.target.value }))}
-                                className="input-sleek flex-1"
+                                className="input-sleek flex-1 h-12"
                                 placeholder="XXXX.XX.XX"
                             />
                             <Button
                                 type="button"
                                 onClick={() => setShowHSCodeLookup(true)}
                                 disabled={!formData.name}
-                                className="btn-sleek-primary shadow-blue-500/20"
+                                className="btn-sleek-primary h-12 px-6 shadow-indigo-500/20 gap-2"
                             >
-                                <Sparkles size={16} className="mr-2" />
+                                <Sparkles size={16} />
                                 AI Lookup
                             </Button>
                         </div>
@@ -161,14 +162,9 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                                 onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value as ProductCategory }))}
                                 className="input-sleek w-full"
                             >
-                                <option value="Electronics">Electronics</option>
-                                <option value="Textiles">Textiles</option>
-                                <option value="Machinery">Machinery</option>
-                                <option value="Chemicals">Chemicals</option>
-                                <option value="Agricultural">Agricultural</option>
-                                <option value="Automotive">Automotive</option>
-                                <option value="Pharmaceuticals">Pharmaceuticals</option>
-                                <option value="Other">Other</option>
+                                {PRODUCT_CATEGORIES.map(cat => (
+                                    <option key={cat} value={cat}>{cat}</option>
+                                ))}
                             </select>
                         </div>
 
@@ -182,14 +178,9 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                                 onChange={(e) => setFormData(prev => ({ ...prev, unitOfMeasure: e.target.value as UnitOfMeasure }))}
                                 className="input-sleek w-full"
                             >
-                                <option value="KGS">Kilograms (KGS)</option>
-                                <option value="LTR">Liters (LTR)</option>
-                                <option value="MTR">Meters (MTR)</option>
-                                <option value="PCS">Pieces (PCS)</option>
-                                <option value="SET">Sets (SET)</option>
-                                <option value="TON">Metric Tons (TON)</option>
-                                <option value="BOX">Boxes (BOX)</option>
-                                <option value="CTN">Cartons (CTN)</option>
+                                {UNIT_OF_MEASURE.map(u => (
+                                    <option key={u.code} value={u.code}>{u.name} ({u.code})</option>
+                                ))}
                             </select>
                         </div>
                     </div>
@@ -200,14 +191,16 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                             <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">
                                 Origin Country *
                             </label>
-                            <input
-                                type="text"
+                            <select
                                 required
                                 value={formData.originCountry}
                                 onChange={(e) => setFormData(prev => ({ ...prev, originCountry: e.target.value }))}
                                 className="input-sleek w-full"
-                                placeholder="India"
-                            />
+                            >
+                                {COUNTRIES.map(c => (
+                                    <option key={c.code} value={c.name}>{c.name}</option>
+                                ))}
+                            </select>
                         </div>
 
                         <div className="space-y-2">
@@ -229,7 +222,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                     <div className="flex items-center gap-4 pt-4">
                         <Button
                             type="submit"
-                            className="btn-sleek-primary flex-1 h-12 text-base shadow-indigo-500/20"
+                            className="btn-sleek-lg btn-sleek-primary flex-1 shadow-indigo-500/20"
                         >
                             {product ? 'Update Product' : 'Add Product'}
                         </Button>
@@ -237,7 +230,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
                             type="button"
                             variant="outline"
                             onClick={onCancel}
-                            className="btn-sleek-secondary h-12 px-8 text-base"
+                            className="btn-sleek-secondary h-14 px-8 font-black uppercase tracking-widest text-xs"
                         >
                             Cancel
                         </Button>

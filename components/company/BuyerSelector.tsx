@@ -55,7 +55,7 @@ export function BuyerSelector({ companyId, onSelect, selectedBuyer }: BuyerSelec
                 <button
                     type="button"
                     onClick={() => setShowAddForm(!showAddForm)}
-                    className="flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors"
+                    className="flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-700 transition-colors"
                 >
                     <Plus size={14} />
                     Add New Buyer
@@ -70,8 +70,8 @@ export function BuyerSelector({ companyId, onSelect, selectedBuyer }: BuyerSelec
                         type="button"
                         onClick={() => onSelect(buyer)}
                         className={`text-left p-4 rounded-xl border-2 transition-all ${selectedBuyer?.id === buyer.id
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-slate-200 bg-white hover:border-blue-200'
+                            ? 'border-indigo-500 bg-indigo-50'
+                            : 'border-slate-200 bg-white hover:border-indigo-200'
                             }`}
                     >
                         <p className="text-sm font-black text-slate-900">{buyer.name}</p>
@@ -89,7 +89,7 @@ export function BuyerSelector({ companyId, onSelect, selectedBuyer }: BuyerSelec
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden"
                     >
-                        <div className="p-6 bg-blue-50 border-2 border-blue-200 rounded-2xl space-y-4">
+                        <div className="p-6 bg-indigo-50 border-2 border-indigo-200 rounded-2xl space-y-4">
                             <h3 className="text-lg font-black text-slate-900">Add New Buyer</h3>
 
                             <div className="grid grid-cols-2 gap-4">
@@ -101,7 +101,7 @@ export function BuyerSelector({ companyId, onSelect, selectedBuyer }: BuyerSelec
                                         type="text"
                                         value={newBuyer.name}
                                         onChange={(e) => setNewBuyer({ ...newBuyer, name: e.target.value })}
-                                        className="w-full h-12 px-4 bg-white border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
+                                        className="w-full h-12 px-4 bg-white border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
                                         placeholder="Company Name"
                                     />
                                 </div>
@@ -114,7 +114,7 @@ export function BuyerSelector({ companyId, onSelect, selectedBuyer }: BuyerSelec
                                         type="email"
                                         value={newBuyer.email}
                                         onChange={(e) => setNewBuyer({ ...newBuyer, email: e.target.value })}
-                                        className="w-full h-12 px-4 bg-white border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
+                                        className="w-full h-12 px-4 bg-white border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
                                         placeholder="email@company.com"
                                     />
                                 </div>
@@ -127,7 +127,7 @@ export function BuyerSelector({ companyId, onSelect, selectedBuyer }: BuyerSelec
                                         type="text"
                                         value={newBuyer.country}
                                         onChange={(e) => setNewBuyer({ ...newBuyer, country: e.target.value })}
-                                        className="w-full h-12 px-4 bg-white border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
+                                        className="w-full h-12 px-4 bg-white border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
                                         placeholder="e.g., Germany"
                                     />
                                 </div>
@@ -151,7 +151,7 @@ export function BuyerSelector({ companyId, onSelect, selectedBuyer }: BuyerSelec
                                     type="button"
                                     onClick={handleAddBuyer}
                                     disabled={!newBuyer.name || !newBuyer.email || !newBuyer.country}
-                                    className="flex-1 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black"
+                                    className="flex-1 h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-black shadow-lg shadow-indigo-500/20"
                                 >
                                     Add Buyer
                                 </Button>

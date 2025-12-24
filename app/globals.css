@@ -106,20 +106,28 @@ body {
 }
 
 .glow-soft {
-  filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.15));
+  filter: drop-shadow(0 0 15px rgba(79, 70, 229, 0.15));
 }
 
 /* Theme Utilities - Sleek Enterprise (Tailwind v4) */
 @utility input-sleek {
-  @apply h-11 px-4 bg-white border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-sm;
+  @apply h-11 px-4 bg-white border border-slate-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm;
 }
 
 @utility btn-sleek-primary {
-  @apply h-11 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-bold text-sm shadow-md shadow-blue-500/20 active:scale-[0.98] flex items-center justify-center;
+  @apply h-11 px-6 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white rounded-xl font-bold text-sm shadow-md shadow-indigo-500/20 active:scale-[0.98] flex items-center justify-center;
 }
 
 @utility btn-sleek-secondary {
   @apply h-11 px-6 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold text-sm transition-all active:scale-[0.98] flex items-center justify-center;
+}
+
+@utility btn-sleek-lg {
+  @apply h-14 px-10 rounded-2xl font-black text-lg transition-all active:scale-[0.98] flex items-center justify-center;
+}
+
+@utility btn-sleek-xl {
+  @apply h-16 px-12 rounded-[1.5rem] font-black text-xl transition-all active:scale-[0.98] flex items-center justify-center shadow-2xl;
 }
 
 @utility icon-box-sleek {

@@ -41,16 +41,16 @@ export function WebGLHero() {
         rendererRef.current = renderer;
 
         // Lighting
-        const ambientLight = new THREE.AmbientLight(0x4a9eff, 0.4); // Brighter ambient
+        const ambientLight = new THREE.AmbientLight(0x6366f1, 0.4); // Indigo ambient
         scene.add(ambientLight);
 
-        const pointLight = new THREE.PointLight(0x60a5fa, 2, 50);
+        const pointLight = new THREE.PointLight(0x8b5cf6, 2, 50); // Violet point light
         pointLight.position.set(10, 10, 10);
         scene.add(pointLight);
 
-        const blueLight = new THREE.PointLight(0x4a9eff, 2, 40);
-        blueLight.position.set(-10, -5, 5);
-        scene.add(blueLight);
+        const indigoLight = new THREE.PointLight(0x4f46e5, 2, 40);
+        indigoLight.position.set(-10, -5, 5);
+        scene.add(indigoLight);
 
 
         // Background gradient
@@ -103,7 +103,7 @@ export function WebGLHero() {
         globeGeometry.setAttribute('size', new THREE.BufferAttribute(globeSizes, 1));
 
         const globeMaterial = new THREE.PointsMaterial({
-            color: 0x4a9eff,
+            color: 0x6366f1,
             size: 0.1,
             transparent: true,
             opacity: 0.15,
@@ -190,21 +190,21 @@ export function WebGLHero() {
             positions[i * 3 + 1] = point.y;
             positions[i * 3 + 2] = point.z;
 
-            // Refined Colors (Cyan, Blue, White, Subtle Amber)
+            // Refined Colors (Indigo, Violet, White)
             const colorChoice = Math.random();
             if (colorChoice < 0.6) {
-                // Muted cyan
-                colors[i * 3] = 0.29;
-                colors[i * 3 + 1] = 0.62;
-                colors[i * 3 + 2] = 1.0;
+                // Muted violet
+                colors[i * 3] = 0.545; // 0x8b5cf6 -> 139/255
+                colors[i * 3 + 1] = 0.36; // 92/255
+                colors[i * 3 + 2] = 0.96; // 246/255
             } else if (colorChoice < 0.9) {
-                // Bright Blue
-                colors[i * 3] = 0.2;
-                colors[i * 3 + 1] = 0.4;
-                colors[i * 3 + 2] = 1.0;
+                // Bright Indigo
+                colors[i * 3] = 0.31; // 0x4f46e5 -> 79/255
+                colors[i * 3 + 1] = 0.27; // 69/255
+                colors[i * 3 + 2] = 0.9; // 229/255
             } else {
                 // Data White
-                colors[i * 3] = 0.9;
+                colors[i * 3] = 0.95;
                 colors[i * 3 + 1] = 0.95;
                 colors[i * 3 + 2] = 1.0;
             }

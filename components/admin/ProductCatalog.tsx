@@ -94,17 +94,17 @@ export function ProductCatalog() {
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-3xl font-black text-slate-900 mb-2">Product Catalog</h2>
-                    <p className="text-slate-500 font-medium">Manage your EXIM product database with AI-powered HS Code classification</p>
+                    <h2 className="text-3xl font-black text-slate-800 mb-2">Product Catalog</h2>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Manage your EXIM product database with AI-powered HS Code classification</p>
                 </div>
                 <Button
                     onClick={() => {
                         setEditingProduct(null);
                         setShowProductForm(true);
                     }}
-                    className="btn-sleek-primary h-10 px-5 shadow-blue-500/20"
+                    className="btn-sleek-primary h-12 px-6 shadow-indigo-500/20 gap-2"
                 >
-                    <Plus size={18} className="mr-2" />
+                    <Plus size={18} />
                     Add Product
                 </Button>
             </div>
@@ -118,18 +118,18 @@ export function ProductCatalog() {
                         placeholder="Search by product name, HS code, or category..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="input-sleek w-full pl-10"
+                        className="input-sleek w-full pl-10 h-12"
                     />
                 </div>
-                <button className="btn-sleek-secondary h-10 px-4">
+                <button className="btn-sleek-secondary h-12 px-4 gap-2">
                     <Filter size={16} />
                     Filter
                 </button>
-                <button className="btn-sleek-secondary h-10 px-4">
+                <button className="btn-sleek-secondary h-12 px-4 gap-2">
                     <Upload size={16} />
-                    Import CSV
+                    Import
                 </button>
-                <button className="btn-sleek-secondary h-10 px-4">
+                <button className="btn-sleek-secondary h-12 px-4 gap-2">
                     <Download size={16} />
                     Export
                 </button>
@@ -161,22 +161,22 @@ export function ProductCatalog() {
                                 >
                                     <td className="p-6">
                                         <div className="flex items-center gap-4">
-                                            <div className="icon-box-sleek h-12 w-12 bg-blue-50 text-blue-600 border border-blue-100">
+                                            <div className="h-12 w-12 rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
                                                 <Package size={20} />
                                             </div>
                                             <div>
-                                                <p className="text-sm font-black text-slate-900">{product.name}</p>
-                                                <p className="text-xs text-slate-400 font-medium line-clamp-1">{product.description}</p>
+                                                <p className="text-sm font-black text-slate-800 uppercase tracking-tight">{product.name}</p>
+                                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest line-clamp-1">{product.description}</p>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="p-6">
                                         <div className="flex items-center gap-2">
-                                            <code className="text-sm font-black text-slate-900 bg-slate-100 px-3 py-1 rounded-lg">
+                                            <code className="text-xs font-black text-indigo-600 bg-indigo-50/50 px-3 py-1.5 rounded-lg border border-indigo-100/50">
                                                 {product.hsCode}
                                             </code>
                                             {product.hsCodeConfidence && product.hsCodeConfidence >= 90 && (
-                                                <div className="h-2 w-2 bg-emerald-500 rounded-full" title={`${product.hsCodeConfidence}% confidence`} />
+                                                <div className="h-1.5 w-1.5 bg-emerald-500 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]" title={`${product.hsCodeConfidence}% confidence`} />
                                             )}
                                         </div>
                                     </td>

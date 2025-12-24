@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Shipment } from '@/lib/workflow';
 import { useWorkflow } from '@/context/WorkflowContext';
 import { Button } from '@/components/ui/button';
@@ -8,9 +9,12 @@ import { FileText, ShieldCheck, Stamp, AlertTriangle, ExternalLink, Check, Spark
 import { PDFViewer } from '@/components/ui/PDFViewer';
 import { AIGenerationHUD } from '../AIGenerationHUD';
 import { cn } from '@/lib/utils';
+import { getPartners } from '@/lib/services/partnerService';
+import { Partner } from '@/lib/types/partner';
+import { Users, ChevronDown } from 'lucide-react';
 
 export function ShippingBillView({ shipment }: { shipment: Shipment }) {
-    const { updateShipmentStatus, currentRole } = useWorkflow();
+    const { updateShipmentStatus, currentRole, setShipments } = useWorkflow();
     const isCHA = currentRole === 'CHA';
     const isExporter = currentRole === 'EXPORTER_ADMIN' || currentRole === 'EXPORT_MANAGER';
 
@@ -22,6 +26,18 @@ export function ShippingBillView({ shipment }: { shipment: Shipment }) {
         shipment.status === 'SB_FILED' || shipment.status === 'LEO_GRANTED' ? 'REVIEW' : 'IDLE'
     );
     const [isApproved, setIsApproved] = useState(false);
+    const [showChaSelector, setShowChaSelector] = useState(false);
+
+    const chaAgents = getPartners('company-1', 'CHA_AGENT');
+
+    const handleSelectCha = (cha: Partner) => {
+        setShipments(prev => prev.map(s => s.id === shipment.id ? {
+            ...s,
+            selectedChaId: cha.id,
+            selectedChaName: cha.name
+        } : s));
+        setShowChaSelector(false);
+    };
 
     const handleGenerate = () => {
         setGenState('GENERATING');
@@ -111,13 +127,59 @@ export function ShippingBillView({ shipment }: { shipment: Shipment }) {
                     <h3 className="text-xl font-bold text-slate-900 mb-2">Shipping Bill Review</h3>
                     <p className="text-slate-500 text-sm">Review AI-drafted SB and approve for filing.</p>
                 </div>
-                {shipment.chaMode === 'EMBEDDED' && (
+                {shipment.chaMode === 'EMBEDDED' ? (
                     <span className={cn(
                         "px-3 py-1 text-xs font-bold rounded-full border flex items-center gap-1",
                         isCHA ? "bg-emerald-50 text-emerald-700 border-emerald-100" : "bg-amber-50 text-amber-700 border-amber-100"
                     )}>
                         <Stamp size={12} /> {isCHA ? 'CHA AUTHORIZED' : 'CHA EXCLUSIVE'}
                     </span>
+                ) : (
+                    <div className="relative">
+                        <button
+                            onClick={() => setShowChaSelector(!showChaSelector)}
+                            className={cn(
+                                "px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl border transition-all flex items-center gap-2",
+                                shipment.selectedChaId
+                                    ? "bg-indigo-50 text-indigo-700 border-indigo-100 shadow-sm"
+                                    : "bg-white text-slate-400 border-slate-100 hover:border-slate-300"
+                            )}
+                        >
+                            <Users size={12} />
+                            {shipment.selectedChaName || 'Select CHA Agent'}
+                            <ChevronDown size={12} className={cn("transition-transform", showChaSelector && "rotate-180")} />
+                        </button>
+
+                        <AnimatePresence>
+                            {showChaSelector && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 10 }}
+                                    className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 p-2"
+                                >
+                                    <p className="px-3 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-50 mb-1">
+                                        Partner Network: CHAs
+                                    </p>
+                                    {chaAgents.map(cha => (
+                                        <button
+                                            key={cha.id}
+                                            onClick={() => handleSelectCha(cha)}
+                                            className="w-full text-left px-3 py-3 rounded-xl hover:bg-slate-50 transition-colors flex items-center justify-between group"
+                                        >
+                                            <div>
+                                                <p className="text-xs font-black text-slate-900">{cha.name}</p>
+                                                <p className="text-[10px] text-slate-500 font-medium">Exp: {cha.metadata.experienceYears}y • {cha.metadata.licenseNumber}</p>
+                                            </div>
+                                            {shipment.selectedChaId === cha.id && (
+                                                <Check size={14} className="text-indigo-600" />
+                                            )}
+                                        </button>
+                                    ))}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
                 )}
             </div>
 

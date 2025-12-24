@@ -88,30 +88,35 @@ export default function CompanyEventsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 p-8">
-            <div className="max-w-4xl mx-auto">
+        <div className="min-h-screen bg-transparent">
+            <div className="max-w-7xl mx-auto">
                 {/* Header */}
-                <div className="mb-8">
-                    <button
-                        onClick={() => router.push('/dashboard')}
-                        className="flex items-center gap-2 text-slate-600 hover:text-slate-900 font-bold mb-4 transition-colors"
-                    >
-                        <ArrowLeft size={20} />
-                        Back to Dashboard
-                    </button>
-                    <div className="flex items-center gap-4">
-                        <div className="h-16 w-16 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-500/20">
-                            <Activity size={32} />
+                <div className="mb-10">
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-5">
+                            <div className="h-14 w-14 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-[1.5rem] flex items-center justify-center text-white shadow-2xl shadow-indigo-500/30">
+                                <Activity size={24} />
+                            </div>
+                            <div>
+                                <h1 className="text-3xl font-black tracking-tight text-slate-800 uppercase">Company Audit</h1>
+                                <p className="text-slate-500 font-bold mt-1 flex items-center gap-2 uppercase text-[10px] tracking-widest">
+                                    <span className="h-2 w-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(79,70,229,0.5)]" />
+                                    Real-time Activity Cluster
+                                </p>
+                            </div>
                         </div>
-                        <div>
-                            <h1 className="text-4xl font-black tracking-tight text-slate-900">Company Events</h1>
-                            <p className="text-slate-500 font-medium mt-1">Activity log for your company</p>
-                        </div>
+                        <button
+                            onClick={() => router.push('/dashboard')}
+                            className="btn-sleek-secondary h-12 px-6 gap-2 group font-black uppercase tracking-widest text-[10px]"
+                        >
+                            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                            Back to Core
+                        </button>
                     </div>
                 </div>
 
                 {/* Events Timeline */}
-                <div className="glass-panel p-8 rounded-[2rem] shadow-2xl">
+                <div className="card-sleek shadow-2xl border-slate-100">
                     <div className="space-y-4">
                         {events.map((event, idx) => {
                             const Icon = getEventIcon(event.type);
@@ -123,11 +128,11 @@ export default function CompanyEventsPage() {
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: idx * 0.05 }}
-                                    className="flex gap-4 p-4 bg-white rounded-xl border border-slate-100 hover:shadow-lg transition-all"
+                                    className="flex gap-4 p-4 bg-white rounded-xl border border-slate-100 hover:border-indigo-100 hover:shadow-lg transition-all"
                                 >
                                     <div className={cn(
                                         "h-12 w-12 rounded-xl flex items-center justify-center flex-shrink-0",
-                                        color === 'blue' && "bg-blue-50 text-blue-600",
+                                        color === 'blue' && "bg-indigo-50 text-indigo-600",
                                         color === 'emerald' && "bg-emerald-50 text-emerald-600",
                                         color === 'purple' && "bg-purple-50 text-purple-600",
                                         color === 'amber' && "bg-amber-50 text-amber-600",
@@ -137,13 +142,13 @@ export default function CompanyEventsPage() {
                                         <Icon size={20} />
                                     </div>
                                     <div className="flex-1">
-                                        <p className="text-sm font-black text-slate-900">{event.title}</p>
-                                        <p className="text-xs text-slate-600 font-medium mt-1">{event.description}</p>
+                                        <p className="text-sm font-black text-slate-800 uppercase tracking-tight group-hover:text-indigo-600 transition-colors">{event.title}</p>
+                                        <p className="text-xs text-slate-500 font-medium mt-1">{event.description}</p>
                                         <div className="flex items-center gap-4 mt-2">
-                                            <p className="text-xs text-slate-400 font-bold">
-                                                {event.actor} • {event.actorRole}
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                                {event.actor} • {event.actorRole.replace('_', ' ')}
                                             </p>
-                                            <p className="text-xs text-slate-400 font-medium">
+                                            <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
                                                 {formatTimestamp(event.timestamp)}
                                             </p>
                                         </div>
