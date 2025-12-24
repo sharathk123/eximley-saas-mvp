@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { WebGLHero } from './WebGLHero';
 
 export function LandingPage() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -69,14 +70,9 @@ function Navbar() {
 
 function Hero() {
     return (
-        <section className="relative min-h-[110vh] flex flex-col items-center justify-center pt-32 pb-20 overflow-hidden bg-gradient-to-b from-white via-blue-50/30 to-white">
-            {/* Enhanced Background Abstract Motion */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-500/25 blur-[140px] rounded-full animate-float" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-indigo-500/20 blur-[180px] rounded-full animate-float" style={{ animationDelay: '-5s' }} />
-                <div className="absolute top-[30%] right-[20%] w-[30%] h-[30%] bg-purple-400/15 blur-[100px] rounded-full animate-float" style={{ animationDelay: '-3s' }} />
-                <div className="absolute inset-0 compliance-grid opacity-5" />
-            </div>
+        <section className="relative min-h-[110vh] flex flex-col items-center justify-center pt-32 pb-20 overflow-hidden bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-900">
+            {/* WebGL Cinematic Background */}
+            <WebGLHero />
 
             <div className="relative z-10 w-full max-w-6xl px-6 flex flex-col items-center text-center">
                 <motion.div
@@ -84,17 +80,17 @@ function Hero() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 >
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full border border-blue-100 shadow-sm mb-8">
-                        <Sparkles size={16} className="text-blue-600" />
-                        <span className="text-xs font-black uppercase tracking-widest text-blue-700">India's First Autonomous Export System</span>
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/20 backdrop-blur-sm rounded-full border border-indigo-400/30 shadow-sm mb-8">
+                        <Sparkles size={16} className="text-cyan-400" />
+                        <span className="text-xs font-black uppercase tracking-widest text-cyan-300">India's First Autonomous Export System</span>
                     </div>
 
-                    <h1 className="text-6xl md:text-8xl font-black tracking-tight text-indigo-950 mb-8 leading-[1.05] drop-shadow-sm">
+                    <h1 className="text-6xl md:text-8xl font-black tracking-tight text-white mb-8 leading-[1.05] drop-shadow-2xl">
                         From Enquiry<br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-600 animate-gradient">to Export.</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 animate-gradient">to Export.</span>
                     </h1>
 
-                    <p className="text-xl md:text-2xl text-slate-600 max-w-2xl mx-auto mb-12 font-medium leading-relaxed">
+                    <p className="text-xl md:text-2xl text-slate-300 max-w-2xl mx-auto mb-12 font-medium leading-relaxed drop-shadow-lg">
                         AI-powered workflows for Indian exporters, importers, and CHAs — where global trade gets done seamlessly.
                     </p>
 
