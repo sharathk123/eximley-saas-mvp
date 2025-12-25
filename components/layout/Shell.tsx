@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import Link from 'next/link';
 import { useWorkflow } from '@/context/WorkflowContext';
 import { Button } from '@/components/ui/button';
@@ -12,8 +13,9 @@ import {
     LogOut,
     Bell,
     Search,
-    ChevronDown,
-    Users
+    Users,
+    PanelLeftClose,
+    PanelLeftOpen
 } from 'lucide-react';
 import { Role } from '@/lib/workflow';
 import { cn } from '@/lib/utils';
@@ -24,6 +26,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
     const { currentRole, setRole } = useWorkflow();
     const pathname = usePathname();
     const [userInitials, setUserInitials] = useState('JD');
+    const [isCollapsed, setIsCollapsed] = useState(false);
 
     useEffect(() => {
         const storedUser = localStorage.getItem('currentUser');
@@ -54,54 +57,80 @@ export function Shell({ children }: { children: React.ReactNode }) {
     return (
         <div className="min-h-screen bg-slate-50 flex font-sans">
             {/* Sidebar */}
-            <aside className="w-64 fixed inset-y-0 left-0 z-50 glass border-r border-slate-200/60 hidden md:flex flex-col transition-all duration-300">
-                <div className="h-20 flex items-center px-6 border-b border-indigo-50/50 bg-indigo-50/5">
-                    <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 text-white flex items-center justify-center font-black text-xl shadow-xl shadow-indigo-500/20">
+            <aside
+                className={cn(
+                    "fixed inset-y-0 left-0 z-50 glass border-r border-slate-200/60 hidden md:flex flex-col transition-all duration-300",
+                    isCollapsed ? "w-20" : "w-64"
+                )}
+            >
+                <div className="h-20 flex items-center px-4 border-b border-indigo-50/50 bg-indigo-50/5 justify-between">
+                    <div className={cn("flex items-center gap-3", isCollapsed && "justify-center w-full")}>
+                        <div className="h-10 w-10 min-w-[2.5rem] rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 text-white flex items-center justify-center font-black text-xl shadow-xl shadow-indigo-500/20">
                             E
                         </div>
-                        <div className="flex flex-col">
-                            <span className="font-black text-indigo-950 tracking-tighter text-xl leading-none">Eximley</span>
-                            <motion.span
-                                animate={{ opacity: [0.5, 1, 0.5] }}
-                                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                                className="text-[8px] font-black uppercase tracking-[0.2em] text-indigo-500 mt-1"
-                            >
-                                SaaS Cluster
-                            </motion.span>
-                        </div>
+                        {!isCollapsed && (
+                            <div className="flex flex-col overflow-hidden">
+                                <span className="font-black text-indigo-950 tracking-tighter text-xl leading-none truncate">Eximley</span>
+                                <motion.span
+                                    animate={{ opacity: [0.5, 1, 0.5] }}
+                                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                                    className="text-[8px] font-black uppercase tracking-[0.2em] text-indigo-500 mt-1 truncate"
+                                >
+                                    SaaS Cluster
+                                </motion.span>
+                            </div>
+                        )}
                     </div>
                 </div>
 
-                <nav className="flex-1 p-4 space-y-1.5">
-                    <NavItem href="/dashboard" icon={<LayoutDashboard size={18} />} label="Dashboard" active={pathname === '/dashboard'} />
-                    <NavItem href="/shipments" icon={<Box size={18} />} label="Shipments" active={pathname.startsWith('/shipments')} />
-                    <NavItem href="/company/network" icon={<Users size={18} />} label="Partner Network" active={pathname === '/company/network'} />
-                    <NavItem href="/documents" icon={<FileText size={18} />} label="Documents" active={pathname === '/documents'} />
-                    <NavItem href="/settings" icon={<Settings size={18} />} label="Settings" active={pathname === '/settings'} />
+                <nav className="flex-1 p-2 space-y-1.5 mt-2">
+                    <NavItem href="/dashboard" icon={<LayoutDashboard size={isCollapsed ? 20 : 18} />} label="Dashboard" active={pathname === '/dashboard'} isCollapsed={isCollapsed} />
+                    <NavItem href="/shipments" icon={<Box size={isCollapsed ? 20 : 18} />} label="Shipments" active={pathname.startsWith('/shipments')} isCollapsed={isCollapsed} />
+                    <NavItem href="/company/network" icon={<Users size={isCollapsed ? 20 : 18} />} label="Partner Network" active={pathname === '/company/network'} isCollapsed={isCollapsed} />
+                    <NavItem href="/documents" icon={<FileText size={isCollapsed ? 20 : 18} />} label="Documents" active={pathname === '/documents'} isCollapsed={isCollapsed} />
+                    <NavItem href="/settings" icon={<Settings size={isCollapsed ? 20 : 18} />} label="Settings" active={pathname === '/settings'} isCollapsed={isCollapsed} />
                 </nav>
 
                 <div className="p-4 border-t border-indigo-50/50">
-                    <Button variant="ghost" className="w-full justify-start text-slate-400 hover:text-red-500 hover:bg-red-50 font-black uppercase tracking-widest text-[9px] rounded-xl">
-                        <LogOut size={16} className="mr-3" />
-                        Terminate Session
+                    <Button variant="ghost" className={cn("w-full text-slate-400 hover:text-red-500 hover:bg-red-50 font-black uppercase tracking-widest text-[9px] rounded-xl", isCollapsed ? "justify-center px-0" : "justify-start")}>
+                        <LogOut size={16} className={cn(!isCollapsed && "mr-3")} />
+                        {!isCollapsed && "Terminate Session"}
                     </Button>
                 </div>
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 md:ml-64 relative min-h-screen flex flex-col">
+            <main className={cn("flex-1 relative min-h-screen flex flex-col transition-all duration-300", isCollapsed ? "md:ml-20" : "md:ml-64")}>
                 {/* Header */}
-                <header className="h-20 fixed top-0 right-0 left-0 md:left-64 z-40 glass border-b border-slate-200/60 flex items-center justify-between px-8 transition-all duration-300">
-                    {/* Search Bar */}
-                    <div className="w-[480px] relative hidden lg:block">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={16} />
-                        <input
-                            type="text"
-                            placeholder="Universal search shipments, documents, or partners..."
-                            className="input-sleek w-full !h-10 pl-11 pr-4 bg-slate-50 border-transparent focus:bg-white transition-all text-xs"
-                        />
+                <header className={cn("h-20 fixed top-0 right-0 z-40 glass border-b border-slate-200/60 flex items-center justify-between px-8 transition-all duration-300", isCollapsed ? "left-0 md:left-20" : "left-0 md:left-64")}>
+
+                    <div className="flex items-center gap-4">
+
+
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="hidden md:flex text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded-xl"
+                            onClick={() => setIsCollapsed(!isCollapsed)}
+                        >
+                            {isCollapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
+                        </Button>
+
+                        <div className="ml-4">
+                            <Breadcrumbs />
+                        </div>
+
+                        {/* Search Bar */}
+                        <div className="w-[480px] relative hidden lg:block ml-4">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={16} />
+                            <input
+                                type="text"
+                                placeholder="Universal search shipments, documents, or partners..."
+                                className="input-sleek w-full !h-10 pl-11 pr-4 bg-slate-50 border-transparent focus:bg-white transition-all text-xs"
+                            />
+                        </div>
                     </div>
+
 
                     <div className="flex items-center gap-4 ml-auto">
                         {/* Demo Role Switcher */}
@@ -138,19 +167,30 @@ export function Shell({ children }: { children: React.ReactNode }) {
     );
 }
 
-function NavItem({ href, icon, label, active }: { href: string; icon: React.ReactNode; label: string; active?: boolean }) {
+function NavItem({ href, icon, label, active, isCollapsed }: { href: string; icon: React.ReactNode; label: string; active?: boolean; isCollapsed: boolean }) {
     return (
         <Link
             href={href}
             className={cn(
-                "flex items-center px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300",
+                "flex items-center py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 group relative",
                 active
                     ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
-                    : "text-slate-400 hover:bg-white hover:text-indigo-600 hover:shadow-sm hover:translate-x-1"
+                    : "text-slate-400 hover:bg-white hover:text-indigo-600 hover:shadow-sm hover:translate-x-1",
+                isCollapsed ? "justify-center px-0" : "px-4"
             )}
+            title={isCollapsed ? label : undefined}
         >
-            <span className={cn("mr-4", active ? "text-white" : "text-slate-300 transition-colors")}>{icon}</span>
-            {label}
+            <span className={cn("transition-colors flex items-center justify-center", active ? "text-white" : "text-slate-300 group-hover:text-indigo-600", !isCollapsed && "mr-4")}>
+                {icon}
+            </span>
+            {!isCollapsed && <span className="truncate">{label}</span>}
+
+            {/* Tooltip for collapsed mode */}
+            {isCollapsed && (
+                <div className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-[9px] rounded-md opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity">
+                    {label}
+                </div>
+            )}
         </Link>
     );
 }

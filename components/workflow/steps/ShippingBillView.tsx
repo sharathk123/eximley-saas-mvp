@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { FileText, ShieldCheck, Stamp, AlertTriangle, ExternalLink, Check, Sparkles, Lock } from 'lucide-react';
 import { PDFViewer } from '@/components/ui/PDFViewer';
 import { AIGenerationHUD } from '../AIGenerationHUD';
+import { SmartDocumentUpload } from '../SmartDocumentUpload';
 import { cn } from '@/lib/utils';
 import { getPartners } from '@/lib/services/partnerService';
 import { Partner } from '@/lib/types/partner';
@@ -226,6 +227,18 @@ export function ShippingBillView({ shipment }: { shipment: Shipment }) {
                     </div>
                 ) : (
                     <div className="space-y-4">
+                        {/* Manual Upload Section */}
+                        <div className="mb-6">
+                            <SmartDocumentUpload
+                                title="Upload Filed Shipping Bill (Copy)"
+                                documentType="BOE" // Reuse BOE logic for SB as they are similar customs docs
+                                onExtractionComplete={(data) => {
+                                    console.log('SB Data:', data);
+                                    setIsApproved(true); // Auto-approve on successful upload
+                                }}
+                            />
+                        </div>
+
                         <div className="flex items-center gap-2 px-1">
                             <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">

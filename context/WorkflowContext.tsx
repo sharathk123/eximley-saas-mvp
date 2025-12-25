@@ -1,30 +1,35 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Role, Shipment, MOCK_SHIPMENTS, ShipmentState } from '@/lib/workflow';
+import { Role, Shipment, ImportShipment, MOCK_SHIPMENTS, MOCK_IMPORT_SHIPMENTS, ShipmentState, ImportState } from '@/lib/workflow';
+
+type AnyShipment = Shipment | ImportShipment;
+type AnyState = ShipmentState | ImportState;
 
 interface WorkflowContextType {
     currentRole: Role;
     setRole: (role: Role) => void;
-    shipments: Shipment[];
-    setShipments: React.Dispatch<React.SetStateAction<Shipment[]>>;
-    updateShipmentStatus: (id: string, newStatus: ShipmentState, action: string) => void;
-    addShipment: (shipment: Shipment) => void;
+    shipments: AnyShipment[];
+    setShipments: React.Dispatch<React.SetStateAction<AnyShipment[]>>;
+    updateShipmentStatus: (id: string, newStatus: AnyState, action: string) => void;
+    addShipment: (shipment: AnyShipment) => void;
 }
 
 const WorkflowContext = createContext<WorkflowContextType | undefined>(undefined);
 
 export function WorkflowProvider({ children }: { children: ReactNode }) {
     const [currentRole, setRole] = useState<Role>('EXPORTER_ADMIN');
-    const [shipments, setShipments] = useState<Shipment[]>(MOCK_SHIPMENTS);
+    const [shipments, setShipments] = useState<AnyShipment[]>([...MOCK_SHIPMENTS, ...MOCK_IMPORT_SHIPMENTS]);
 
-    const addShipment = (shipment: Shipment) => {
+    const addShipment = (shipment: AnyShipment) => {
         setShipments(prev => [shipment, ...prev]);
     };
 
-    const updateShipmentStatus = (id: string, newStatus: ShipmentState, action: string) => {
+    const updateShipmentStatus = (id: string, newStatus: AnyState, action: string) => {
         setShipments(prev => prev.map(s => {
             if (s.id === id) {
+                // Type casting here is necessary because we are updating a specific field
+                // safely assuming the state is valid for the shipment type due to UI logic
                 return {
                     ...s,
                     status: newStatus,
@@ -38,7 +43,7 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
                             action: action
                         }
                     ]
-                };
+                } as AnyShipment;
             }
             return s;
         }));

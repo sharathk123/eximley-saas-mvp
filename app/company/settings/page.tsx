@@ -17,6 +17,8 @@ import { cn } from '@/lib/utils';
 import type { Company, User } from '@/lib/types/user';
 import { getCompanyById } from '@/lib/services/userService';
 import { useRouter } from 'next/navigation';
+import { LUTManagement } from '@/components/settings/LUTManagement';
+
 
 interface CompanyDetails extends Company {
     iecNumber?: string;
@@ -357,6 +359,10 @@ export default function CompanySettingsPage() {
                                                 placeholder="7-digit AD Code"
                                             />
                                         </div>
+                                    </div>
+
+                                    <div className="border-t border-slate-200/60 pt-8 mt-8">
+                                        <LUTManagement />
                                     </div>
                                 </div>
                             )}

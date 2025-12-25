@@ -13,27 +13,36 @@ import {
     Zap,
     Scale
 } from 'lucide-react';
-import { Shipment } from '@/lib/workflow';
+import { Shipment, ImportShipment, WORKFLOW_STEPS, IMPORT_WORKFLOW_STEPS, isImportShipment } from '@/lib/workflow';
 import { cn } from '@/lib/utils';
 
 interface WorkflowSidebarProps {
-    shipment: Shipment;
+    shipment: Shipment | ImportShipment;
 }
 
 export function WorkflowSidebar({ shipment }: WorkflowSidebarProps) {
+    const isImport = isImportShipment(shipment);
+
     // Mock health score calculation based on status
     const getHealthScore = () => {
-        const states = [
-            'ENQUIRY_RECEIVED', 'QUOTE_SENT', 'QUOTE_ACCEPTED',
-            'PI_APPROVED', 'PAYMENT_CONFIRMED', 'CI_PL_APPROVED',
-            'SB_FILED', 'LEO_GRANTED', 'BL_APPROVED', 'CLOSED'
-        ];
-        const index = states.indexOf(shipment.status);
+        const steps = isImport ? IMPORT_WORKFLOW_STEPS : WORKFLOW_STEPS;
+        const index = steps.findIndex(step => step.id === shipment.status);
+
         if (index === -1) return 15;
-        return Math.min(Math.floor((index + 1) * 12), 100);
+
+        const totalSteps = steps.length;
+        const rawScore = Math.floor(((index + 1) / totalSteps) * 100);
+        return Math.min(rawScore + 10, 100); // Slight boost for UX
     };
 
     const health = getHealthScore();
+
+    // Determine region context safely
+    const regionContext = isImport
+        ? (shipment as ImportShipment).origin
+        : (shipment as Shipment).destination;
+
+    const regionName = regionContext?.split(',')[1] || (isImport ? 'source region' : 'target region');
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-700">
@@ -69,8 +78,8 @@ export function WorkflowSidebar({ shipment }: WorkflowSidebarProps) {
 
                     <p className="text-[11px] text-slate-300 leading-relaxed font-medium">
                         {health < 50 ? "Early stage analysis complete. Awaiting commercial terms." :
-                            health < 80 ? "Operational data verified. Proceed to customs filing." :
-                                "Final verification successful. Ready for vessel boarding."}
+                            health < 80 ? "Operational data verified. Proceeding with clear flow." :
+                                "Final verification successful. Ready for completion."}
                     </p>
                 </div>
             </div>
@@ -86,13 +95,16 @@ export function WorkflowSidebar({ shipment }: WorkflowSidebarProps) {
                     <InsightItem
                         icon={<TrendingUp size={14} />}
                         title="Market Context"
-                        desc={`Demand for ${shipment.goods} in ${shipment.destination.split(',')[1] || 'target region'} is up 12% this quarter.`}
+                        desc={`Demand for ${shipment.goods} in ${regionName} is up 12% this quarter.`}
                         color="indigo"
                     />
                     <InsightItem
                         icon={<Globe size={14} />}
                         title="Port Latency"
-                        desc="Nhava Sheva reporting 4h faster turnaround for textile containers."
+                        desc={isImport
+                            ? "Customs clearance at entry port showing 4h delay due to volume."
+                            : "Nhava Sheva reporting 4h faster turnaround for textile containers."
+                        }
                         color="emerald"
                     />
                     <InsightItem

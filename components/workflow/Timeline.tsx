@@ -1,50 +1,23 @@
 "use client";
 
 import React from 'react';
-import { WORKFLOW_STEPS, ShipmentState, Role } from '@/lib/workflow';
+import { WORKFLOW_STEPS, IMPORT_WORKFLOW_STEPS, ShipmentState, ImportState, Role, getStepColor } from '@/lib/workflow';
 import { Check, Lock, Clock, Info, ShieldCheck, FileText, Truck, DollarSign, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useWorkflow } from '@/context/WorkflowContext';
 
 interface TimelineProps {
-    currentStatus: ShipmentState;
+    currentStatus: ShipmentState | ImportState;
     className?: string;
 }
 
-const getStepColor = (status: ShipmentState) => {
-    switch (status) {
-        case 'REJECTED':
-        case 'QUOTE_EXPIRED':
-            return 'slate';
-        case 'ENQUIRY_RECEIVED':
-        case 'QUOTE_SENT':
-        case 'NEGOTIATION':
-        case 'QUOTE_ACCEPTED':
-        case 'PI_APPROVED':
-        case 'INSURANCE_FILED':
-        case 'ECGC_COVER_OBTAINED':
-            return 'blue';
-        case 'PAYMENT_CONFIRMED':
-        case 'CI_PL_APPROVED':
-        case 'SB_PENDING_CHA':
-        case 'SB_FILED':
-            return 'purple';
-        case 'CUSTOMS_QUERY':
-        case 'LEO_GRANTED':
-            return 'amber';
-        case 'BL_APPROVED':
-        case 'FINANCIAL_RECONCILIATION':
-        case 'CLOSED':
-            return 'emerald';
-        case 'ESCALATED':
-            return 'slate';
-        default:
-            return 'blue';
-    }
-};
-
 export function Timeline({ currentStatus, className }: TimelineProps) {
-    const currentStepIndex = WORKFLOW_STEPS.findIndex(s => s.id === currentStatus);
+    const isImport = currentStatus.startsWith('IMPORT_');
+    const steps = isImport ? IMPORT_WORKFLOW_STEPS : WORKFLOW_STEPS;
+
+    // Find index in the appropriate array
+    // We cast currentStatus because we know which array we are searching based on isImport
+    const currentStepIndex = steps.findIndex(s => s.id === currentStatus);
     const currentColor = getStepColor(currentStatus);
 
     const colorClasses: Record<string, { bg: string, border: string, text: string, ring: string, glow: string }> = {
@@ -55,7 +28,7 @@ export function Timeline({ currentStatus, className }: TimelineProps) {
         slate: { bg: 'bg-slate-600', border: 'border-slate-600', text: 'text-slate-600', ring: 'ring-slate-500/20', glow: 'shadow-[0_0_20px_rgba(71,85,105,0.3)]' }
     };
 
-    const currentColors = colorClasses[currentColor];
+    const currentColors = colorClasses[currentColor] || colorClasses.blue;
 
     return (
         <div className={cn("relative pl-4", className)}>
@@ -63,11 +36,11 @@ export function Timeline({ currentStatus, className }: TimelineProps) {
             <div className="absolute left-[32px] top-6 bottom-6 w-0.5 bg-slate-200" />
             <div
                 className={cn("absolute left-[32px] top-6 w-0.5 transition-all duration-1000 ease-in-out", currentColors.bg)}
-                style={{ height: `${(currentStepIndex / (WORKFLOW_STEPS.length - 1)) * 100}%` }}
+                style={{ height: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}
             />
 
             <div className="space-y-6 relative">
-                {WORKFLOW_STEPS.map((step, index) => {
+                {steps.map((step, index) => {
                     const isCompleted = index < currentStepIndex;
                     const isCurrent = index === currentStepIndex;
                     const isLocked = index > currentStepIndex;
@@ -114,7 +87,7 @@ export function Timeline({ currentStatus, className }: TimelineProps) {
                                                         stepColor === 'amber' ? "bg-amber-50 text-amber-600 border-amber-100" :
                                                             "bg-emerald-50 text-emerald-600 border-emerald-100"
                                             )}>
-                                                {role.replace('EXPORTER_', '').replace('_', ' ')}
+                                                {role.replace('EXPORTER_', '').replace('COMPANY_', '').replace('_', ' ')}
                                             </span>
                                         ))}
                                     </div>

@@ -1,12 +1,20 @@
 import React from 'react';
-import { Shipment } from '@/lib/workflow';
+import { Shipment, ImportShipment, isImportShipment, WORKFLOW_STEPS, IMPORT_WORKFLOW_STEPS } from '@/lib/workflow';
 import { Box, MapPin, DollarSign, Briefcase, Zap, CheckCircle2 } from 'lucide-react';
 import { AIStatusPill } from './AIStatusPill';
 import { cn } from '@/lib/utils';
-import { WORKFLOW_STEPS } from '@/lib/workflow';
 
-export function ShipmentHeader({ shipment }: { shipment: Shipment }) {
-    const currentStepIndex = WORKFLOW_STEPS.findIndex(s => s.id === shipment.status);
+
+export function ShipmentHeader({ shipment }: { shipment: Shipment | ImportShipment }) {
+    const isImport = isImportShipment(shipment);
+    const steps = isImport ? IMPORT_WORKFLOW_STEPS : WORKFLOW_STEPS;
+    const currentStepIndex = steps.findIndex(s => s.id === shipment.status);
+
+    const destination = isImport ? (shipment as ImportShipment).portOfEntry : (shipment as Shipment).destination;
+    // For import, origin is interesting, but we might want to show Supplier instead of Buyer in the header
+    const counterparty = isImport ? (shipment as ImportShipment).supplier : (shipment as Shipment).buyer;
+    const typeLabel = isImport ? 'Import' : 'Export';
+    const locationLabel = isImport ? (shipment as ImportShipment).origin : (shipment as Shipment).destination;
 
     return (
         <div className="md:col-span-12 float-panel rounded-[2.5rem] p-8 mb-8 relative overflow-hidden group">
@@ -17,7 +25,7 @@ export function ShipmentHeader({ shipment }: { shipment: Shipment }) {
                 <div className="flex items-center gap-6">
                     <div className="relative">
                         <div className="h-20 w-20 bg-slate-900 text-white rounded-[2rem] flex items-center justify-center font-black text-2xl shadow-2xl shadow-slate-900/40 relative z-10">
-                            {shipment.id.split('-')[1]}
+                            {shipment.id.split('-')[1] || shipment.id}
                         </div>
                         <div className="absolute -bottom-1 -right-1 h-8 w-8 bg-indigo-600 rounded-xl border-4 border-white flex items-center justify-center text-white shadow-lg z-20">
                             <Zap size={14} fill="currentColor" />
@@ -28,10 +36,10 @@ export function ShipmentHeader({ shipment }: { shipment: Shipment }) {
                         <div className="flex items-center gap-3 mb-2">
                             <h1 className="text-3xl font-black text-slate-900 tracking-tighter">{shipment.id}</h1>
                             <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200">
-                                <span className="px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-slate-500">Export</span>
+                                <span className="px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-slate-500">{typeLabel}</span>
                                 <span className="px-2 py-0.5 bg-white rounded-md shadow-sm text-[10px] font-black uppercase tracking-widest text-indigo-600 border border-slate-200/50">Air</span>
                             </div>
-                            <AIStatusPill shipment={shipment} />
+                            <AIStatusPill shipment={shipment as any} />
                         </div>
 
                         <div className="flex flex-wrap items-center gap-y-2 gap-x-5 text-sm text-slate-500 font-bold">
@@ -39,13 +47,13 @@ export function ShipmentHeader({ shipment }: { shipment: Shipment }) {
                                 <div className="h-5 w-5 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
                                     <MapPin size={12} />
                                 </div>
-                                {shipment.destination}
+                                {locationLabel}
                             </span>
                             <span className="flex items-center gap-2 group cursor-default">
                                 <div className="h-5 w-5 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-500 transition-colors">
                                     <Briefcase size={12} />
                                 </div>
-                                {shipment.buyer}
+                                {counterparty}
                             </span>
                         </div>
                     </div>
@@ -72,7 +80,7 @@ export function ShipmentHeader({ shipment }: { shipment: Shipment }) {
             {/* Lifecycle Progress Bar */}
             <div className="mt-8 pt-6 border-t border-slate-100/60 flex items-center justify-between gap-4">
                 <div className="flex-1 flex gap-1.5 h-1.5">
-                    {WORKFLOW_STEPS.map((step, i) => (
+                    {steps.map((step, i) => (
                         <div
                             key={step.id}
                             className={cn(
@@ -84,7 +92,7 @@ export function ShipmentHeader({ shipment }: { shipment: Shipment }) {
                     ))}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Stage {currentStepIndex + 1}/{WORKFLOW_STEPS.length}</span>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Stage {currentStepIndex + 1}/{steps.length}</span>
                     <CheckCircle2 size={12} className="text-indigo-600" />
                 </div>
             </div>

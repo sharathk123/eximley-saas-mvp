@@ -63,6 +63,7 @@ export function ConversationThread({ messages }: ConversationThreadProps) {
                             {msg.attachments.map((file) => (
                                 <div
                                     key={file.id}
+                                    onClick={() => file.url && window.open(file.url, '_blank')}
                                     className={cn(
                                         "flex items-center gap-3 px-3 py-2 rounded-xl border text-xs font-medium cursor-pointer transition-colors",
                                         msg.sender === 'EXPORTER'

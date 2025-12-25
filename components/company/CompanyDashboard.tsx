@@ -12,7 +12,8 @@ import {
     ShoppingCart,
     Settings,
     Box,
-    ChevronRight
+    ChevronRight,
+    ArrowDownLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,7 @@ import { useWorkflow } from '@/context/WorkflowContext';
 import { CreateEnquiryForm } from '@/components/workflow/CreateEnquiryForm';
 import Link from 'next/link';
 import { StatusPill } from '@/components/ui/StatusPill';
+import { isImportShipment, Shipment, ImportShipment } from '@/lib/workflow';
 
 export function CompanyDashboard() {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -174,34 +176,48 @@ export function CompanyDashboard() {
                         </Link>
                     </div>
                     <div className="space-y-3">
-                        {shipments.slice(0, 5).map((shipment, idx) => (
-                            <Link key={shipment.id} href={`/shipments/${shipment.id}`}>
-                                <motion.div
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: idx * 0.05 }}
-                                    className="group flex items-center gap-6 p-4 bg-white rounded-2xl border border-slate-50 hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-500/5 transition-all cursor-pointer"
-                                >
-                                    <div className="h-12 w-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
-                                        <Box size={20} />
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="text-sm font-black text-slate-800 uppercase tracking-tight group-hover:text-indigo-600 transition-colors">{shipment.id}</p>
-                                        <div className="flex items-center gap-4 mt-1 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                            <span>{shipment.destination}</span>
-                                            <span>•</span>
-                                            <span className="line-clamp-1">{shipment.goods}</span>
+                        {shipments.slice(0, 5).map((shipment, idx) => {
+                            const isImport = isImportShipment(shipment);
+                            const imp = shipment as ImportShipment;
+                            const exp = shipment as Shipment;
+
+                            return (
+                                <Link key={shipment.id} href={`/shipments/${shipment.id}`}>
+                                    <motion.div
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: idx * 0.05 }}
+                                        className="group flex items-center gap-6 p-4 bg-white rounded-2xl border border-slate-50 hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-500/5 transition-all cursor-pointer"
+                                    >
+                                        <div className={cn(
+                                            "h-12 w-12 rounded-xl flex items-center justify-center transition-all duration-300",
+                                            isImport
+                                                ? "bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white"
+                                                : "bg-slate-50 text-slate-400 group-hover:bg-indigo-600 group-hover:text-white"
+                                        )}>
+                                            {isImport ? <ArrowDownLeft size={20} /> : <Box size={20} />}
                                         </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <StatusPill status={shipment.status} />
-                                    </div>
-                                    <div className="h-8 w-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                                        <ChevronRight size={18} />
-                                    </div>
-                                </motion.div>
-                            </Link>
-                        ))}
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-sm font-black text-slate-800 uppercase tracking-tight group-hover:text-indigo-600 transition-colors">{shipment.id}</p>
+                                                {isImport && <span className="text-[8px] uppercase font-bold tracking-widest bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">Import</span>}
+                                            </div>
+                                            <div className="flex items-center gap-4 mt-1 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                                <span>{isImport ? imp.origin : exp.destination}</span>
+                                                <span>•</span>
+                                                <span className="line-clamp-1">{shipment.goods}</span>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <StatusPill status={shipment.status} />
+                                        </div>
+                                        <div className="h-8 w-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                                            <ChevronRight size={18} />
+                                        </div>
+                                    </motion.div>
+                                </Link>
+                            );
+                        })}
                         {shipments.length === 0 && (
                             <div className="text-center py-12">
                                 <div className="h-20 w-20 bg-slate-100 rounded-3xl flex items-center justify-center text-slate-400 mx-auto mb-4">

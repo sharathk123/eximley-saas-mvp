@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Shipment, Role } from '@/lib/workflow';
+import { Shipment, ImportShipment, Role, getProgressPercentage } from '@/lib/workflow';
 import { useWorkflow } from '@/context/WorkflowContext';
 import { Button } from '@/components/ui/button';
-import { Lock, CheckCircle, ShieldCheck } from 'lucide-react';
+import { Lock, CheckCircle, ShieldCheck, Zap, AlertTriangle, Clock, FileCheck, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { QuoteApprovalView } from './steps/QuoteApprovalView';
 import { DocumentView } from './steps/DocumentView';
@@ -15,11 +15,17 @@ import { FinanceView } from './steps/FinanceView';
 import { EnquiryDetailView } from './steps/EnquiryDetailView';
 import { ReplyQuotationView } from './steps/ReplyQuotationView';
 import { ConversationThread } from './ConversationThread';
-import { Sparkles, MessageCircle, FileCheck, Clock, AlertTriangle, Loader2, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+// New Imports
+import { SupplierPIReview } from './steps/import/SupplierPIReview';
+import { ImportPaymentView } from './steps/import/ImportPaymentView';
+import { BillOfEntryView } from './steps/import/BillOfEntryView';
+import { ImportEnquiryView } from './steps/import/ImportEnquiryView';
+import { ImportQuoteReceivedView } from './steps/import/ImportQuoteReceivedView';
+import { SmartDocumentUpload } from './SmartDocumentUpload';
 
 interface ActionPanelProps {
-    shipment: Shipment;
+    shipment: Shipment | ImportShipment;
 }
 
 export function ActionPanel({ shipment }: ActionPanelProps) {
@@ -27,30 +33,6 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
     const [showReplyForm, setShowReplyForm] = useState(false);
     const [isThinking, setIsThinking] = useState(false);
     const [thinkingMessage, setThinkingMessage] = useState('');
-
-    const getProgressPercentage = (status: string) => {
-        const stages: Record<string, number> = {
-            'ENQUIRY_RECEIVED': 5,
-            'QUOTE_SENT': 10,
-            'NEGOTIATION': 15,
-            'QUOTE_ACCEPTED': 20,
-            'PI_APPROVED': 25,
-            'INSURANCE_FILED': 30,
-            'ECGC_COVER_OBTAINED': 35,
-            'PAYMENT_CONFIRMED': 40,
-            'PROCUREMENT_INITIATED': 50,
-            'GOODS_RECEIVED': 60,
-            'CI_PL_APPROVED': 70,
-            'SB_FILED': 80,
-            'LEO_GRANTED': 90,
-            'BL_APPROVED': 95,
-            'FINANCIAL_RECONCILIATION': 98,
-            'CLOSED': 100,
-            'REJECTED': 0,
-            'ESCALATED': 100 // Visual flag
-        };
-        return stages[status] || 5;
-    };
 
     const progress = getProgressPercentage(shipment.status);
 
@@ -64,6 +46,10 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
             'PAYMENT_CONFIRMED': 'Verifying SWIFT/Bank remittance with ledger patterns...',
             'SB_FILED': 'Analyzing HSN compatibility for ICEGATE submission...',
             'BL_APPROVED': 'Checking Bill of Lading parity with Packing List...',
+            // Import messages
+            'IMPORT_PI_APPROVED': 'Validating supplier PI against purchase order...',
+            'IMPORT_BOE_FILED': 'Checking HSN codes and duty structure for Bill of Entry...',
+            'IMPORT_DUTY_PAID': 'Verifying duty payment with customs gateway...'
         };
 
         if (messages[newState]) setThinkingMessage(messages[newState]);
@@ -73,51 +59,54 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
         setIsThinking(false);
     };
 
-    // Helper to check if current role can act
-    // For prototype, we map the current state to the allowed roles defined in WORKFLOW_STEPS
-    // But we can also look up permissions directly
-
-    // Helper to simulate buyer acceptance
-    const simulateBuyerAcceptance = () => {
+    // Helper to simulate buyer/supplier acceptance
+    const simulateCounterpartyAcceptance = () => {
+        const isImport = shipment.status.startsWith('IMPORT');
+        const counterparty = isImport ? 'SUPPLIER' : 'BUYER';
         const acceptanceMessage = {
             id: `msg-acc-${Date.now()}`,
-            sender: 'BUYER' as const,
-            content: "Dear Team,\n\nWe are pleased to confirm acceptance of your quotation. Please proceed with the **Proforma Invoice** at the earliest.\n\nRegards,\nBerlin Trading GmbH",
+            sender: counterparty as any,
+            content: isImport
+                ? "We confirm the order terms and accept the Purchase Order."
+                : "Dear Team,\n\nWe are pleased to confirm acceptance of your quotation. Please proceed with the **Proforma Invoice** at the earliest.\n\nRegards,\nBerlin Trading GmbH",
             timestamp: new Date().toISOString()
         };
 
-        setShipments((prev: Shipment[]) => prev.map(s => {
+        setShipments((prev: any[]) => prev.map(s => {
             if (s.id === shipment.id) {
                 return {
                     ...s,
-                    status: 'QUOTE_ACCEPTED' as const,
+                    status: isImport ? 'IMPORT_QUOTE_ACCEPTED' : 'QUOTE_ACCEPTED',
                     messages: [...s.messages, acceptanceMessage],
                     history: [
                         ...s.history,
                         {
-                            state: 'QUOTE_ACCEPTED' as const,
+                            state: isImport ? 'IMPORT_QUOTE_ACCEPTED' : 'QUOTE_ACCEPTED',
                             timestamp: new Date().toISOString(),
-                            actor: shipment.buyer,
-                            role: 'BUYER' as any,
+                            actor: isImport ? (s as unknown as ImportShipment).supplier : (s as Shipment).buyer,
+                            role: counterparty as any,
                             action: 'Accepted Quotation'
                         }
                     ]
-                };
+                } as any;
             }
             return s;
         }));
     };
 
-    // Helper to simulate buyer rejection
-    const simulateBuyerRejection = (reason: string) => {
+    // Helper to simulate counterparty rejection
+    const simulateCounterpartyRejection = (reason: string) => {
+        const isImport = shipment.status.startsWith('IMPORT');
+        const counterparty = isImport ? 'SUPPLIER' : 'BUYER';
+
         const rejectionMessage = {
             id: `msg-rej-${Date.now()}`,
-            sender: 'BUYER' as const,
+            sender: counterparty as any,
             content: `We regret to inform you that we cannot proceed with this enquiry/quotation at this time.\n\n**Reason:** ${reason}`,
             timestamp: new Date().toISOString()
         };
 
-        setShipments((prev: Shipment[]) => prev.map(s => {
+        setShipments((prev: any[]) => prev.map(s => {
             if (s.id === shipment.id) {
                 return {
                     ...s,
@@ -128,12 +117,12 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                         {
                             state: 'REJECTED' as const,
                             timestamp: new Date().toISOString(),
-                            actor: shipment.buyer,
-                            role: 'BUYER' as any,
+                            actor: isImport ? (s as unknown as ImportShipment).supplier : (s as Shipment).buyer,
+                            role: counterparty as any,
                             action: `Rejected: ${reason}`
                         }
                     ]
-                };
+                } as any;
             }
             return s;
         }));
@@ -141,30 +130,35 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
 
     // Helper to simulate counter-offer
     const simulateCounterOffer = () => {
+        const isImport = shipment.status.startsWith('IMPORT');
+        const counterparty = isImport ? 'SUPPLIER' : 'BUYER';
+
         const counterMessage = {
             id: `msg-counter-${Date.now()}`,
-            sender: 'BUYER' as const,
-            content: "Thank you for your quotation. Could you please revise the price to **USD 10.50 per unit FOB** and confirm delivery within **30 days**?",
+            sender: counterparty as any,
+            content: isImport
+                ? "We can offer a 5% discount if you increase quantity by 20%."
+                : "Thank you for your quotation. Could you please revise the price to **USD 10.50 per unit FOB** and confirm delivery within **30 days**?",
             timestamp: new Date().toISOString()
         };
 
-        setShipments((prev: Shipment[]) => prev.map(s => {
+        setShipments((prev: any[]) => prev.map(s => {
             if (s.id === shipment.id) {
                 return {
                     ...s,
-                    status: 'NEGOTIATION' as const,
+                    status: isImport ? 'IMPORT_NEGOTIATION' : 'NEGOTIATION',
                     messages: [...s.messages, counterMessage],
                     history: [
                         ...s.history,
                         {
-                            state: 'NEGOTIATION' as const,
+                            state: isImport ? 'IMPORT_NEGOTIATION' : 'NEGOTIATION',
                             timestamp: new Date().toISOString(),
-                            actor: shipment.buyer,
-                            role: 'BUYER' as any,
+                            actor: isImport ? (s as unknown as ImportShipment).supplier : (s as Shipment).buyer,
+                            role: counterparty as any,
                             action: 'Received Counter-Offer'
                         }
                     ]
-                };
+                } as any;
             }
             return s;
         }));
@@ -174,12 +168,12 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
     const simulateExpiry = () => {
         const expiryMessage = {
             id: `msg-expiry-${Date.now()}`,
-            sender: 'EXPORTER' as const,
-            content: `System Notification: Quotation QT-001 has expired as of ${new Date().toLocaleDateString()}. Negotiation is paused.`,
+            sender: 'EXPORTER' as const, // Or Importer
+            content: `System Notification: Quotation has expired as of ${new Date().toLocaleDateString()}. Negotiation is paused.`,
             timestamp: new Date().toISOString()
         };
 
-        setShipments((prev: Shipment[]) => prev.map(s => {
+        setShipments((prev: any[]) => prev.map(s => {
             if (s.id === shipment.id) {
                 return {
                     ...s,
@@ -195,7 +189,7 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                             action: 'Quotation Expired'
                         }
                     ]
-                };
+                } as any;
             }
             return s;
         }));
@@ -204,25 +198,32 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
     // Render Dynamic Content based on State
     const renderContent = () => {
         switch (shipment.status) {
+            // === EXPORT FLOW ===
             case 'ENQUIRY_RECEIVED':
             case 'NEGOTIATION':
             case 'QUOTE_EXPIRED':
                 if (showReplyForm) {
                     return (
                         <ReplyQuotationView
-                            shipment={shipment}
+                            shipment={shipment as Shipment}
                             isRevision={shipment.status === 'NEGOTIATION' || shipment.status === 'QUOTE_EXPIRED'}
                             onBack={() => setShowReplyForm(false)}
                             onSend={(data) => {
+                                const quotationId = `QT-${shipment.id}-${Date.now().toString().slice(-4)}`;
                                 const exporterMsg = {
                                     id: `msg-rev-${Date.now()}`,
                                     sender: 'EXPORTER' as const,
                                     content: data.message,
                                     timestamp: new Date().toISOString(),
-                                    attachments: [{ name: 'Quotation QT-002', type: 'PDF', id: 'qt-002' }]
+                                    attachments: [{
+                                        name: `${quotationId}.pdf`,
+                                        type: 'PDF',
+                                        id: quotationId,
+                                        url: data.pdfUrl // Passing the data URL
+                                    }]
                                 };
 
-                                setShipments((prev: Shipment[]) => prev.map(s => {
+                                setShipments((prev: any[]) => prev.map(s => {
                                     if (s.id === shipment.id) {
                                         return {
                                             ...s,
@@ -236,7 +237,7 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                                                     timestamp: new Date().toISOString(),
                                                     actor: 'Demo User',
                                                     role: 'EXPORTER_ADMIN',
-                                                    action: `Sent Revised Quotation for $${data.price}/${data.unit}`
+                                                    action: `Sent AI Quotation ${quotationId} for $${data.price}/${data.unit}`
                                                 }
                                             ]
                                         };
@@ -251,13 +252,13 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                 return (
                     <div className="space-y-6">
                         <EnquiryDetailView
-                            shipment={shipment}
+                            shipment={shipment as Shipment}
                             onReply={() => setShowReplyForm(true)}
                         />
                         <Button
                             variant="ghost"
                             className="w-full text-red-500 hover:text-red-600 hover:bg-red-50 text-xs font-bold"
-                            onClick={() => simulateBuyerRejection("Pricing exceeds our current budget for this project.")}
+                            onClick={() => simulateCounterpartyRejection("Pricing exceeds our current budget for this project.")}
                         >
                             <AlertTriangle size={14} className="mr-2" />
                             Simulate Buyer Rejection
@@ -288,7 +289,7 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                                     <Button
                                         size="sm"
                                         className="w-full bg-white text-indigo-600 hover:bg-indigo-50 font-black text-[10px] rounded-xl"
-                                        onClick={simulateBuyerAcceptance}
+                                        onClick={simulateCounterpartyAcceptance}
                                     >
                                         Accept Deal
                                     </Button>
@@ -323,7 +324,7 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                                 variant="outline"
                                 size="sm"
                                 className="flex-1 border-red-100 text-red-600 hover:bg-red-50 text-[10px] font-bold h-10 rounded-xl"
-                                onClick={() => simulateBuyerRejection("Terms not acceptable.")}
+                                onClick={() => simulateCounterpartyRejection("Terms not acceptable.")}
                             >
                                 <AlertTriangle size={14} className="mr-2" />
                                 Reject
@@ -340,12 +341,12 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                         </div>
                         <h3 className="text-xl font-bold text-red-900">Workflow Terminated</h3>
                         <p className="text-sm text-red-700 max-w-xs mx-auto">
-                            This enquiry has been rejected by the buyer. No further operational actions are permitted in this thread.
+                            This process has been rejected. No further operational actions are permitted in this thread.
                         </p>
                         <div className="pt-4 border-t border-red-200 mt-6">
                             <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest mb-2">History Log</p>
                             <div className="text-[11px] text-red-600 font-medium italic">
-                                "{shipment.messages[shipment.messages.length - 1]?.content.split('**Reason:** ')[1]}"
+                                "{shipment.messages[shipment.messages.length - 1]?.content.split('**Reason:** ')[1] || 'Reason not specified'}"
                             </div>
                         </div>
                     </div>
@@ -381,7 +382,7 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                 );
 
             case 'QUOTE_DRAFT':
-                return <QuoteApprovalView shipment={shipment} />;
+                return <QuoteApprovalView shipment={shipment as Shipment} />;
 
             case 'PI_APPROVED':
                 return (
@@ -406,7 +407,7 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                                             "px-3 py-1 text-[10px] font-bold rounded-md transition-all",
                                             shipment.chaMode === 'EMBEDDED' ? "bg-white text-blue-600 shadow-sm" : "text-blue-400 hover:text-blue-500"
                                         )}
-                                        onClick={() => setShipments((prev: Shipment[]) => prev.map(s => s.id === shipment.id ? { ...s, chaMode: 'EMBEDDED' } : s))}
+                                        onClick={() => setShipments((prev: any[]) => prev.map(s => s.id === shipment.id ? { ...s, chaMode: 'EMBEDDED' } : s))}
                                     >
                                         EMBEDDED
                                     </button>
@@ -415,7 +416,7 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                                             "px-3 py-1 text-[10px] font-bold rounded-md transition-all",
                                             shipment.chaMode === 'MANUAL' ? "bg-white text-blue-600 shadow-sm" : "text-blue-400 hover:text-blue-500"
                                         )}
-                                        onClick={() => setShipments((prev: Shipment[]) => prev.map(s => s.id === shipment.id ? { ...s, chaMode: 'MANUAL' } : s))}
+                                        onClick={() => setShipments((prev: any[]) => prev.map(s => s.id === shipment.id ? { ...s, chaMode: 'MANUAL' } : s))}
                                     >
                                         MANUAL
                                     </button>
@@ -443,26 +444,48 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
 
             case 'ECGC_COVER_OBTAINED':
                 return (
-                    <StandardActionView
-                        shipment={shipment}
-                        nextState="PAYMENT_CONFIRMED"
-                        actionLabel="Confirm Advance Payment"
-                        role="FINANCE"
-                        onAction={handleUpdateStatus}
-                    />
+                    <div className="flex flex-col h-full space-y-6 animate-in fade-in duration-500">
+                        <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6">
+                            <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                <ShieldCheck size={16} className="text-blue-600" />
+                                Review Inward Remittance
+                            </h3>
+                            <div className="h-[350px]">
+                                <SmartDocumentUpload
+                                    title="Upload FIRC / Bank Advice"
+                                    documentType="SWIFT"
+                                    onExtractionComplete={(data) => {
+                                        console.log('FIRC Data:', data);
+                                        // Auto-confirm for prototype
+                                        handleUpdateStatus(shipment.id, 'PAYMENT_CONFIRMED', 'Payment verified via FIRC');
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        <div className="text-center">
+                            <p className="text-xs text-slate-400 mb-2">Or verify manually</p>
+                            <StandardActionView
+                                shipment={shipment}
+                                nextState="PAYMENT_CONFIRMED"
+                                actionLabel="Confirm Advance Payment (Manual)"
+                                role="FINANCE"
+                                onAction={handleUpdateStatus}
+                            />
+                        </div>
+                    </div>
                 );
 
             case 'PAYMENT_CONFIRMED':
             case 'CI_PL_APPROVED':
-                return <DocumentView shipment={shipment} />;
+                return <DocumentView shipment={shipment as Shipment} />;
 
             case 'SB_PENDING_CHA':
             case 'SB_FILED':
-                return <ShippingBillView shipment={shipment} />;
+                return <ShippingBillView shipment={shipment as Shipment} />;
 
             case 'LEO_GRANTED':
             case 'BL_APPROVED':
-                return <BillOfLadingView shipment={shipment} />;
+                return <BillOfLadingView shipment={shipment as Shipment} />;
 
             case 'FINANCIAL_RECONCILIATION':
                 return (
@@ -471,6 +494,186 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                         nextState="CLOSED"
                         actionLabel="Complete Final Reconciliation"
                         role="FINANCE"
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            // === IMPORT FLOW ===
+            case 'IMPORT_ENQUIRY_SENT':
+                return (
+                    <ImportEnquiryView
+                        shipment={shipment as ImportShipment}
+                        onReply={() => console.log('Reply to supplier')} // Placeholder handler
+                    />
+                );
+
+            case 'IMPORT_QUOTE_RECEIVED':
+                return (
+                    <ImportQuoteReceivedView
+                        shipment={shipment as ImportShipment}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'IMPORT_NEGOTIATION':
+                return (
+                    <div className="flex flex-col h-full space-y-6 animate-in fade-in duration-500">
+                        <div className="flex-1 overflow-y-auto max-h-[300px] pr-2 space-y-4 scrollbar-hide">
+                            <ConversationThread messages={shipment.messages} />
+                        </div>
+                        <div className="flex gap-2">
+                            <Button size="lg" className="flex-1 bg-indigo-600" onClick={simulateCounterpartyAcceptance}>
+                                Accept Supplier Quote
+                            </Button>
+                            <Button size="lg" variant="outline" className="flex-1" onClick={simulateCounterOffer}>
+                                Negotiate
+                            </Button>
+                        </div>
+                    </div>
+                );
+
+            case 'IMPORT_QUOTE_ACCEPTED':
+                return (
+                    <SupplierPIReview
+                        shipment={shipment as ImportShipment}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'IMPORT_PI_APPROVED':
+                return (
+                    <ImportPaymentView
+                        shipment={shipment as ImportShipment}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'IMPORT_PAYMENT_SENT':
+                return (
+                    <StandardActionView
+                        shipment={shipment}
+                        nextState="IMPORT_INSURANCE_FILED"
+                        actionLabel="File Import Insurance"
+                        role={['COMPANY_EXPORT_ANALYST', 'COMPANY_ADMIN']}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'IMPORT_INSURANCE_FILED':
+                return (
+                    <StandardActionView
+                        shipment={shipment}
+                        nextState="IMPORT_COMPLIANCE_CHECK"
+                        actionLabel="Verify Compliance"
+                        role={['COMPANY_EXPORT_ANALYST']}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'IMPORT_COMPLIANCE_CHECK':
+                return (
+                    <StandardActionView
+                        shipment={shipment}
+                        nextState="IMPORT_GOODS_SHIPPED"
+                        actionLabel="Confirm Goods Shipped"
+                        role={['COMPANY_EXPORT_ANALYST']}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'IMPORT_GOODS_SHIPPED':
+                return (
+                    <StandardActionView
+                        shipment={shipment}
+                        nextState="IMPORT_IN_TRANSIT"
+                        actionLabel="Update Tracking: In Transit"
+                        role={['COMPANY_EXPORT_ANALYST']}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'IMPORT_IN_TRANSIT':
+                return (
+                    <StandardActionView
+                        shipment={shipment}
+                        nextState="IMPORT_ARRIVED_PORT"
+                        actionLabel="Mark Arrived at Port"
+                        role={['COMPANY_EXPORT_ANALYST', 'CHA']}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'IMPORT_ARRIVED_PORT':
+            case 'IMPORT_BOE_FILED':
+                return (
+                    <BillOfEntryView
+                        shipment={shipment as ImportShipment}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'IMPORT_CUSTOMS_ASSESSMENT':
+                return (
+                    <StandardActionView
+                        shipment={shipment}
+                        nextState="IMPORT_DUTY_PAID"
+                        actionLabel="Pay Import Duty"
+                        role={['COMPANY_ADMIN', 'FINANCE']}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'IMPORT_DUTY_PAID':
+                return (
+                    <StandardActionView
+                        shipment={shipment}
+                        nextState="IMPORT_CUSTOMS_CLEARANCE"
+                        actionLabel="Confirm Customs Clearance"
+                        role={['CHA']}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'IMPORT_CUSTOMS_CLEARANCE':
+                return (
+                    <StandardActionView
+                        shipment={shipment}
+                        nextState="IMPORT_GOODS_RECEIVED"
+                        actionLabel="Confirm Goods Received at Warehouse"
+                        role={['COMPANY_EXPORT_ANALYST']}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'IMPORT_GOODS_RECEIVED':
+                return (
+                    <StandardActionView
+                        shipment={shipment}
+                        nextState="IMPORT_QUALITY_CHECK"
+                        actionLabel="Complete Quality Check"
+                        role={['COMPANY_EXPORT_ANALYST']}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'IMPORT_QUALITY_CHECK':
+                return (
+                    <StandardActionView
+                        shipment={shipment}
+                        nextState="IMPORT_RECONCILIATION"
+                        actionLabel="Start Financial Reconciliation"
+                        role={['FINANCE', 'COMPANY_ADMIN']}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'IMPORT_RECONCILIATION':
+                return (
+                    <StandardActionView
+                        shipment={shipment}
+                        nextState="IMPORT_CLOSED"
+                        actionLabel="Close Import Cycle"
+                        role={['COMPANY_ADMIN']}
                         onAction={handleUpdateStatus}
                     />
                 );
@@ -498,12 +701,13 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                 );
 
             case 'CLOSED':
-                return <FinanceView shipment={shipment} />;
+            case 'IMPORT_CLOSED':
+                return <FinanceView shipment={shipment as Shipment} />;
 
             case 'CUSTOMS_QUERY':
                 return (
                     <div className="space-y-6">
-                        <CustomsQueryView shipment={shipment} />
+                        <CustomsQueryView shipment={shipment as Shipment} />
                         <Button
                             variant="ghost"
                             className="w-full text-amber-600 hover:text-amber-700 hover:bg-amber-50 text-[10px] font-black uppercase tracking-widest gap-2"
@@ -518,7 +722,14 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
             default:
                 return (
                     <div className="flex flex-col items-center justify-center h-64 text-slate-400">
-                        <p>Workflow step specific UI not implemented for {shipment.status} yet.</p>
+                        <p>Action view for {shipment.status} is pending configuration.</p>
+                        <StandardActionView
+                            shipment={shipment}
+                            nextState={shipment.status}
+                            actionLabel="Manual Step (Prototype)"
+                            role="COMPANY_ADMIN"
+                            onAction={() => console.log('Placeholder Action')}
+                        />
                     </div>
                 );
         }
@@ -562,7 +773,7 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                                 shipment.status === 'ESCALATED' ? "text-amber-600" :
                                     "text-indigo-600"
                         )}>
-                            {shipment.status === 'CLOSED' ? 'Completed' :
+                            {shipment.status === 'CLOSED' || shipment.status === 'IMPORT_CLOSED' ? 'Completed' :
                                 shipment.status === 'ESCALATED' ? 'Attention' :
                                     shipment.status === 'REJECTED' ? 'Terminated' : 'Operational'}
                         </span>
@@ -613,8 +824,8 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
 function StandardActionView({ shipment, nextState, actionLabel, role, onAction }: any) {
     const { updateShipmentStatus, currentRole } = useWorkflow();
     const isAllowed = Array.isArray(role)
-        ? role.includes(currentRole) || currentRole === 'EXPORTER_ADMIN'
-        : currentRole === role || currentRole === 'EXPORTER_ADMIN';
+        ? role.includes(currentRole) || currentRole === 'EXPORTER_ADMIN' || currentRole === 'COMPANY_ADMIN'
+        : currentRole === role || currentRole === 'EXPORTER_ADMIN' || currentRole === 'COMPANY_ADMIN';
 
     return (
         <div className="flex flex-col items-center justify-center h-full space-y-6 text-center">
@@ -623,7 +834,7 @@ function StandardActionView({ shipment, nextState, actionLabel, role, onAction }
             </div>
             <div>
                 <h3 className="text-lg font-semibold text-slate-900">Pending Action</h3>
-                <p className="text-slate-500">This step requires approval from {role.replace('_', ' ')}.</p>
+                <p className="text-slate-500">This step requires approval from {Array.isArray(role) ? role.join(' / ').replace(/_/g, ' ') : role.replace(/_/g, ' ')}.</p>
             </div>
 
             {isAllowed ? (
@@ -637,7 +848,7 @@ function StandardActionView({ shipment, nextState, actionLabel, role, onAction }
             ) : (
                 <div className="flex items-center gap-2 text-amber-600 bg-amber-50 px-4 py-2 rounded-lg border border-amber-100">
                     <Lock size={16} />
-                    <span className="text-sm font-medium">Restricted to {role.replace('_', ' ')}</span>
+                    <span className="text-sm font-medium">Restricted Role</span>
                 </div>
             )}
         </div>
