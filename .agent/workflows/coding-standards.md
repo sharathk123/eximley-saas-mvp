@@ -8,6 +8,33 @@ Follow these instructions when working on this project.
 
 ---
 
+## 🚨 CRITICAL BEHAVIOR RULES
+
+### 1. NO HALLUCINATION
+- **Only implement what is explicitly asked** - Do not invent features
+- **If unsure, ASK** - Never assume requirements
+- **Verify file exists before editing** - Use `view_file` first
+- **Check existing patterns** - Follow what's already in the codebase
+
+### 2. NO EXTRA WORK
+- **Do exactly what is requested** - Nothing more, nothing less
+- **Do not refactor unrelated code** - Stay focused on the task
+- **Do not add "nice to have" features** - Wait for explicit requests
+- **Do not change file structure** - Unless specifically asked
+
+### 3. PRESERVE EXISTING FUNCTIONALITY
+- **Run `npm run build` before finishing** - Ensure no compilation errors
+- **Test affected flows** - Verify you didn't break anything
+- **Keep backward compatibility** - Don't change existing interfaces
+- **Review your changes** - Check diff before committing
+
+### 4. WHEN IN DOUBT
+- Ask the user for clarification
+- Show what you plan to do before doing it
+- Provide options if multiple approaches exist
+
+---
+
 ## 🏗️ Tech Stack (Do Not Deviate)
 
 | Layer | Technology |
