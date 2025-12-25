@@ -36,7 +36,7 @@ const INITIAL_TASKS: Task[] = [
         title: 'Tech Stack Documentation',
         description: 'Multi-tenant EXIM SaaS architecture',
         epic: 'DevOps',
-        status: 'BACKLOG',
+        status: 'DONE',
         priority: 'HIGH',
         sprint: 0,
         acceptanceCriteria: [
@@ -52,6 +52,26 @@ const INITIAL_TASKS: Task[] = [
             { id: '0.1.5', title: 'AI & Integrations', prompt: 'Document AI stack: OpenAI/Qwen for quotation drafting, AWS Textract for OCR, Descartes for HS codes. Background jobs via Trigger.dev or Inngest.' },
             { id: '0.1.6', title: 'Storage & Caching', prompt: 'Document Supabase Storage for documents with signed URLs per tenant. Upstash Redis for edge caching, rate limiting, and sessions.' },
             { id: '0.1.7', title: 'DevOps & Monitoring', prompt: 'Document infrastructure: Vercel for frontend, Railway/Render for workers. Sentry for errors, Vercel Analytics for APM. GitHub Actions for CI/CD.' }
+        ]
+    },
+    {
+        id: 'S0-02',
+        title: 'AI Coding Standards',
+        description: 'Behavioral rules & context awareness',
+        epic: 'DevOps',
+        status: 'DONE',
+        priority: 'HIGH',
+        sprint: 0,
+        acceptanceCriteria: [
+            'Critical behavior rules defined (No hallucination, No extra work)',
+            'State & Context awareness rules defined',
+            'Architectural patterns (Cards, Modals, Tables) documented',
+            'Workflow instructions created in .agent/workflows/coding-standards.md'
+        ],
+        subtasks: [
+            { id: '0.2.1', title: 'Behavioral Rules', prompt: 'Define rules for NO Hallucination, NO Extra Work, and Preserving Functionality.' },
+            { id: '0.2.2', title: 'Context Awareness', prompt: 'Define rules for checking PROJECT_KANBAN.md and conversation summaries before starting tasks.' },
+            { id: '0.2.3', title: 'Architectural Patterns', prompt: 'Document standard patterns for Cards, Modals, and Tables in the design system.' }
         ]
     },
 
@@ -77,7 +97,7 @@ const INITIAL_TASKS: Task[] = [
         title: 'Design System',
         description: 'Design tokens, Storybook, Dark mode',
         epic: 'UI/UX',
-        status: 'BACKLOG',
+        status: 'DONE',
         priority: 'HIGH',
         sprint: 1,
         subtasks: [

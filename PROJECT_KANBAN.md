@@ -1,8 +1,52 @@
-# Eximley SaaS - Project Kanban Board (Camunda Integration)
+# Eximley SaaS - Project Kanban Board (Sprint-Based Roadmap)
 
-All tasks are in **Backlog**. Each subtask includes an AI coding prompt for vibe coding.
+All tasks are organized into 6 logical sprints for iterative delivery.
 
 ---
+
+## 🏗️ SPRINT 0: Architecture & Planning
+**Deliverable:** Tech stack decisions & AI coding standards documented.
+
+### User Story S0-01: Tech Stack Documentation
+**Status:** DONE
+
+**Acceptance Criteria:**
+- [x] All technology choices documented with rationale
+- [x] Multi-tenancy pattern defined (RLS by company_id)
+- [x] Architecture diagram created
+
+**Subtasks:**
+| ID | Subtask | AI Prompt |
+|:---|:--------|:----------|
+| 0.1.1 | Frontend Stack | Document frontend stack: Next.js 14, Tailwind, Zustand, Zod. |
+| 0.1.2 | Database & Auth | Document Supabase + RLS for multi-tenancy. |
+| 0.1.3 | Multi-tenancy RLS | Create SQL migration for RLS policy pattern. |
+| 0.1.4 | Workflow Engine | Document Camunda 8 (Zeebe) integration. |
+
+---
+
+### User Story S0-02: AI Coding Standards
+**Status:** DONE
+
+**Acceptance Criteria:**
+- [x] Critical behavior rules defined (No hallucination, No extra work)
+- [x] State & Context awareness rules defined
+- [x] Architectural patterns (Cards, Modals, Tables) documented
+- [x] Workflow instructions created in `.agent/workflows/coding-standards.md`
+
+**Subtasks:**
+| ID | Subtask | AI Prompt |
+|:---|:--------|:----------|
+| 0.2.1 | Behavioral Rules | Define rules for NO Hallucination, NO Extra Work. |
+| 0.2.2 | Context Awareness | Define rules for checking KANBAN and conversation summaries. |
+| 0.2.3 | Architectural Patterns | Document standard patterns for Cards, Modals, and Tables. |
+
+---
+
+## 🚀 SPRINT 1: Foundation
+**Deliverable:** CI/CD pipeline, design system, basic testing.
+
+### Epic 1: Camunda Workflow Orchestration (Setup)
 
 ## 🚀 Epic 1: Camunda Workflow Orchestration
 

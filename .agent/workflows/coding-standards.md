@@ -109,7 +109,7 @@ types/                  # TypeScript type definitions
 
 ---
 
-## 🎨 UI/UX Guidelines
+## 🎨 UI/UX Guidelines (STRICTLY FOLLOW)
 
 ### Design System: "Sleek Enterprise"
 - **Primary Color**: Indigo (`indigo-600`)
@@ -136,6 +136,136 @@ className="bg-black" // NEVER
 - Body: `text-sm text-slate-600`
 
 ---
+
+## 🏛️ ARCHITECTURAL PATTERNS (MANDATORY)
+
+### Component Architecture
+```
+components/
+├── ui/           # Atomic components (Button, Input, Modal) - REUSE THESE
+├── layout/       # Page structure (Sidebar, Header) - DO NOT DUPLICATE
+├── workflow/     # Business logic components - ONE per feature
+└── admin/        # Admin-only components
+```
+
+### RULE: Check Before Creating
+```bash
+# Before creating ANY component, search first:
+grep -r "ComponentName" components/
+
+# If it exists, IMPORT IT. Do not create a new one.
+```
+
+### Standard Component Patterns
+
+#### Cards (use this exact pattern)
+```tsx
+<div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+  <h3 className="text-lg font-black text-slate-800 mb-2">Title</h3>
+  <p className="text-sm text-slate-600">Content</p>
+</div>
+```
+
+#### Modals (use this exact pattern)
+```tsx
+<AnimatePresence>
+  {isOpen && (
+    <motion.div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <motion.div className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-[85vh] overflow-hidden">
+        {/* Header */}
+        <div className="p-6 border-b border-slate-200 flex justify-between items-center">
+          <h2 className="text-xl font-black text-slate-800">{title}</h2>
+          <button onClick={onClose}><X size={20} /></button>
+        </div>
+        {/* Body */}
+        <div className="p-6 overflow-y-auto">{children}</div>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+```
+
+#### Tables (use this exact pattern)
+```tsx
+<table className="w-full">
+  <thead>
+    <tr className="border-b border-slate-200">
+      <th className="text-left text-xs font-black uppercase tracking-widest text-slate-400 py-3 px-4">Column</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr className="border-b border-slate-100 hover:bg-slate-50">
+      <td className="py-3 px-4 text-sm text-slate-600">Data</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+#### Buttons
+```tsx
+// Primary Action
+<Button className="btn-sleek-primary">Submit</Button>
+
+// Secondary Action  
+<Button variant="outline" className="border-slate-200 text-slate-600 hover:bg-slate-50">Cancel</Button>
+
+// Danger Action
+<Button className="bg-red-500 hover:bg-red-600 text-white">Delete</Button>
+```
+
+#### Form Inputs
+```tsx
+<div className="space-y-2">
+  <label className="text-xs font-black uppercase tracking-widest text-slate-400">Label</label>
+  <input className="w-full px-4 py-2 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20" />
+</div>
+```
+
+### Page Layout Pattern
+```tsx
+export default function PageName() {
+  return (
+    <div className="p-8">
+      {/* Page Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-black text-slate-800 tracking-tight">Page Title</h1>
+        <p className="text-slate-600 mt-1">Description</p>
+      </div>
+      
+      {/* Page Content */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Content here */}
+      </div>
+    </div>
+  );
+}
+```
+
+### Status Badges (use exact colors)
+```tsx
+const STATUS_COLORS = {
+  success: 'bg-emerald-100 text-emerald-700',
+  warning: 'bg-amber-100 text-amber-700', 
+  error: 'bg-red-100 text-red-700',
+  info: 'bg-indigo-100 text-indigo-700',
+  neutral: 'bg-slate-100 text-slate-700'
+};
+```
+
+### Icon Usage
+- Use `lucide-react` icons ONLY
+- Standard sizes: `size={16}` small, `size={20}` medium, `size={24}` large
+- Always add `className="text-slate-400"` or appropriate color
+
+### Animation Standards
+- Use `framer-motion` for animations
+- Entrance: `initial={{ opacity: 0 }} animate={{ opacity: 1 }}`
+- Transitions: `transition={{ duration: 0.2 }}`
+- Modal overlays: `bg-black/50`
+
+---
+
 
 ## 🗄️ Multi-Tenancy Rules
 
