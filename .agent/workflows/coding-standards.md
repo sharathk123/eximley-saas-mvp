@@ -1,0 +1,257 @@
+---
+description: Coding standards and instructions for AI agents working on Eximley EXIM SaaS
+---
+
+# Eximley Coding Standards
+
+Follow these instructions when working on this project.
+
+---
+
+## 🏗️ Tech Stack (Do Not Deviate)
+
+| Layer | Technology |
+|:------|:-----------|
+| Framework | Next.js 14 (App Router) |
+| Styling | Tailwind CSS + Radix UI |
+| State | Zustand (client), TanStack Query (server) |
+| Forms | react-hook-form + Zod |
+| Database | Supabase (PostgreSQL + RLS) |
+| Auth | Supabase Auth |
+| Storage | Supabase Storage |
+| Workflow | Camunda 8 (Zeebe) |
+| AI | OpenAI / Qwen API |
+| PDF | jsPDF + jspdf-autotable |
+
+---
+
+## 📁 File Structure
+
+```
+app/                    # Next.js App Router pages
+  api/                  # API routes
+  (auth)/               # Auth pages (login, signup)
+  dashboard/            # Dashboard page
+  shipments/            # Shipments list and detail
+  admin/                # Admin dashboard
+
+components/
+  ui/                   # Reusable UI components (Button, Card, Modal)
+  layout/               # Layout components (Sidebar, Header)
+  workflow/             # Workflow-specific components
+  admin/                # Admin-specific components
+
+lib/
+  services/             # Business logic services (aiService, pdfService)
+  camunda/              # Camunda client and workers
+  auth/                 # Auth utilities
+  utils.ts              # Shared utilities
+  workflow.ts           # Workflow state definitions
+
+types/                  # TypeScript type definitions
+```
+
+---
+
+## 🎨 UI/UX Guidelines
+
+### Design System: "Sleek Enterprise"
+- **Primary Color**: Indigo (`indigo-600`)
+- **Accent**: Emerald for success, Amber for warnings, Red for errors
+- **Background**: Slate-50 to Slate-100 (NEVER pure black)
+- **Text**: Slate-800 (headings), Slate-600 (body)
+
+### Component Styling
+```tsx
+// ✅ DO: Use btn-sleek-primary class
+<Button className="btn-sleek-primary">Submit</Button>
+
+// ✅ DO: Use consistent border-radius
+className="rounded-xl" // Cards
+className="rounded-lg" // Buttons, inputs
+
+// ❌ DON'T: Use black backgrounds
+className="bg-black" // NEVER
+```
+
+### Typography
+- Headings: `font-black` with `tracking-tight`
+- Labels: `text-xs font-black uppercase tracking-widest text-slate-400`
+- Body: `text-sm text-slate-600`
+
+---
+
+## 🗄️ Multi-Tenancy Rules
+
+### CRITICAL: Every Data Table Must Have `company_id`
+```sql
+CREATE TABLE shipments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID NOT NULL REFERENCES companies(id),
+  -- other columns
+);
+```
+
+### CRITICAL: Apply RLS to Every Table
+```sql
+ALTER TABLE shipments ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users see own company data"
+ON shipments FOR ALL
+USING (company_id = (SELECT company_id FROM profiles WHERE id = auth.uid()));
+```
+
+### In API Routes
+```typescript
+// ✅ DO: Always filter by company_id
+const { data } = await supabase
+  .from('shipments')
+  .select('*')
+  .eq('company_id', user.company_id);
+
+// ❌ DON'T: Query without company filter
+const { data } = await supabase.from('shipments').select('*');
+```
+
+---
+
+## 📝 Code Style
+
+### TypeScript
+- Always use explicit types, avoid `any`
+- Use interfaces for objects, types for unions
+- Suffix interfaces with purpose: `ShipmentData`, `QuotationResponse`
+
+### Components
+```tsx
+// ✅ DO: Use named exports
+export function ShipmentCard({ shipment }: { shipment: Shipment }) {}
+
+// ✅ DO: Destructure props
+export function Button({ children, variant = 'primary', ...props }) {}
+
+// ❌ DON'T: Use default exports for components
+export default function ShipmentCard() {} // Avoid
+```
+
+### API Routes
+```typescript
+// ✅ DO: Use proper error handling
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    // validate with Zod
+    const validated = shipmentSchema.parse(body);
+    // ... logic
+    return NextResponse.json({ data }, { status: 201 });
+  } catch (error) {
+    console.error('Error:', error);
+    return NextResponse.json({ error: 'Failed' }, { status: 500 });
+  }
+}
+```
+
+---
+
+## 🔄 Workflow States
+
+### Export Lifecycle
+```
+ENQUIRY_RECEIVED → QUOTATION_DRAFTING → QUOTATION_SENT → 
+ORDER_CONFIRMED → PRODUCTION → SHIPPING_BILL → IN_TRANSIT → DELIVERED
+```
+
+### Import Lifecycle
+```
+SUPPLIER_SELECTION → PI_RECEIVED → PI_APPROVED → PAYMENT_INITIATED → 
+SHIPMENT_DISPATCHED → BOE_FILED → CUSTOMS_CLEARED → DELIVERED
+```
+
+---
+
+## 📄 Document Types
+
+| Code | Document |
+|:-----|:---------|
+| PI | Proforma Invoice |
+| CI | Commercial Invoice |
+| PL | Packing List |
+| BL | Bill of Lading |
+| SB | Shipping Bill |
+| BOE | Bill of Entry |
+| BRC | Bank Realization Certificate |
+
+---
+
+## ⚙️ Camunda Integration
+
+### Job Types (use exact names)
+- `ai-quotation-draft` - AI drafts quotation
+- `generate-pdf` - Generate PDF document
+- `send-notification` - Send email/SMS
+- `compliance-check` - Run compliance validation
+
+### BPMN Best Practices
+- Use meaningful process IDs: `export_shipment`, `import_shipment`
+- Service tasks must have `type` matching worker subscription
+- User tasks need `assignee` or `candidateGroups`
+
+---
+
+## 🧪 Testing Requirements
+
+### Unit Tests
+- All services in `lib/services/` must have tests
+- Mock external APIs (OpenAI, Supabase, Camunda)
+
+### E2E Tests
+- Cover complete Export workflow
+- Cover complete Import workflow
+- Test auth flow (login, logout, protected routes)
+
+---
+
+## 📦 Git Commit Convention
+
+```
+feat: Add new feature
+fix: Bug fix
+docs: Documentation only
+style: Formatting, no code change
+refactor: Code restructuring
+test: Adding tests
+chore: Build process, dependencies
+```
+
+Example:
+```
+feat: Add AI quotation drafting with Qwen integration
+
+- Create aiService with generateAIQuotation()
+- Add PDF generation for quotations
+- Integrate with ReplyQuotationView component
+```
+
+---
+
+## ⚠️ Common Pitfalls to Avoid
+
+1. **Never use `any` type** - Always define proper types
+2. **Never query without company_id filter** - Multi-tenancy breach
+3. **Never use pure black (#000)** - Use slate palette
+4. **Never skip form validation** - Use Zod schemas
+5. **Never hardcode secrets** - Use environment variables
+6. **Never forget loading states** - Show skeletons/spinners
+7. **Never ignore errors** - Log and show user-friendly messages
+
+---
+
+## 🚀 Before Submitting Code
+
+- [ ] TypeScript compiles without errors
+- [ ] ESLint passes
+- [ ] All new services have tests
+- [ ] RLS policies applied to new tables
+- [ ] Loading and error states handled
+- [ ] Mobile responsive
+- [ ] Commit message follows convention
