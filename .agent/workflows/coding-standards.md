@@ -33,7 +33,36 @@ Follow these instructions when working on this project.
 - Show what you plan to do before doing it
 - Provide options if multiple approaches exist
 
+### 5. STATE & CONTEXT AWARENESS
+
+#### Before Starting Any Task:
+1. **Check PROJECT_KANBAN.md** - See what's already done, in progress, or planned
+2. **Read the conversation summary** - Don't repeat work from previous sessions
+3. **Search codebase first** - Use `grep_search` to find existing implementations
+4. **Check if feature exists** - Before creating, verify it doesn't already exist
+
+#### After Completing a Task:
+1. **Update PROJECT_KANBAN.md** - Mark stories/subtasks as complete
+2. **Summarize what was done** - So next session doesn't redo it
+3. **Note any blockers** - Document issues for future sessions
+
+#### Files to Check Before Working:
+| File | Purpose |
+|:-----|:--------|
+| `PROJECT_KANBAN.md` | Current sprint, completed tasks |
+| `lib/workflow.ts` | Workflow states (don't recreate) |
+| `lib/services/` | Existing services (don't duplicate) |
+| `components/ui/` | UI components (reuse, don't recreate) |
+
+#### Common Duplications to Avoid:
+- ❌ Creating a new Button when `components/ui/button.tsx` exists
+- ❌ Adding workflow states when they're in `lib/workflow.ts`
+- ❌ Building PDF service when `lib/services/pdfService.ts` exists
+- ❌ Adding AI integration when `lib/services/aiService.ts` exists
+- ❌ Creating modals when pattern exists in other components
+
 ---
+
 
 ## 🏗️ Tech Stack (Do Not Deviate)
 
