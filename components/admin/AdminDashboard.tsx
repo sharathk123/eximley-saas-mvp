@@ -19,11 +19,13 @@ import {
     PanelLeftClose,
     PanelLeftOpen,
     LogOut,
-    Bell
+    Bell,
+    Map
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ProductCatalog } from './ProductCatalog';
+import { KanbanBoard } from './KanbanBoard';
 
 interface PendingUser {
     id: string;
@@ -34,7 +36,7 @@ interface PendingUser {
     status: 'PENDING' | 'APPROVED' | 'DECLINED';
 }
 
-type AdminTab = 'users' | 'products';
+type AdminTab = 'users' | 'products' | 'roadmap';
 
 export function AdminDashboard() {
     const [activeTab, setActiveTab] = useState<AdminTab>('users');
@@ -143,6 +145,23 @@ export function AdminDashboard() {
                         </span>
                         {!isCollapsed && <span className="truncate">Product Catalog</span>}
                     </button>
+
+                    <button
+                        onClick={() => setActiveTab('roadmap')}
+                        className={cn(
+                            "w-full flex items-center py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 group relative",
+                            activeTab === 'roadmap'
+                                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
+                                : "text-slate-400 hover:bg-white hover:text-indigo-600 hover:shadow-sm hover:translate-x-1",
+                            isCollapsed ? "justify-center px-0" : "px-4"
+                        )}
+                        title={isCollapsed ? "Product Roadmap" : undefined}
+                    >
+                        <span className={cn("transition-colors flex items-center justify-center", activeTab === 'roadmap' ? "text-white" : "text-slate-300 group-hover:text-indigo-600", !isCollapsed && "mr-4")}>
+                            <Map size={isCollapsed ? 20 : 18} />
+                        </span>
+                        {!isCollapsed && <span className="truncate">Product Roadmap</span>}
+                    </button>
                 </nav>
 
                 <div className="p-4 border-t border-indigo-50/50">
@@ -174,7 +193,7 @@ export function AdminDashboard() {
                         </div>
 
                         <h1 className="text-xl font-black text-slate-800 tracking-tight hidden md:block pl-4 border-l border-slate-200 ml-4">
-                            {activeTab === 'users' ? 'User Management' : 'Product Catalog'}
+                            {activeTab === 'users' ? 'User Management' : activeTab === 'products' ? 'Product Catalog' : 'Product Roadmap'}
                         </h1>
                     </div>
 
@@ -334,6 +353,12 @@ export function AdminDashboard() {
                     {activeTab === 'products' && (
                         <div className="max-w-7xl mx-auto w-full">
                             <ProductCatalog />
+                        </div>
+                    )}
+
+                    {activeTab === 'roadmap' && (
+                        <div className="max-w-[1600px] mx-auto w-full h-full">
+                            <KanbanBoard />
                         </div>
                     )}
                 </div>
