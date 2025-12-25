@@ -51,11 +51,11 @@ export async function generateAIQuotation(
       - validity: (e.g., "15 Days")
       - terms: (Incoterm code, e.g., "FOB", "CIF")
       - paymentTerms: (code, e.g., "ADVANCE_30_70", "LC_SIGHT")
-      - message: (professional email-style response. IMPORTANT: Use PLAIN TEXT ONLY. NO MARKDOWN (no stars, hashes, or bold text))
+      - message: (Professional email response in HTML format. Use <p> tags for paragraphs. For the 'Offer Details' section, you MUST use an HTML <table> with <th> and <td> tags to present the Item, Qty, Price, and Total clearly. Do not use Markdown. Format as: Salutation, Opening, HTML Table for Offer, Logistics/Timeline, Closing, Sign-off)
       - itemDescription: (A professional, detailed trade description of the goods for the official quotation PDF)
       - insights: (array of 2-3 short strings about pricing strategy or market fit)
       
-      Make the pricing realistic for the ${destination} market.
+      Make the pricing realistic for the ${destination} market. Ensure the html table is well-structured.
     `;
 
         const model = isOpenRouter ? 'qwen/qwen-2.5-72b-instruct' : 'qwen-plus';
@@ -72,7 +72,14 @@ export async function generateAIQuotation(
         const content = response.choices[0].message.content;
         if (!content) throw new Error('Empty response from AI');
 
-        return JSON.parse(content) as QuotationAIResponse;
+        // Strip markdown code blocks if present (```json ... ```)
+        const cleanContent = content
+            .replace(/^```json\s*/i, '')
+            .replace(/^```\s*/i, '')
+            .replace(/\s*```$/i, '')
+            .trim();
+
+        return JSON.parse(cleanContent) as QuotationAIResponse;
     } catch (error) {
         console.error('Error generating AI quotation:', error);
         // Fallback to mock data if API fails or is not configured

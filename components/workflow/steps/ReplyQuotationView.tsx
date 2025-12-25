@@ -5,12 +5,14 @@ import { Shipment, EnquiryData } from '@/lib/workflow';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { MessageSquare, Send, Save, ArrowLeft, DollarSign, Package, Truck, Sparkles, FileText, CheckCircle, ShieldCheck, Lock, Download, Eye } from 'lucide-react';
+import { MessageSquare, Send, Save, ArrowLeft, DollarSign, Package, Truck, Sparkles, FileText, CheckCircle, ShieldCheck, Lock, Download, Eye, FolderUp } from 'lucide-react';
 import { AIGenerationHUD } from '../AIGenerationHUD';
 import { cn } from '@/lib/utils';
 import { INCOTERMS, PAYMENT_TERMS, CURRENCIES, UNIT_OF_MEASURE } from '@/lib/constants/masterData';
 import { generateAIQuotation, QuotationAIResponse } from '@/lib/services/aiService';
 import { generateQuotationPDF, PDFQuotationData } from '@/lib/services/pdfService';
+import { PDFViewerModal } from '@/components/ui/PDFViewerModal';
+import { EmailEditor } from '@/components/ui/EmailEditor';
 
 interface ReplyQuotationViewProps {
     shipment: Shipment;
@@ -24,11 +26,14 @@ export function ReplyQuotationView({ shipment, isRevision, onBack, onSend }: Rep
     const [genState, setGenState] = useState<'IDLE' | 'GENERATING' | 'REVIEW'>('IDLE');
     const [isApproved, setIsApproved] = useState(false);
     const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
+    const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
     const [aiInsights, setAiInsights] = useState<string[]>([]);
 
     const [formData, setFormData] = useState({
         message: '',
         price: '0.00',
+        costPrice: '0.00',
+        margin: '20',
         currency: 'USD',
         unit: 'PCS',
         validity: '30 Days',
@@ -49,9 +54,15 @@ export function ReplyQuotationView({ shipment, isRevision, onBack, onSend }: Rep
                 enquiry?.message || ''
             );
 
+            const suggestedPrice = parseFloat(aiResponse.price);
+            // Simulate: Cost is ~80% of selling price (25% markup)
+            const suggestedCost = (suggestedPrice / 1.25).toFixed(2);
+
             setFormData({
                 message: aiResponse.message,
                 price: aiResponse.price,
+                costPrice: suggestedCost,
+                margin: '25',
                 currency: aiResponse.currency,
                 unit: aiResponse.unit,
                 validity: aiResponse.validity,
@@ -69,36 +80,70 @@ export function ReplyQuotationView({ shipment, isRevision, onBack, onSend }: Rep
     };
 
     const handlePreviewPDF = () => {
-        const pdfData: PDFQuotationData = {
-            quotationNo: `QT-${shipment.id}-${Date.now().toString().slice(-4)}`,
-            date: new Date().toLocaleDateString(),
-            buyer: {
-                name: shipment.buyer,
-                address: `Trade Center Plaza\n${shipment.destination}`
-            },
-            seller: {
-                name: "Eximley Global Exports Ltd.",
-                address: "Crystal Tower, Bandra Kurla Complex\nMumbai, Maharashtra, India 400051"
-            },
-            items: [
-                {
-                    description: formData.itemDescription,
-                    quantity: enquiry?.quantity || "1 Lot",
-                    unitPrice: formData.price,
-                    total: (parseFloat(formData.price) * (enquiry?.quantity ? parseInt(enquiry.quantity) || 1 : 1)).toFixed(2)
-                }
-            ],
-            terms: {
-                incoterms: formData.terms,
-                payment: formData.paymentTerms,
-                validity: formData.validity
-            },
-            currency: formData.currency
-        };
+        try {
+            const pdfData: PDFQuotationData = {
+                quotationNo: `QT-${shipment.id}-${Date.now().toString().slice(-4)}`,
+                date: new Date().toLocaleDateString(),
+                buyer: {
+                    name: shipment.buyer,
+                    address: `Trade Center Plaza\n${shipment.destination}`
+                },
+                seller: {
+                    name: "Eximley Global Exports Ltd.",
+                    address: "Crystal Tower, Bandra Kurla Complex\nMumbai, Maharashtra, India 400051"
+                },
+                items: [
+                    {
+                        description: formData.itemDescription,
+                        quantity: enquiry?.quantity || "1 Lot",
+                        unitPrice: formData.price,
+                        total: (parseFloat(formData.price) * (enquiry?.quantity ? parseInt(enquiry.quantity) || 1 : 1)).toFixed(2)
+                    }
+                ],
+                terms: {
+                    incoterms: formData.terms,
+                    payment: formData.paymentTerms,
+                    validity: formData.validity
+                },
+                currency: formData.currency
+            };
 
-        const dataUrl = generateQuotationPDF(pdfData);
-        setPdfDataUrl(dataUrl);
-        window.open(dataUrl, '_blank');
+            const dataUrl = generateQuotationPDF(pdfData);
+            setPdfDataUrl(dataUrl);
+            setIsPdfModalOpen(true);
+        } catch (error) {
+            console.error('PDF Generation Error:', error);
+            alert('Failed to generate PDF. Check console for details.');
+        }
+    };
+
+    const handleExportToDMS = async () => {
+        try {
+            if (!pdfDataUrl) {
+                // Generate PDF if not already generated
+                handlePreviewPDF();
+                return;
+            }
+
+            // TODO: Implement actual DMS API integration
+            // For now, we'll simulate saving to DMS
+            const quotationNo = `QT-${shipment.id}-${Date.now().toString().slice(-4)}`;
+            const fileName = `Quotation_${quotationNo}_${new Date().toISOString().split('T')[0]}.pdf`;
+
+            // Simulate DMS upload
+            console.log('Exporting to DMS:', {
+                fileName,
+                shipmentId: shipment.id,
+                buyer: shipment.buyer,
+                timestamp: new Date().toISOString()
+            });
+
+            // Show success message
+            alert(`✓ Quotation exported to DMS successfully!\n\nFile: ${fileName}\nShipment: ${shipment.id}\nBuyer: ${shipment.buyer}`);
+        } catch (error) {
+            console.error('DMS Export Error:', error);
+            alert('Failed to export to DMS. Check console for details.');
+        }
     };
 
     const handleSend = () => {
@@ -265,11 +310,10 @@ export function ReplyQuotationView({ shipment, isRevision, onBack, onSend }: Rep
                 </div>
                 <div className="relative group">
                     <div className="absolute -inset-1 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-3xl blur opacity-10 group-focus-within:opacity-30 transition duration-500"></div>
-                    <Textarea
-                        rows={8}
+                    <EmailEditor
                         value={formData.message}
-                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, message: e.target.value })}
-                        className="relative bg-white border-slate-200 resize-none rounded-2xl shadow-sm focus:ring-blue-500/20"
+                        onChange={(val: string) => setFormData({ ...formData, message: val })}
+                        className="relative"
                         placeholder="Type your professional response here..."
                     />
                 </div>
@@ -281,35 +325,85 @@ export function ReplyQuotationView({ shipment, isRevision, onBack, onSend }: Rep
                     <DollarSign size={20} className="text-blue-600" /> Commercial Offer
                 </h3>
 
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Unit Price</label>
+                <div className="grid grid-cols-12 gap-4">
+                    {/* Variable Cost */}
+                    <div className="col-span-3 space-y-2">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Base Cost</label>
+                        <Input
+                            className="h-12 rounded-xl border-slate-200"
+                            value={formData.costPrice}
+                            placeholder="0.00"
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                const cost = parseFloat(val) || 0;
+                                const margin = parseFloat(formData.margin) || 0;
+                                const newPrice = (cost * (1 + margin / 100)).toFixed(2);
+                                setFormData({ ...formData, costPrice: val, price: newPrice });
+                            }}
+                        />
+                    </div>
+
+                    {/* Margin */}
+                    <div className="col-span-3 space-y-2">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Margin %</label>
+                        <div className="relative">
+                            <Input
+                                className="h-12 rounded-xl border-slate-200 pr-8 text-emerald-600 font-bold"
+                                value={formData.margin}
+                                placeholder="20"
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    const margin = parseFloat(val) || 0;
+                                    const cost = parseFloat(formData.costPrice) || 0;
+                                    const newPrice = (cost * (1 + margin / 100)).toFixed(2);
+                                    setFormData({ ...formData, margin: val, price: newPrice });
+                                }}
+                            />
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">%</span>
+                        </div>
+                    </div>
+
+                    {/* Selling Price */}
+                    <div className="col-span-4 space-y-2">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Selling Price</label>
                         <div className="flex gap-2">
                             <select
-                                className="w-20 h-12 rounded-xl border border-slate-200 bg-white px-2 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500"
+                                className="w-[70px] h-12 rounded-xl border border-slate-200 bg-white px-2 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500"
                                 value={formData.currency}
                                 onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
                             >
                                 {CURRENCIES.map(c => (
-                                    <option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>
+                                    <option key={c.code} value={c.code}>{c.code}</option>
                                 ))}
                             </select>
                             <Input
-                                className="flex-1 h-12 rounded-xl border-slate-200"
+                                className="flex-1 h-12 rounded-xl border-slate-200 font-bold text-blue-600 bg-blue-50/30"
                                 value={formData.price}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, price: e.target.value })}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    const price = parseFloat(val) || 0;
+                                    const cost = parseFloat(formData.costPrice) || 0;
+                                    if (cost > 0) {
+                                        const newMargin = ((price - cost) / cost * 100).toFixed(2);
+                                        setFormData({ ...formData, price: val, margin: newMargin });
+                                    } else {
+                                        setFormData({ ...formData, price: val });
+                                    }
+                                }}
                             />
                         </div>
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Per Unit</label>
+
+                    {/* Unit */}
+                    <div className="col-span-2 space-y-2">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Unit</label>
                         <select
-                            className="w-full h-12 rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500"
+                            className="w-full h-12 rounded-xl border border-slate-200 bg-white px-2 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500"
                             value={formData.unit}
                             onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
                         >
                             {UNIT_OF_MEASURE.map(u => (
-                                <option key={u.code} value={u.code}>{u.name} ({u.code})</option>
+                                <option key={u.code} value={u.code}>{u.code}</option>
                             ))}
                         </select>
                     </div>
@@ -398,7 +492,7 @@ export function ReplyQuotationView({ shipment, isRevision, onBack, onSend }: Rep
                     {isApproved ? <Send size={20} className="mr-2" /> : <Lock size={18} className="mr-2" />}
                     {isRevision ? 'Approve & Send Revised Quotation' : 'Approve & Send Quotation'}
                 </Button>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                     <Button
                         variant="outline"
                         size="lg"
@@ -417,8 +511,27 @@ export function ReplyQuotationView({ shipment, isRevision, onBack, onSend }: Rep
                         <Download size={14} className="mr-2" />
                         Download PDF
                     </Button>
+                    <Button
+                        variant="outline"
+                        size="lg"
+                        className="border-emerald-200 rounded-xl text-xs font-black h-12 hover:bg-emerald-50 text-emerald-700 hover:text-emerald-800"
+                        onClick={handleExportToDMS}
+                    >
+                        <FolderUp size={14} className="mr-2" />
+                        Export to DMS
+                    </Button>
                 </div>
             </div>
+
+            {/* PDF Viewer Modal */}
+            {pdfDataUrl && (
+                <PDFViewerModal
+                    isOpen={isPdfModalOpen}
+                    onClose={() => setIsPdfModalOpen(false)}
+                    pdfDataUrl={pdfDataUrl}
+                    title="Quotation Preview"
+                />
+            )}
         </div>
     );
 }

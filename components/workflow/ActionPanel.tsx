@@ -23,6 +23,9 @@ import { BillOfEntryView } from './steps/import/BillOfEntryView';
 import { ImportEnquiryView } from './steps/import/ImportEnquiryView';
 import { ImportQuoteReceivedView } from './steps/import/ImportQuoteReceivedView';
 import { SmartDocumentUpload } from './SmartDocumentUpload';
+import { ProcurementView } from './steps/ProcurementView'; // New
+import { POReviewView } from './steps/POReviewView'; // New
+import { ImportDocsView } from './steps/import/ImportDocsView'; // New
 
 interface ActionPanelProps {
     shipment: Shipment | ImportShipment;
@@ -352,6 +355,14 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                     </div>
                 );
 
+            case 'PO_RECEIVED':
+                return (
+                    <POReviewView
+                        shipment={shipment as Shipment}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
             case 'QUOTE_ACCEPTED':
                 return (
                     <div className="flex flex-col h-full space-y-6 animate-in fade-in duration-500">
@@ -429,6 +440,20 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                             </p>
                         </div>
                     </div>
+                );
+
+            // Procurement Stages
+            case 'PROCUREMENT_INITIATED':
+            case 'SUPPLIER_SELECTED':
+            case 'SUPPLIER_PO_SENT':
+            case 'GOODS_IN_TRANSIT':
+            case 'GOODS_RECEIVED':
+            case 'QUALITY_CHECK_PASSED':
+                return (
+                    <ProcurementView
+                        shipment={shipment as Shipment}
+                        onAction={handleUpdateStatus}
+                    />
                 );
 
             case 'INSURANCE_FILED':
@@ -604,6 +629,24 @@ export function ActionPanel({ shipment }: ActionPanelProps) {
                 );
 
             case 'IMPORT_ARRIVED_PORT':
+                return (
+                    <StandardActionView
+                        shipment={shipment}
+                        nextState="IMPORT_DOCS_RECEIVED"
+                        actionLabel="Confirm Arrival & Docs"
+                        role={['COMPANY_EXPORT_ANALYST', 'CHA']}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
+            case 'IMPORT_DOCS_RECEIVED':
+                return (
+                    <ImportDocsView
+                        shipment={shipment as ImportShipment}
+                        onAction={handleUpdateStatus}
+                    />
+                );
+
             case 'IMPORT_BOE_FILED':
                 return (
                     <BillOfEntryView

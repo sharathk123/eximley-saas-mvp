@@ -1,5 +1,6 @@
 export interface Product {
     id: string;
+    sku: string; // Stock Keeping Unit
     name: string;
     description: string;
     hsCode: string; // 8-digit ITC format: XXXX.XX.XX

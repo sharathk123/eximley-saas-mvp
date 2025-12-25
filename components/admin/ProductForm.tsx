@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { X, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,15 @@ interface ProductFormProps {
 }
 
 export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
+    // Auto-generate SKU for new products
+    const generateSKU = (category: ProductCategory) => {
+        const categoryPrefix = category.substring(0, 3).toUpperCase();
+        const timestamp = Date.now().toString().slice(-6);
+        return `${categoryPrefix}-${timestamp}`;
+    };
+
     const [formData, setFormData] = useState({
+        sku: product?.sku || '',
         name: product?.name || '',
         description: product?.description || '',
         hsCode: product?.hsCode || '',
@@ -28,11 +36,19 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     const [showHSCodeLookup, setShowHSCodeLookup] = useState(false);
     const [hsCodeConfidence, setHsCodeConfidence] = useState(product?.hsCodeConfidence);
 
+    // Auto-generate SKU for new products when category changes
+    useEffect(() => {
+        if (!product && formData.category) {
+            setFormData(prev => ({ ...prev, sku: generateSKU(formData.category as ProductCategory) }));
+        }
+    }, [formData.category, product]);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
         const newProduct: Product = {
             id: product?.id || Date.now().toString(),
+            sku: formData.sku || generateSKU(formData.category as ProductCategory),
             name: formData.name,
             description: formData.description,
             hsCode: formData.hsCode,
@@ -90,19 +106,33 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
-                    {/* Product Name */}
-                    <div className="space-y-2">
-                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">
-                            Product Name *
-                        </label>
-                        <input
-                            type="text"
-                            required
-                            value={formData.name}
-                            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                            className="input-sleek w-full"
-                            placeholder="e.g., Cotton T-Shirts, Basmati Rice, Laptop"
-                        />
+                    {/* SKU and Product Name */}
+                    <div className="grid grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">
+                                SKU (Auto-generated)
+                            </label>
+                            <input
+                                type="text"
+                                readOnly
+                                value={formData.sku || 'Auto-generated on save'}
+                                className="input-sleek w-full bg-slate-50 text-slate-500 cursor-not-allowed"
+                                placeholder="Auto-generated"
+                            />
+                        </div>
+                        <div className="col-span-2 space-y-2">
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">
+                                Product Name *
+                            </label>
+                            <input
+                                type="text"
+                                required
+                                value={formData.name}
+                                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                                className="input-sleek w-full"
+                                placeholder="e.g., Cotton T-Shirts, Basmati Rice, Laptop"
+                            />
+                        </div>
                     </div>
 
                     {/* Description */}

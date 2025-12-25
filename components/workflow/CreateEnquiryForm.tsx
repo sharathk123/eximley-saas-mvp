@@ -15,10 +15,13 @@ interface CreateEnquiryFormProps {
 
 export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
     const { addShipment } = useWorkflow();
+    const [workflowType, setWorkflowType] = useState<'EXPORT' | 'IMPORT'>('EXPORT');
+
+    // Joint state for both flows
     const [formData, setFormData] = useState({
-        buyer: '',
-        destinationCountry: 'DE',
-        destinationPort: 'DEHAM',
+        partyName: '', // Buyer (Export) or Supplier (Import)
+        country: 'DE', // Destination (Export) or Origin (Import)
+        port: 'DEHAM', // Destination (Export) or Origin (Import)
         shippingMode: 'SEA',
         goods: '',
         quantity: '',
@@ -33,46 +36,73 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        const newId = `ENQ-${Math.floor(100 + Math.random() * 900)}`;
+        const prefix = workflowType === 'EXPORT' ? 'ENQ' : 'IMP-ENQ';
+        const newId = `${prefix}-${Math.floor(100 + Math.random() * 900)}`;
         const timestamp = new Date().toISOString();
 
-        const country = COUNTRIES.find(c => c.code === formData.destinationCountry)?.name || formData.destinationCountry;
-        const port = [...PORTS.SEA, ...PORTS.AIR].find(p => p.code === formData.destinationPort)?.name || formData.destinationPort;
-        const destination = `${port}, ${country}`;
+        const countryName = COUNTRIES.find(c => c.code === formData.country)?.name || formData.country;
+        const portName = [...PORTS.SEA, ...PORTS.AIR].find(p => p.code === formData.port)?.name || formData.port;
+        const locationStr = `${portName}, ${countryName}`;
 
-        const initialMessage: Message = {
-            id: `msg-${Date.now()}`,
-            sender: 'BUYER',
-            content: formData.message || `Dear Team,\n\nWe are looking for **${formData.quantity}** of **${formData.goods}** to be delivered to **${destination}** via **${formData.shippingMode}**.\n\nPlease provide your best FOB quotation.\n\nRegards,\n${formData.buyer}`,
-            timestamp
-        };
+        let newShipment: any = {};
 
-        const newShipment: Shipment = {
-            id: newId,
-            buyer: formData.buyer,
-            destination: destination,
-            goods: formData.goods,
-            status: 'ENQUIRY_RECEIVED',
-            value: 'Pending',
-            chaMode: 'EMBEDDED',
-            enquiry: {
-                id: newId,
-                message: initialMessage.content,
-                quantity: formData.quantity,
-                expectations: 'FOB, Premium Quality',
+        if (workflowType === 'EXPORT') {
+            // Export Logic (Simulate Incoming Enquiry from Buyer)
+            const initialMessage: Message = {
+                id: `msg-${Date.now()}`,
+                sender: 'BUYER',
+                content: formData.message || `Dear Team,\n\nWe are looking for **${formData.quantity}** of **${formData.goods}** to be delivered to **${locationStr}** via **${formData.shippingMode}**.\n\nPlease provide your best FOB quotation.\n\nRegards,\n${formData.partyName}`,
                 timestamp
-            },
-            messages: [initialMessage],
-            history: [
-                {
-                    state: 'ENQUIRY_RECEIVED',
-                    timestamp,
-                    actor: formData.buyer,
-                    role: 'BUYER' as any,
-                    action: 'Sent New Enquiry'
-                }
-            ]
-        };
+            };
+
+            newShipment = {
+                id: newId,
+                buyer: formData.partyName,
+                destination: locationStr,
+                goods: formData.goods,
+                status: 'ENQUIRY_RECEIVED',
+                value: 'Pending',
+                chaMode: 'EMBEDDED',
+                enquiry: {
+                    id: newId,
+                    message: initialMessage.content,
+                    quantity: formData.quantity,
+                    expectations: 'FOB, Premium Quality',
+                    timestamp
+                },
+                messages: [initialMessage],
+                history: [{ state: 'ENQUIRY_RECEIVED', timestamp, actor: formData.partyName, role: 'BUYER', action: 'Sent New Enquiry' }]
+            };
+        } else {
+            // Import Logic (Send Enquiry TO Supplier)
+            // In import, WE are the sender initially
+            const initialMessage: Message = {
+                id: `msg-${Date.now()}`,
+                sender: 'EXPORTER', // Re-using EXPORTER role to represent 'We/Buyer'
+                content: formData.message || `Dear Sales Team,\n\nWe are interested in importing **${formData.quantity}** of **${formData.goods}** from **${locationStr}**.\n\nPlease provide your best Ex-Works quotation and availability.\n\nRegards,\nSourching Manager\nEximley India`,
+                timestamp
+            };
+
+            newShipment = {
+                id: newId.replace('ENQ', 'IMP'),
+                origin: locationStr, // Import specific
+                supplier: formData.partyName, // Import specific
+                goods: formData.goods,
+                status: 'IMPORT_ENQUIRY_SENT',
+                value: 'Pending',
+                chaMode: 'EMBEDDED',
+                portOfEntry: 'JNPT, Mumbai', // Default for now
+                enquiry: {
+                    id: newId,
+                    message: initialMessage.content,
+                    quantity: formData.quantity,
+                    expectations: 'Ex-Works, Standard',
+                    timestamp
+                },
+                messages: [initialMessage],
+                history: [{ state: 'IMPORT_ENQUIRY_SENT', timestamp, actor: 'You', role: 'COMPANY_ADMIN', action: 'Sent Enquiry to Supplier' }]
+            };
+        }
 
         addShipment(newShipment);
         onClose();
@@ -84,29 +114,46 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
                 {/* Header */}
                 <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                     <div>
-                        <h2 className="text-xl font-bold text-slate-900">Create New Enquiry</h2>
-                        <p className="text-sm text-slate-500 mt-1">Simulate a new buyer request</p>
+                        <h2 className="text-xl font-bold text-slate-900">Start New Shipment</h2>
+                        <p className="text-sm text-slate-500 mt-1">Select workflow type to begin</p>
                     </div>
-                    <button
-                        onClick={onClose}
-                        className="p-2 hover:bg-slate-200 rounded-full text-slate-400 transition-colors"
-                    >
+                    <button onClick={onClose} className="p-2 hover:bg-slate-200 rounded-full text-slate-400 transition-colors">
                         <X size={20} />
                     </button>
                 </div>
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="p-8 space-y-6">
+                    {/* Type Toggle */}
+                    <div className="flex p-1 bg-slate-100 rounded-xl mb-6">
+                        <button
+                            type="button"
+                            onClick={() => setWorkflowType('EXPORT')}
+                            className={`flex-1 py-2 text-xs font-bold uppercase tracking-widest rounded-lg transition-all ${workflowType === 'EXPORT' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'
+                                }`}
+                        >
+                            Export (Sell)
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setWorkflowType('IMPORT')}
+                            className={`flex-1 py-2 text-xs font-bold uppercase tracking-widest rounded-lg transition-all ${workflowType === 'IMPORT' ? 'bg-white text-purple-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'
+                                }`}
+                        >
+                            Import (Buy)
+                        </button>
+                    </div>
+
                     <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 px-1">
-                                <User size={12} className="text-blue-500" />
-                                Buyer Name
+                                <User size={12} className={workflowType === 'EXPORT' ? "text-blue-500" : "text-purple-500"} />
+                                {workflowType === 'EXPORT' ? 'Buyer Name' : 'Supplier Name'}
                             </label>
                             <Input
-                                name="buyer"
-                                placeholder="e.g. London Ceramics Ltd"
-                                value={formData.buyer}
+                                name="partyName"
+                                placeholder={workflowType === 'EXPORT' ? "e.g. London Ceramics Ltd" : "e.g. Shanghai Electronics"}
+                                value={formData.partyName}
                                 onChange={handleChange}
                                 required
                                 className="input-sleek"
@@ -114,13 +161,13 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 px-1">
-                                <Globe size={12} className="text-blue-500" />
-                                Destination Country
+                                <Globe size={12} className={workflowType === 'EXPORT' ? "text-blue-500" : "text-purple-500"} />
+                                {workflowType === 'EXPORT' ? 'Destination Country' : 'Origin Country'}
                             </label>
                             <select
-                                name="destinationCountry"
-                                value={formData.destinationCountry}
-                                onChange={(e) => setFormData(prev => ({ ...prev, destinationCountry: e.target.value }))}
+                                name="country"
+                                value={formData.country}
+                                onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
                                 required
                                 className="input-sleek w-full"
                             >
@@ -150,17 +197,17 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">
-                                Target Port
+                                {workflowType === 'EXPORT' ? 'Target Port' : 'Origin Port'}
                             </label>
                             <select
-                                name="destinationPort"
-                                value={formData.destinationPort}
-                                onChange={(e) => setFormData(prev => ({ ...prev, destinationPort: e.target.value }))}
+                                name="port"
+                                value={formData.port}
+                                onChange={(e) => setFormData(prev => ({ ...prev, port: e.target.value }))}
                                 required
                                 className="input-sleek w-full"
                             >
                                 {(formData.shippingMode === 'SEA' ? PORTS.SEA : PORTS.AIR)
-                                    .filter(p => p.country === COUNTRIES.find(c => c.code === formData.destinationCountry)?.name)
+                                    .filter(p => p.country === COUNTRIES.find(c => c.code === formData.country)?.name)
                                     .map(p => (
                                         <option key={p.code} value={p.code}>{p.name} ({p.code})</option>
                                     ))
@@ -173,7 +220,7 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
                     <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 px-1">
-                                <Package size={12} className="text-blue-500" />
+                                <Package size={12} className={workflowType === 'EXPORT' ? "text-blue-500" : "text-purple-500"} />
                                 Goods
                             </label>
                             <Input
@@ -187,7 +234,7 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 px-1">
-                                <ShoppingBag size={12} className="text-blue-500" />
+                                <ShoppingBag size={12} className={workflowType === 'EXPORT' ? "text-blue-500" : "text-purple-500"} />
                                 Quantity
                             </label>
                             <Input
@@ -203,12 +250,12 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
 
                     <div className="space-y-2">
                         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 px-1">
-                            <Send size={12} className="text-blue-500" />
-                            Initial Message (Optional)
+                            <Send size={12} className={workflowType === 'EXPORT' ? "text-blue-500" : "text-purple-500"} />
+                            {workflowType === 'EXPORT' ? 'Initial Enquiry Message' : 'Message to Supplier'}
                         </label>
                         <Textarea
                             name="message"
-                            placeholder="Type a custom message or let the system generate one..."
+                            placeholder="Type a custom message..."
                             value={formData.message}
                             onChange={handleChange}
                             className="min-h-[120px] rounded-xl bg-white border-slate-200 shadow-sm focus:border-blue-500 transition-all font-medium"
@@ -226,9 +273,12 @@ export function CreateEnquiryForm({ onClose }: CreateEnquiryFormProps) {
                         </Button>
                         <Button
                             type="submit"
-                            className="btn-sleek-primary flex-1 shadow-blue-200"
+                            className={`flex-1 shadow-lg h-11 rounded-xl font-bold uppercase tracking-widest text-xs ${workflowType === 'EXPORT'
+                                    ? 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/20'
+                                    : 'bg-purple-600 hover:bg-purple-700 shadow-purple-500/20'
+                                }`}
                         >
-                            Create Enquiry
+                            {workflowType === 'EXPORT' ? 'Simulate Buyer Enquiry' : 'Send Enquiry to Supplier'}
                         </Button>
                     </div>
                 </form>

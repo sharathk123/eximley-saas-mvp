@@ -1,12 +1,5 @@
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
-
-// Extend jsPDF with autotable
-declare module 'jspdf' {
-    interface jsPDF {
-        autoTable: (options: any) => jsPDF;
-    }
-}
+import autoTable from 'jspdf-autotable';
 
 export interface PDFQuotationData {
     quotationNo: string;
@@ -21,6 +14,7 @@ export interface PDFQuotationData {
         logo?: string;
     };
     items: {
+        sku?: string;
         description: string;
         quantity: string;
         unitPrice: string;
@@ -38,7 +32,7 @@ export function generateQuotationPDF(data: PDFQuotationData): string {
     const doc = new jsPDF();
 
     // Branding Colors
-    const primaryColor = [79, 70, 229]; // Indigo-600
+    const primaryColor: [number, number, number] = [79, 70, 229]; // Indigo-600
 
     // Header
     doc.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2]);
@@ -56,14 +50,22 @@ export function generateQuotationPDF(data: PDFQuotationData): string {
     doc.text('FROM:', 20, 50);
     doc.setFont('helvetica', 'normal');
     doc.text(data.seller.name, 20, 55);
-    doc.text(data.seller.address.split('\n'), 20, 60);
+
+    const sellerAddressLines = data.seller.address.split('\n');
+    sellerAddressLines.forEach((line, idx) => {
+        doc.text(line, 20, 60 + (idx * 5));
+    });
 
     // Buyer Info
     doc.setFont('helvetica', 'bold');
     doc.text('TO:', 120, 50);
     doc.setFont('helvetica', 'normal');
     doc.text(data.buyer.name, 120, 55);
-    doc.text(data.buyer.address.split('\n'), 120, 60);
+
+    const buyerAddressLines = data.buyer.address.split('\n');
+    buyerAddressLines.forEach((line, idx) => {
+        doc.text(line, 120, 60 + (idx * 5));
+    });
 
     // Quotation Metadata
     doc.setFont('helvetica', 'bold');
@@ -71,7 +73,7 @@ export function generateQuotationPDF(data: PDFQuotationData): string {
     doc.text(`Date: ${data.date}`, 120, 85);
 
     // Table
-    doc.autoTable({
+    autoTable(doc, {
         startY: 95,
         head: [['Description', 'Quantity', `Unit Price (${data.currency})`, `Total (${data.currency})`]],
         body: data.items.map(item => [
@@ -80,7 +82,11 @@ export function generateQuotationPDF(data: PDFQuotationData): string {
             item.unitPrice,
             item.total
         ]),
-        headStyles: { fillColor: primaryColor, textColor: 255, fontStyle: 'bold' },
+        headStyles: {
+            fillColor: primaryColor,
+            textColor: [255, 255, 255] as [number, number, number],
+            fontStyle: 'bold'
+        },
         styles: { fontSize: 10, cellPadding: 5 },
         columnStyles: {
             0: { cellWidth: 80 },
@@ -90,16 +96,19 @@ export function generateQuotationPDF(data: PDFQuotationData): string {
         }
     });
 
-    const finalY = (doc as any).lastAutoTable.finalY + 10;
+    // Get the final Y position after the table
+    const finalY = (doc as any).lastAutoTable?.finalY || 150;
 
     // Commercial Terms
+    doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
-    doc.text('COMMERCIAL TERMS', 20, finalY);
+    doc.setTextColor(51, 51, 51);
+    doc.text('COMMERCIAL TERMS', 20, finalY + 10);
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Incoterms: ${data.terms.incoterms}`, 20, finalY + 7);
-    doc.text(`Payment Terms: ${data.terms.payment}`, 20, finalY + 14);
-    doc.text(`Validity: ${data.terms.validity}`, 20, finalY + 21);
+    doc.text(`Incoterms: ${data.terms.incoterms}`, 20, finalY + 17);
+    doc.text(`Payment Terms: ${data.terms.payment}`, 20, finalY + 24);
+    doc.text(`Validity: ${data.terms.validity}`, 20, finalY + 31);
 
     // Footer / Disclaimer
     doc.setFontSize(8);
